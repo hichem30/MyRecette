@@ -1,0 +1,180 @@
+import Image from "next/image";
+import { setRequestLocale, getTranslations } from "next-intl/server";
+import { Award, DollarSign, Hammer, Heart, MapPin, Users } from "lucide-react";
+import { Link } from "@/lib/i18n/navigation";
+
+export default async function AboutPage({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  setRequestLocale(locale);
+  const t = await getTranslations("about");
+  const lang = locale as "en" | "es";
+
+  return (
+    <>
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden bg-neutral-900 text-white">
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src="https://images.unsplash.com/photo-1500076656116-558758c991c1?auto=format&fit=crop&w=2000&q=70"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-50"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-900/70 to-transparent" />
+        </div>
+        <div className="container-page py-20">
+          <p className="text-xs font-bold tracking-widest text-amber-300">
+            {lang === "en" ? "FAMILY OWNED · SAND SPRINGS, OK" : "FAMILIA · SAND SPRINGS, OK"}
+          </p>
+          <h1 className="mt-3 font-serif text-4xl font-bold sm:text-6xl">{t("title")}</h1>
+          <p className="mt-4 max-w-2xl text-white/80">{t("subtitle")}</p>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { v: "35+", l: t("yearsStat") },
+              { v: "5,000", l: t("productsStat") },
+              { v: "Mon-Sat", l: t("hoursStat") },
+              { v: "Sand Springs", l: t("locationStat") },
+            ].map((s) => (
+              <div key={s.v} className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3">
+                <p className="font-serif text-2xl font-bold text-amber-300">{s.v}</p>
+                <p className="text-xs text-white/70">{s.l}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Story */}
+      <section className="container-page py-16">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div>
+            <p className="text-xs font-bold tracking-widest text-barn-600">{t("story")}</p>
+            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">{t("storyTitle")}</h2>
+            <p className="mt-4 text-neutral-600 leading-relaxed">{t("storyBody")}</p>
+          </div>
+          <div className="relative aspect-[5/4] overflow-hidden rounded-2xl bg-neutral-100 shadow-card">
+            <Image
+              src="https://images.unsplash.com/photo-1593438739734-9b3ace27bbd0?auto=format&fit=crop&w=1200&q=70"
+              alt="Red Barn storefront"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
+            <span className="absolute left-4 top-4 rounded-md bg-amber-500 px-2 py-1 text-[10px] font-bold text-white">
+              1987
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Core Values */}
+      <section className="bg-neutral-50 py-16">
+        <div className="container-page">
+          <div className="text-center">
+            <p className="text-xs font-bold tracking-widest text-barn-600">{t("coreValuesLabel")}</p>
+            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">{t("coreValues")}</h2>
+          </div>
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { Icon: Award, title: t("value1"), body: t("value1Body") },
+              { Icon: DollarSign, title: t("value2"), body: t("value2Body") },
+              { Icon: Hammer, title: t("value3"), body: t("value3Body") },
+              { Icon: MapPin, title: t("value4"), body: t("value4Body") },
+              { Icon: Heart, title: t("value5"), body: t("value5Body") },
+              { Icon: Users, title: t("value6"), body: t("value6Body") },
+            ].map(({ Icon, title, body }) => (
+              <div key={title} className="rounded-xl bg-white p-6 shadow-card">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-barn-50 text-barn-700">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-bold">{title}</h3>
+                <p className="mt-2 text-sm text-neutral-600">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Milestones */}
+      <section className="container-page py-16">
+        <div className="text-center">
+          <p className="text-xs font-bold tracking-widest text-barn-600">{t("milestonesLabel")}</p>
+          <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">{t("milestones")}</h2>
+        </div>
+        <ol className="mx-auto mt-10 max-w-3xl border-l border-neutral-200 pl-6">
+          {[
+            { year: "1987", body: t("milestone1987") },
+            { year: "1995", body: t("milestone1995") },
+            { year: "2005", body: t("milestone2005") },
+            { year: "2015", body: t("milestone2015") },
+            { year: "2020", body: t("milestone2020") },
+            { year: lang === "en" ? "Today" : "Hoy", body: t("milestoneToday") },
+          ].map((m) => (
+            <li key={m.year} className="relative pb-8">
+              <span className="absolute -left-[33px] inline-flex h-6 items-center rounded-full bg-barn-600 px-2 text-[10px] font-bold uppercase tracking-wide text-white">
+                {m.year}
+              </span>
+              <p className="text-sm text-neutral-700">{m.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Team */}
+      <section className="bg-neutral-50 py-16">
+        <div className="container-page">
+          <div className="text-center">
+            <p className="text-xs font-bold tracking-widest text-barn-600">{t("teamLabel")}</p>
+            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">{t("team")}</h2>
+          </div>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { name: t("team1Name"), role: t("team1Role"), body: t("team1Body") },
+              { name: t("team2Name"), role: t("team2Role"), body: t("team2Body") },
+              { name: t("team3Name"), role: t("team3Role"), body: t("team3Body") },
+              { name: t("team4Name"), role: t("team4Role"), body: t("team4Body") },
+            ].map((m) => (
+              <div key={m.name} className="rounded-xl bg-white p-5 text-center shadow-card">
+                <div className="mx-auto h-16 w-16 rounded-full bg-neutral-200" aria-hidden />
+                <h3 className="mt-3 text-sm font-bold">{m.name}</h3>
+                <p className="text-xs text-barn-600">{m.role}</p>
+                <p className="mt-2 text-xs text-neutral-600">{m.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="relative isolate overflow-hidden bg-neutral-900 py-16 text-white">
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src="https://images.unsplash.com/photo-1500076656116-558758c991c1?auto=format&fit=crop&w=2000&q=70"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-neutral-900/70" />
+        </div>
+        <div className="container-page text-center">
+          <h2 className="font-serif text-3xl font-bold sm:text-4xl">{t("readyTitle")}</h2>
+          <p className="mx-auto mt-3 max-w-xl text-white/80">{t("readyBody")}</p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Link href="/products" className="rounded-full bg-barn-600 px-6 py-3 text-sm font-bold hover:bg-barn-700">
+              {t("readyCtaShop")}
+            </Link>
+            <Link href="/contact" className="rounded-full border border-white/40 bg-white/10 px-6 py-3 text-sm font-bold hover:bg-white/20">
+              {t("readyCtaContact")}
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

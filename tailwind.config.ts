@@ -9,8 +9,26 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        barn: {
+          50:  "#FFF4F2",
+          100: "#FDE6E1",
+          200: "#FBC9BF",
+          300: "#F4998A",
+          400: "#E36E5A",
+          500: "#C8472F",
+          600: "#A8351F",
+          700: "#8B2A18",
+          800: "#6B1F11",
+          900: "#4A150B",
+        },
+        cream: "#FAF7F2",
+      },
+      fontFamily: {
+        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans:  ['Inter', 'system-ui', 'sans-serif'],
+      },
+      boxShadow: {
+        card: "0 4px 12px -2px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04)",
       },
     },
   },
