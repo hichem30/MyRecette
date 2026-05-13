@@ -115,7 +115,18 @@ export function CartDrawer() {
                         >
                           <Minus className="h-3 w-3" />
                         </button>
-                        <span className="min-w-[28px] text-center text-sm">{item.quantity}</span>
+                        <input
+                          type="number"
+                          inputMode="numeric"
+                          min={1}
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const n = parseInt(e.target.value, 10);
+                            if (!Number.isNaN(n) && n >= 1) updateQuantity(item.product_id, n);
+                          }}
+                          aria-label="Quantity"
+                          className="w-12 border-x border-neutral-300 bg-transparent py-1 text-center text-sm outline-none focus:bg-neutral-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
                         <button
                           onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
                           aria-label="Increase"

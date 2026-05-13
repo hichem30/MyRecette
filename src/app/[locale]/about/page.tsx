@@ -59,14 +59,14 @@ export default async function AboutPage({
           </div>
           <div className="relative aspect-[5/4] overflow-hidden rounded-2xl bg-neutral-100 shadow-card">
             <Image
-              src="https://images.unsplash.com/photo-1593438739734-9b3ace27bbd0?auto=format&fit=crop&w=1200&q=70"
-              alt="Red Barn storefront"
+              src="/about/storefront.jpg"
+              alt="Red Barn Western Market storefront, Sand Springs OK"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
             <span className="absolute left-4 top-4 rounded-md bg-amber-500 px-2 py-1 text-[10px] font-bold text-white">
-              1987
+              Sand Springs, OK
             </span>
           </div>
         </div>
@@ -106,7 +106,7 @@ export default async function AboutPage({
           <p className="text-xs font-bold tracking-widest text-barn-600">{t("milestonesLabel")}</p>
           <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">{t("milestones")}</h2>
         </div>
-        <ol className="mx-auto mt-10 max-w-3xl border-l border-neutral-200 pl-6">
+        <ol className="mx-auto mt-10 max-w-3xl space-y-6">
           {[
             { year: "1987", body: t("milestone1987") },
             { year: "1995", body: t("milestone1995") },
@@ -115,11 +115,13 @@ export default async function AboutPage({
             { year: "2020", body: t("milestone2020") },
             { year: lang === "en" ? "Today" : "Hoy", body: t("milestoneToday") },
           ].map((m) => (
-            <li key={m.year} className="relative pb-8">
-              <span className="absolute -left-[33px] inline-flex h-6 items-center rounded-full bg-barn-600 px-2 text-[10px] font-bold uppercase tracking-wide text-white">
+            <li key={m.year} className="flex flex-col gap-2 sm:flex-row sm:gap-5">
+              <span className="inline-flex h-7 w-fit flex-none items-center rounded-full bg-barn-600 px-3 text-[11px] font-bold uppercase tracking-wide text-white sm:w-24 sm:justify-center">
                 {m.year}
               </span>
-              <p className="text-sm text-neutral-700">{m.body}</p>
+              <p className="flex-1 text-sm leading-relaxed text-neutral-700 sm:border-l sm:border-neutral-200 sm:pl-5">
+                {m.body}
+              </p>
             </li>
           ))}
         </ol>
@@ -134,13 +136,21 @@ export default async function AboutPage({
           </div>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { name: t("team1Name"), role: t("team1Role"), body: t("team1Body") },
-              { name: t("team2Name"), role: t("team2Role"), body: t("team2Body") },
-              { name: t("team3Name"), role: t("team3Role"), body: t("team3Body") },
-              { name: t("team4Name"), role: t("team4Role"), body: t("team4Body") },
+              { name: t("team1Name"), role: t("team1Role"), body: t("team1Body"), img: "/about/team-1.jpg" },
+              { name: t("team2Name"), role: t("team2Role"), body: t("team2Body"), img: "/about/team-2.jpg" },
+              { name: t("team3Name"), role: t("team3Role"), body: t("team3Body"), img: "/about/team-3.jpg" },
+              { name: t("team4Name"), role: t("team4Role"), body: t("team4Body"), img: "/about/team-4.jpg" },
             ].map((m) => (
               <div key={m.name} className="rounded-xl bg-white p-5 text-center shadow-card">
-                <div className="mx-auto h-16 w-16 rounded-full bg-neutral-200" aria-hidden />
+                <div className="relative mx-auto h-20 w-20 overflow-hidden rounded-full bg-neutral-200">
+                  <Image
+                    src={m.img}
+                    alt={m.name}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                </div>
                 <h3 className="mt-3 text-sm font-bold">{m.name}</h3>
                 <p className="text-xs text-barn-600">{m.role}</p>
                 <p className="mt-2 text-xs text-neutral-600">{m.body}</p>

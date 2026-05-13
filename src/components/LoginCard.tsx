@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
-type Provider = "google" | "facebook" | "apple";
+type Provider = "google" | "facebook";
 
 export function LoginCard() {
   const t = useTranslations("login");
@@ -74,9 +74,6 @@ export function LoginCard() {
         </ProviderButton>
         <ProviderButton onClick={() => signInWithProvider("facebook")} label={t("continueFacebook")}>
           <FacebookIcon />
-        </ProviderButton>
-        <ProviderButton onClick={() => signInWithProvider("apple")} label={t("continueApple")}>
-          <AppleIcon />
         </ProviderButton>
       </div>
 
@@ -187,10 +184,4 @@ function FacebookIcon() {
     </svg>
   );
 }
-function AppleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden fill="currentColor">
-      <path d="M16.4 12.9c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.3-.9C5.9 7 4.1 8.1 3.1 9.9c-1.8 3.2-.5 7.9 1.3 10.5.9 1.3 1.9 2.7 3.3 2.6 1.3-.1 1.8-.9 3.4-.9s2 .9 3.4.8c1.4 0 2.3-1.3 3.1-2.6.7-1 1.3-2.1 1.6-3.3-1.4-.5-3.4-1.7-3.4-4.1zM13.8 4.5c.7-.9 1.2-2.1 1.1-3.4-1 .1-2.3.7-3 1.6-.7.8-1.3 2-1.1 3.2 1.1.1 2.3-.5 3-1.4z" />
-    </svg>
-  );
-}
+

@@ -17,8 +17,8 @@ export default async function CategoriesPage({
     <>
       <PageHeader title={t("title")} subtitle={t("subtitle")} eyebrow={t("explore")} />
 
-      <section className="container-page -mt-10">
-        <div className="grid grid-cols-1 gap-3 rounded-2xl bg-white p-6 shadow-xl sm:grid-cols-3">
+      <section className="container-page mt-6 sm:-mt-10 relative z-10">
+        <div className="grid grid-cols-1 gap-4 rounded-2xl bg-white p-6 shadow-xl sm:grid-cols-3">
           {[
             { Icon: LayoutGrid, value: String(cats.length), label: t("totalCategories") },
             { Icon: Package, value: "1,000+", label: t("productsAvailable") },

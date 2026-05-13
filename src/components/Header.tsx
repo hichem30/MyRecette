@@ -34,7 +34,7 @@ export function Header() {
         isHome ? "bg-neutral-900/80 backdrop-blur text-white" : "bg-white shadow-sm",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:px-6 lg:px-8">
         <Logo variant={isHome ? "light" : "dark"} />
 
         <nav className="hidden md:flex items-center gap-1">
@@ -63,12 +63,12 @@ export function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex flex-none items-center gap-0.5 sm:gap-2">
           <button
             onClick={() => setSearchOpen((v) => !v)}
             aria-label={t("search")}
             className={cn(
-              "rounded-full p-2 transition",
+              "inline-flex h-9 w-9 items-center justify-center rounded-full transition",
               isHome ? "text-white/80 hover:text-white" : "text-neutral-600 hover:text-barn-700",
             )}
           >
@@ -79,7 +79,7 @@ export function Header() {
             href="/wishlist"
             aria-label={t("wishlist")}
             className={cn(
-              "relative rounded-full p-2 transition",
+              "relative inline-flex h-9 w-9 items-center justify-center rounded-full transition",
               isHome ? "text-white/80 hover:text-white" : "text-neutral-600 hover:text-barn-700",
             )}
           >
@@ -94,7 +94,7 @@ export function Header() {
             onClick={openCart}
             aria-label={t("cart")}
             className={cn(
-              "relative rounded-full p-2 transition",
+              "relative inline-flex h-9 w-9 items-center justify-center rounded-full transition",
               isHome ? "text-white/80 hover:text-white" : "text-neutral-600 hover:text-barn-700",
             )}
           >
@@ -119,7 +119,7 @@ export function Header() {
           </Link>
           <button
             className={cn(
-              "inline-flex md:hidden rounded-md p-2",
+              "inline-flex md:hidden h-9 w-9 items-center justify-center rounded-md",
               isHome ? "text-white" : "text-neutral-700",
             )}
             onClick={() => setMobileOpen((v) => !v)}
@@ -131,20 +131,27 @@ export function Header() {
       </div>
 
       {searchOpen && (
-        <div className="border-t border-white/10 bg-white px-4 py-3 sm:px-6 lg:px-8">
+        <div className="border-t border-neutral-200 bg-white px-3 py-3 sm:px-6 lg:px-8">
           <form
             action="/products"
             method="GET"
-            className="mx-auto max-w-3xl"
+            className="mx-auto flex max-w-3xl items-stretch gap-2"
           >
-            <div className="flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 py-2">
-              <Search className="h-4 w-4 text-neutral-400" />
+            <div className="flex flex-1 items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 py-2">
+              <Search className="h-4 w-4 flex-none text-neutral-400" />
               <input
                 name="q"
                 placeholder={t("search")}
-                className="flex-1 bg-transparent text-sm outline-none text-neutral-800"
+                className="flex-1 min-w-0 bg-transparent text-sm outline-none text-neutral-800"
               />
             </div>
+            <button
+              type="submit"
+              className="flex-none rounded-full bg-barn-600 px-4 text-sm font-bold text-white hover:bg-barn-700"
+              aria-label={t("search")}
+            >
+              <Search className="h-4 w-4" />
+            </button>
           </form>
         </div>
       )}

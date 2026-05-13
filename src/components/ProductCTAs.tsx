@@ -23,7 +23,19 @@ export function ProductCTAs({ product }: { product: Product }) {
         >
           <Minus className="h-3 w-3" />
         </button>
-        <span className="min-w-[36px] text-center text-sm font-medium">{qty}</span>
+        <input
+          type="number"
+          inputMode="numeric"
+          min={1}
+          value={qty}
+          onChange={(e) => {
+            const n = parseInt(e.target.value, 10);
+            if (!Number.isNaN(n) && n >= 1) setQty(n);
+            else if (e.target.value === "") setQty(1);
+          }}
+          aria-label="Quantity"
+          className="w-14 border-x border-neutral-300 bg-transparent py-2 text-center text-sm font-medium outline-none focus:bg-neutral-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
         <button
           type="button"
           onClick={() => setQty((q) => q + 1)}

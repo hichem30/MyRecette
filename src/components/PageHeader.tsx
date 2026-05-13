@@ -16,7 +16,7 @@ export function PageHeader({
         dark ? "bg-neutral-900 text-white" : "bg-cream text-neutral-900"
       }`}
     >
-      <div className="container-page py-16 text-center sm:py-20">
+      <div className="container-page pt-16 pb-20 text-center sm:pt-20 sm:pb-24">
         {eyebrow && (
           <p className={`text-xs font-bold tracking-widest ${dark ? "text-barn-300" : "text-barn-600"}`}>
             {eyebrow}

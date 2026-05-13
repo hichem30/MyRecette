@@ -20,7 +20,7 @@ The site is a fully static Next.js 14 / Tailwind project backed by Supabase and 
 | i18n         | `next-intl` (EN default, ES) |
 | Data         | Supabase (Postgres + Auth + Storage) |
 | Payments     | Stripe Checkout (test mode out of the box) |
-| Auth         | Supabase Auth (email/password + Google / Facebook / Apple OAuth) |
+| Auth         | Supabase Auth (email/password + Google / Facebook OAuth) |
 | Hosting      | Netlify or Cloudflare Pages (static + serverless functions) |
 | Icons        | lucide-react |
 | PWA          | `public/manifest.json` + `public/sw.js` |
@@ -85,13 +85,14 @@ Copy `.env.example` to `.env.local` and fill in whichever services you want to e
 
 That's it — `/admin` is now unlocked for that account.
 
-### OAuth providers (Google / Facebook / Apple)
+### OAuth providers (Google / Facebook)
 
 Each OAuth button is wired in `LoginCard.tsx`. To make a provider live, enable it in **Supabase → Authentication → Providers** and paste in client IDs / secrets from the provider's developer console:
 
 - **Google:** https://console.cloud.google.com → APIs & Services → Credentials → Create OAuth client ID (Web). Add Supabase callback URL `https://<your-project>.supabase.co/auth/v1/callback` to *Authorized redirect URIs*. **Free.**
 - **Facebook:** https://developers.facebook.com → My Apps → Create App → Facebook Login. Use the same Supabase callback URL. **Free.**
-- **Apple:** https://developer.apple.com → Sign In with Apple. Requires an **Apple Developer Program** membership ($99/year). Tedious; skip until you actually need it.
+
+For non‑technical, step‑by‑step instructions, see [SETUP_GUIDE.md](./SETUP_GUIDE.md).
 
 Buttons remain in the UI but show a polite error until the provider is enabled.
 
@@ -231,7 +232,7 @@ public/                          # PWA manifest, service worker, icons
 | Stripe webhook → orders table | ✓ — needs `STRIPE_WEBHOOK_SECRET` |
 | Mock data fallback when Supabase unconfigured | ✓ |
 | PWA (manifest + service worker + offline page) | ✓ |
-| OAuth (Google / Facebook / Apple) buttons | ✓ — enable in Supabase to activate |
+| OAuth (Google / Facebook) buttons | ✓ — enable in Supabase to activate |
 | About + Login pages designed | ✓ |
 
 The **only manual steps** to take the site live are:
