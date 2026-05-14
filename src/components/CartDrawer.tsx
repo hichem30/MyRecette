@@ -22,12 +22,12 @@ export function CartDrawer() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          // Send only the product_id and quantity. The server looks up the
+          // real price/name/image from the database (or trusted mock data)
+          // so the client cannot tamper with prices.
           items: items.map((i) => ({
             product_id: i.product_id,
-            name: i.name[locale],
-            price: i.price,
             quantity: i.quantity,
-            image_url: i.image_url,
           })),
           locale,
         }),

@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { getStripeClient } from "@/lib/stripe/server";
+import { getAllProducts } from "@/lib/data";
 
-interface LineInput {
-  product_id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image_url?: string;
-}
+const BodySchema = z.object({
+  items: z
+    .array(
+      z.object({
+        product_id: z.string().min(1),
+        quantity: z.number().int().min(1).max(999),
+      }),
+    )
+    .min(1)
+    .max(50),
+  locale: z.enum(["en", "es"]).default("en"),
+});
 
 export async function POST(req: Request) {
   const stripe = getStripeClient();
@@ -21,37 +28,70 @@ export async function POST(req: Request) {
     );
   }
 
+  let parsed: z.infer<typeof BodySchema>;
   try {
-    const { items, locale }: { items: LineInput[]; locale: "en" | "es" } = await req.json();
-    if (!Array.isArray(items) || items.length === 0) {
-      return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
+    parsed = BodySchema.parse(await req.json());
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "invalid body";
+    return NextResponse.json({ error: msg }, { status: 400 });
+  }
+
+  // SECURITY: always look up the canonical price/name/image from the database
+  // (or trusted mock data). Never trust client-provided prices — a malicious
+  // user could otherwise post `price: 0.01` and buy a $1000 item for a penny.
+  const catalog = await getAllProducts();
+  const byId = new Map(catalog.map((p) => [p.id, p]));
+
+  const lineItems: Array<{
+    quantity: number;
+    price_data: {
+      currency: string;
+      product_data: {
+        name: string;
+        images?: string[];
+        metadata: { product_id: string };
+      };
+      unit_amount: number;
+    };
+  }> = [];
+
+  for (const item of parsed.items) {
+    const product = byId.get(item.product_id);
+    if (!product) {
+      return NextResponse.json(
+        { error: `Unknown product: ${item.product_id}` },
+        { status: 400 },
+      );
     }
+    lineItems.push({
+      quantity: item.quantity,
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: product.name[parsed.locale] ?? product.name.en,
+          images: product.image_url ? [product.image_url] : undefined,
+          metadata: { product_id: product.id },
+        },
+        unit_amount: Math.round(Number(product.price) * 100),
+      },
+    });
+  }
 
-    const origin =
-      req.headers.get("origin") ??
-      process.env.NEXT_PUBLIC_SITE_URL ??
-      "http://localhost:3000";
+  const origin =
+    req.headers.get("origin") ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    "http://localhost:3000";
 
+  try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      line_items: items.map((i) => ({
-        quantity: i.quantity,
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: i.name,
-            images: i.image_url ? [i.image_url] : undefined,
-            metadata: { product_id: i.product_id },
-          },
-          unit_amount: Math.round(i.price * 100),
-        },
-      })),
+      line_items: lineItems,
       automatic_tax: { enabled: false },
       shipping_address_collection: { allowed_countries: ["US", "CA", "MX"] },
       allow_promotion_codes: true,
-      locale: locale === "es" ? "es" : "en",
-      success_url: `${origin}/${locale}/checkout/success?email={CHECKOUT_SESSION_CUSTOMER_EMAIL}&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/${locale}/checkout/cancel`,
+      locale: parsed.locale === "es" ? "es" : "en",
+      success_url: `${origin}/${parsed.locale}/checkout/success?email={CHECKOUT_SESSION_CUSTOMER_EMAIL}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/${parsed.locale}/checkout/cancel`,
       metadata: { source: "redbarn-storefront" },
     });
 
