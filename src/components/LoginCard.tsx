@@ -46,9 +46,22 @@ export function LoginCard() {
 
     const supabase = getSupabaseBrowserClient();
     if (mode === "sign_in") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message);
-      else window.location.href = "/admin";
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        setError(error.message);
+      } else {
+        const userId = data.user?.id;
+        let dest = "/";
+        if (userId) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", userId)
+            .maybeSingle();
+          if (profile?.role === "admin") dest = "/admin";
+        }
+        window.location.href = dest;
+      }
     } else {
       const { error } = await supabase.auth.signUp({
         email,

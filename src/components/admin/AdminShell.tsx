@@ -17,7 +17,7 @@ import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/c
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [status, setStatus] = useState<"loading" | "anon" | "non_admin" | "admin">("loading");
   const [email, setEmail] = useState<string | null>(null);
 
   // Don't auth-gate the login page
@@ -25,25 +25,46 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
-      setAuthed(false);
+      setStatus("anon");
       return;
     }
     const supabase = getSupabaseBrowserClient();
-    supabase.auth.getUser().then(({ data }) => {
-      setAuthed(!!data.user);
-      setEmail(data.user?.email ?? null);
+    let cancelled = false;
+
+    async function loadRole() {
+      const { data: userData } = await supabase.auth.getUser();
+      if (cancelled) return;
+      const user = userData.user;
+      if (!user) {
+        setStatus("anon");
+        setEmail(null);
+        return;
+      }
+      setEmail(user.email ?? null);
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      setStatus(profile?.role === "admin" ? "admin" : "non_admin");
+    }
+
+    loadRole();
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      loadRole();
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      setAuthed(!!session?.user);
-      setEmail(session?.user?.email ?? null);
-    });
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
     if (isLogin) return;
-    if (authed === false) router.replace("/admin/login");
-  }, [authed, isLogin, router]);
+    if (status === "anon") router.replace("/admin/login");
+    else if (status === "non_admin") router.replace("/");
+  }, [status, isLogin, router]);
 
   async function signOut() {
     if (!isSupabaseConfigured()) {
@@ -56,14 +77,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }
 
   if (isLogin) return <>{children}</>;
-  if (authed === null) {
+  if (status === "loading") {
     return (
       <div className="flex h-screen items-center justify-center text-sm text-neutral-500">
         Loading...
       </div>
     );
   }
-  if (!authed) return null;
+  if (status !== "admin") return null;
 
   const nav = [
     { href: "/admin", label: "Dashboard", Icon: LayoutDashboard },
