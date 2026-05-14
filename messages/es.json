@@ -254,8 +254,6 @@
     "noAccount": "¿No tiene una cuenta?",
     "haveAccount": "¿Ya tiene una cuenta?",
     "signInWith": "Inicie sesión con",
-    "demoTip": "Tip demo:",
-    "demoTipBody": "Cree una cuenta vía Registrarse para probar el flujo completo. O regístrese y luego inicie sesión.",
     "errorInvalid": "Correo o contraseña inválidos.",
     "errorGeneric": "Algo salió mal — intente de nuevo.",
     "trustedQuality": "Calidad Confiable",

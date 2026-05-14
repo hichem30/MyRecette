@@ -254,8 +254,6 @@
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",
     "signInWith": "Sign in with",
-    "demoTip": "Demo tip:",
-    "demoTipBody": "Create an account via Sign Up to test the full flow. Or sign up then log in.",
     "errorInvalid": "Invalid email or password.",
     "errorGeneric": "Something went wrong — please try again.",
     "trustedQuality": "Trusted Quality",

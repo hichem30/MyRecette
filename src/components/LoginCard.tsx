@@ -152,9 +152,6 @@ export function LoginCard() {
         </button>
       </p>
 
-      <div className="mt-5 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-        <strong>{t("demoTip")}</strong> {t("demoTipBody")}
-      </div>
     </div>
   );
 }
