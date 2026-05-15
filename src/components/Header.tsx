@@ -1,12 +1,13 @@
 "use client";
 
-import { Heart, Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { Heart, LogOut, Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { LanguageSelector } from "./LanguageSelector";
 import { Link, usePathname } from "@/lib/i18n/navigation";
 import { useCart } from "@/lib/cart/CartProvider";
+import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -15,8 +16,49 @@ export function Header() {
   const { itemCount, openCart, wishlist } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [authed, setAuthed] = useState<boolean>(false);
+  const [displayName, setDisplayName] = useState<string | null>(null);
 
   const isHome = pathname === "/";
+
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    const supabase = getSupabaseBrowserClient();
+    let cancelled = false;
+
+    function applyUser(user: { email?: string | null; user_metadata?: Record<string, unknown> } | null) {
+      if (cancelled) return;
+      if (!user) {
+        setAuthed(false);
+        setDisplayName(null);
+        return;
+      }
+      setAuthed(true);
+      const meta = user.user_metadata ?? {};
+      const fullName =
+        (typeof meta.full_name === "string" && meta.full_name) ||
+        (typeof meta.name === "string" && meta.name) ||
+        null;
+      const first = fullName ? fullName.split(" ")[0] : null;
+      setDisplayName(first ?? user.email ?? null);
+    }
+
+    supabase.auth.getUser().then(({ data }) => applyUser(data.user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      applyUser(session?.user ?? null);
+    });
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  async function handleSignOut() {
+    if (!isSupabaseConfigured()) return;
+    const supabase = getSupabaseBrowserClient();
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  }
 
   const navItems = [
     { href: "/", key: "home" },
@@ -105,18 +147,44 @@ export function Header() {
               </span>
             )}
           </button>
-          <Link
-            href="/login"
-            className={cn(
-              "hidden sm:inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
-              isHome
-                ? "border-white/30 text-white hover:bg-white/10"
-                : "border-neutral-300 text-neutral-700 hover:border-barn-600 hover:text-barn-700",
-            )}
-          >
-            <User className="h-3.5 w-3.5" />
-            {t("login")}
-          </Link>
+          {authed ? (
+            <div
+              className={cn(
+                "hidden sm:inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium",
+                isHome
+                  ? "border-white/30 text-white"
+                  : "border-neutral-300 text-neutral-700",
+              )}
+            >
+              <User className="h-3.5 w-3.5" />
+              <span className="max-w-[120px] truncate" title={displayName ?? ""}>
+                {displayName}
+              </span>
+              <button
+                onClick={handleSignOut}
+                aria-label={t("logout")}
+                className={cn(
+                  "ml-1 inline-flex h-6 w-6 items-center justify-center rounded-full transition",
+                  isHome ? "hover:bg-white/10" : "hover:bg-neutral-100 hover:text-barn-700",
+                )}
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className={cn(
+                "hidden sm:inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
+                isHome
+                  ? "border-white/30 text-white hover:bg-white/10"
+                  : "border-neutral-300 text-neutral-700 hover:border-barn-600 hover:text-barn-700",
+              )}
+            >
+              <User className="h-3.5 w-3.5" />
+              {t("login")}
+            </Link>
+          )}
           <button
             className={cn(
               "inline-flex md:hidden h-9 w-9 items-center justify-center rounded-md",
@@ -169,13 +237,32 @@ export function Header() {
                 {t(item.key)}
               </Link>
             ))}
-            <Link
-              href="/login"
-              onClick={() => setMobileOpen(false)}
-              className="block rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
-            >
-              {t("login")}
-            </Link>
+            {authed ? (
+              <>
+                <div className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-700">
+                  <User className="h-4 w-4" />
+                  <span className="truncate">{displayName}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    handleSignOut();
+                  }}
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                >
+                  <LogOut className="h-4 w-4" />
+                  {t("logout")}
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMobileOpen(false)}
+                className="block rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+              >
+                {t("login")}
+              </Link>
+            )}
           </div>
         </div>
       )}

@@ -204,33 +204,41 @@ export default async function HomePage({ params: { locale } }: { params: { local
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
+      {/* TESTIMONIALS — real public reviews */}
       <section className="bg-neutral-50 py-14">
         <div className="container-page">
           <SectionHeader title={tH("testimonials")} subtitle={tH("testimonialsSubtitle")} />
           <div className="grid gap-5 sm:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <figure key={i} className="rounded-xl bg-white p-6 shadow-card">
+            {(
+              [
+                {
+                  author: "Billy C.",
+                  en: "I own a small construction company local and Red Barn saves me a hour drive to Tulsa to the big box stores. They always have what I need. Thank God for Red Barn.",
+                  es: "Soy dueño de una pequeña constructora local y Red Barn me ahorra una hora de viaje a Tulsa a las tiendas grandes. Siempre tienen lo que necesito. Gracias a Dios por Red Barn.",
+                },
+                {
+                  author: "Paula L.",
+                  en: "Excellent customer service and best prices around. Highly recommend this place. Not only lumber, but feed, also.",
+                  es: "Excelente servicio al cliente y los mejores precios de la zona. Recomiendo mucho este lugar. No solo madera, también alimento.",
+                },
+                {
+                  author: "Matt M.",
+                  en: "We love this place. We go for feed and come home with furniture and flooring. You never know what treasure you'll find.",
+                  es: "Nos encanta este lugar. Vamos por alimento y nos vamos con muebles y pisos. Nunca sabes qué tesoro vas a encontrar.",
+                },
+              ] as const
+            ).map((review) => (
+              <figure key={review.author} className="rounded-xl bg-white p-6 shadow-card">
                 <div className="mb-2 flex gap-0.5 text-amber-500">
                   {Array.from({ length: 5 }).map((_, idx) => (
                     <Star key={idx} className="h-4 w-4 fill-current" />
                   ))}
                 </div>
                 <blockquote className="text-sm text-neutral-700">
-                  {locale === "en"
-                    ? [
-                        "Best lumber yard in Tulsa County. Buzz always remembers what we ordered last week.",
-                        "Drove forty miles past two big-box stores just to come here. Prices and people are worth it.",
-                        "Helped me load 200 ft of fence in the truck on a rainy Tuesday. That's the Red Barn way.",
-                      ][i - 1]
-                    : [
-                        "El mejor depósito de madera del Condado. Buzz siempre recuerda lo que pedimos.",
-                        "Manejé 40 millas, pasando dos tiendas grandes, solo para venir aquí. Vale la pena.",
-                        "Me ayudaron a cargar 200 pies de cerca un martes lluvioso. Así es Red Barn.",
-                      ][i - 1]}
+                  &ldquo;{locale === "en" ? review.en : review.es}&rdquo;
                 </blockquote>
                 <figcaption className="mt-4 text-xs font-semibold text-neutral-600">
-                  {locale === "en" ? "Local Customer" : "Cliente Local"} · Sand Springs, OK
+                  {review.author} · Sand Springs, OK
                 </figcaption>
               </figure>
             ))}

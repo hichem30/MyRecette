@@ -18,7 +18,7 @@ export async function getAllCategories(): Promise<Category[]> {
       .from("categories")
       .select("*")
       .order("name->>en", { ascending: true });
-    if (error || !data) return mockCategories;
+    if (error || !data || data.length === 0) return mockCategories;
     return data as Category[];
   } catch {
     return mockCategories;
@@ -38,7 +38,7 @@ export async function getAllProducts(): Promise<Product[]> {
       .from("products")
       .select("*")
       .order("created_at", { ascending: false });
-    if (error || !data) return mockProducts;
+    if (error || !data || data.length === 0) return mockProducts;
     return data as Product[];
   } catch {
     return mockProducts;
