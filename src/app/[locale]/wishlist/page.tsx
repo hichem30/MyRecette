@@ -3,6 +3,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { WishlistGrid } from "@/components/WishlistGrid";
 import { getAllProducts } from "@/lib/data";
 
+export const revalidate = 60;
+
 export default async function WishlistPage({
   params: { locale },
 }: {

@@ -12,6 +12,8 @@ import {
   getNewArrivals,
 } from "@/lib/data";
 
+export const revalidate = 60;
+
 export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
   setRequestLocale(locale);
   const tH = await getTranslations("home");

@@ -9,6 +9,9 @@ import { locales } from "@/lib/i18n/config";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCTAs } from "@/components/ProductCTAs";
 
+export const revalidate = 60;
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   const all = await getAllProducts();
   const params: Array<{ locale: string; slug: string }> = [];

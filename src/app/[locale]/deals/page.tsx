@@ -4,6 +4,8 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { ProductCard } from "@/components/ProductCard";
 import { getDeals } from "@/lib/data";
 
+export const revalidate = 60;
+
 export default async function DealsPage({
   params: { locale },
 }: {
