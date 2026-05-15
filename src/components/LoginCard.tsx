@@ -5,8 +5,6 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
-type Provider = "google" | "facebook";
-
 export function LoginCard() {
   const t = useTranslations("login");
   const [mode, setMode] = useState<"sign_in" | "sign_up">("sign_in");
@@ -15,7 +13,7 @@ export function LoginCard() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
 
-  async function signInWithProvider(provider: Provider) {
+  async function signInWithProvider(provider: "google") {
     setError(null);
     if (!isSupabaseConfigured()) {
       setError("Supabase is not configured yet. Add your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.");
@@ -84,9 +82,6 @@ export function LoginCard() {
       <div className="mt-6 space-y-2.5">
         <ProviderButton onClick={() => signInWithProvider("google")} label={t("continueGoogle")}>
           <GoogleIcon />
-        </ProviderButton>
-        <ProviderButton onClick={() => signInWithProvider("facebook")} label={t("continueFacebook")}>
-          <FacebookIcon />
         </ProviderButton>
       </div>
 
@@ -184,13 +179,6 @@ function GoogleIcon() {
       <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16.1 19 13 24 13c3.1 0 5.9 1.2 8 3l5.7-5.7C34.5 6.3 29.5 4 24 4 16 4 9 8.6 6.3 14.7z" />
       <path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.5l-6.5-5.4c-2 1.5-4.6 2.4-7.5 2.4-5.2 0-9.6-3.3-11.3-8L6 32.6C8.7 39 15.8 44 24 44z" />
       <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.4-2.4 4.5-4.4 5.9l6.5 5.4C40.3 36.5 44 30.7 44 24c0-1.2-.1-2.4-.4-3.5z" />
-    </svg>
-  );
-}
-function FacebookIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden fill="#1877F2">
-      <path d="M22 12a10 10 0 1 0-11.6 9.9V15h-2.5v-3h2.5V9.7c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.3 0-1.7.8-1.7 1.6V12h2.9l-.5 3h-2.5v6.9A10 10 0 0 0 22 12z" />
     </svg>
   );
 }

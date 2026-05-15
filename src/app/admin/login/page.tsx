@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
     setSubmitting(false);
   }
 
-  async function provider(p: "google" | "facebook") {
+  async function provider(p: "google") {
     setError(null);
     if (!isSupabaseConfigured()) {
       setError("Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local.");
@@ -56,9 +56,6 @@ export default function AdminLoginPage() {
         <div className="mt-5 space-y-2">
           <button onClick={() => provider("google")} className="w-full rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium hover:border-neutral-400">
             Continue with Google
-          </button>
-          <button onClick={() => provider("facebook")} className="w-full rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium hover:border-neutral-400">
-            Continue with Facebook
           </button>
         </div>
 
