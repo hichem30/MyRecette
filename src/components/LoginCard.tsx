@@ -140,14 +140,14 @@ export function LoginCard() {
         </label>
 
         {mode === "sign_up" && (
-          <label className="flex items-start gap-2 text-xs text-neutral-600">
+          <label className="flex items-start gap-2 rounded-md border border-barn-200 bg-barn-50/50 px-3 py-2.5 text-xs text-neutral-700">
             <input
               type="checkbox"
               checked={marketingOptin}
               onChange={(e) => setMarketingOptin(e.target.checked)}
-              className="mt-0.5 rounded border-neutral-300 accent-barn-600"
+              className="mt-0.5 h-4 w-4 flex-none rounded border-neutral-300 accent-barn-600"
             />
-            <span>{t("marketingOptin")}</span>
+            <span className="font-medium">{t("marketingOptin")}</span>
           </label>
         )}
 

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "./Logo";
 import { LanguageSelector } from "./LanguageSelector";
-import { Link, usePathname } from "@/lib/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { useCart } from "@/lib/cart/CartProvider";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -13,9 +13,11 @@ import { cn } from "@/lib/utils";
 export function Header() {
   const t = useTranslations("nav");
   const pathname = usePathname();
+  const router = useRouter();
   const { itemCount, openCart, wishlist } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [authed, setAuthed] = useState<boolean>(false);
   const [displayName, setDisplayName] = useState<string | null>(null);
@@ -246,15 +248,20 @@ export function Header() {
       {searchOpen && (
         <div className="border-t border-neutral-200 bg-white px-3 py-3 sm:px-6 lg:px-8">
           <form
-            action="/products"
-            method="GET"
             className="mx-auto flex max-w-3xl items-stretch gap-2"
-            onSubmit={() => setSearchOpen(false)}
+            onSubmit={(e) => {
+              e.preventDefault();
+              const q = searchQuery.trim();
+              router.push(q ? `/products?q=${encodeURIComponent(q)}` : "/products");
+              setSearchOpen(false);
+            }}
           >
             <div className="flex flex-1 items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 py-2">
               <Search className="h-4 w-4 flex-none text-neutral-400" />
               <input
                 name="q"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t("search")}
                 className="flex-1 min-w-0 bg-transparent text-sm outline-none text-neutral-800"
                 autoFocus

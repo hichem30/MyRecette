@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronDown, ChevronRight, Copy, Mail } from "lucide-react";
-import { Fragment, useEffect, useState } from "react";
+import { ChevronDown, ChevronRight, Copy, Mail, Search, X } from "lucide-react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Order, OrderStatus } from "@/lib/types";
 
@@ -28,6 +28,14 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [savingStatusId, setSavingStatusId] = useState<string | null>(null);
+  const [emailFilter, setEmailFilter] = useState("");
+
+  // Pre-fill the email filter when arriving from /admin/staff?email=…
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const p = new URLSearchParams(window.location.search).get("email");
+    if (p) setEmailFilter(p);
+  }, []);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -66,16 +74,46 @@ export default function AdminOrdersPage() {
     });
   }
 
+  const filteredItems = useMemo(() => {
+    const q = emailFilter.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter((o) => (o.customer_email ?? "").toLowerCase().includes(q));
+  }, [items, emailFilter]);
+
   return (
     <div>
       <h1 className="font-serif text-2xl font-bold">Orders</h1>
-      <p className="text-sm text-neutral-500">{items.length} order{items.length === 1 ? "" : "s"}.</p>
+      <p className="text-sm text-neutral-500">
+        {filteredItems.length} of {items.length} order{items.length === 1 ? "" : "s"}
+        {emailFilter ? ` matching “${emailFilter}”` : ""}.
+      </p>
 
       {!isSupabaseConfigured() && (
         <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
           Orders are written by the Stripe webhook into Supabase. Configure both before this works.
         </div>
       )}
+
+      <div className="mt-4 flex items-center gap-2 rounded-md border border-neutral-300 bg-white px-3 py-2">
+        <Search className="h-4 w-4 flex-none text-neutral-400" />
+        <input
+          type="search"
+          value={emailFilter}
+          onChange={(e) => setEmailFilter(e.target.value)}
+          placeholder="Filter by customer email…"
+          className="flex-1 bg-transparent text-sm outline-none"
+        />
+        {emailFilter && (
+          <button
+            type="button"
+            aria-label="Clear filter"
+            onClick={() => setEmailFilter("")}
+            className="text-neutral-400 hover:text-neutral-700"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
 
       <div className="mt-5 overflow-hidden rounded-xl border border-neutral-200 bg-white">
         <table className="w-full text-sm">
@@ -93,10 +131,12 @@ export default function AdminOrdersPage() {
           <tbody className="divide-y divide-neutral-100">
             {loading ? (
               <tr><td colSpan={7} className="px-4 py-8 text-center text-neutral-400">Loading...</td></tr>
-            ) : items.length === 0 ? (
-              <tr><td colSpan={7} className="px-4 py-8 text-center text-neutral-400">No orders yet.</td></tr>
+            ) : filteredItems.length === 0 ? (
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-neutral-400">
+                {emailFilter ? `No orders match “${emailFilter}”.` : "No orders yet."}
+              </td></tr>
             ) : (
-              items.map((o) => {
+              filteredItems.map((o) => {
                 const isOpen = expanded === o.id;
                 return (
                   <Fragment key={o.id}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Filter, Search } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
@@ -32,6 +32,15 @@ export function ProductsListing({
   const [newArrivalsOnly, setNewArrivalsOnly] = useState(false);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
   const [freeShipping, setFreeShipping] = useState(false);
+
+  // Keep listing in sync when the user changes ?q= via the header search
+  // bar without unmounting this component.
+  useEffect(() => {
+    setQuery(urlQ);
+  }, [urlQ]);
+  useEffect(() => {
+    setActiveCategory(urlCategory);
+  }, [urlCategory]);
 
   const filtered = useMemo(() => {
     const lower = query.trim().toLowerCase();

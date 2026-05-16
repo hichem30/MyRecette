@@ -91,11 +91,11 @@ export function ProductShare({ product }: { product: Product }) {
   ];
 
   return (
-    <div className="relative inline-block" ref={wrapperRef}>
+    <div className="relative inline-flex flex-none" ref={wrapperRef}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-neutral-300 text-neutral-500 hover:text-barn-700"
+        className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-md border border-neutral-300 text-neutral-500 hover:text-barn-700"
         aria-label={locale === "en" ? "Share" : "Compartir"}
         aria-haspopup="menu"
         aria-expanded={open}

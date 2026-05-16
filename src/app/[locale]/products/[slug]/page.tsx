@@ -178,10 +178,8 @@ export default async function ProductDetail({
               )}
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <div className="flex-1">
-                <ProductCTAs product={product} />
-              </div>
+            <div className="mt-6 flex flex-wrap items-stretch gap-3">
+              <ProductCTAs product={product} />
               <ProductShare product={product} />
             </div>
           </div>
