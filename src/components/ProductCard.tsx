@@ -47,6 +47,13 @@ export function ProductCard({ product, compact = false }: { product: Product; co
             </span>
           )}
         </div>
+        {product.stock === 0 && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-[1px]">
+            <span className="rounded-md bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white shadow">
+              {t("outOfStock")}
+            </span>
+          </div>
+        )}
       </Link>
 
       <div className="flex flex-1 flex-col gap-1.5 p-3 sm:p-4">
@@ -77,15 +84,22 @@ export function ProductCard({ product, compact = false }: { product: Product; co
           </p>
         )}
 
+        {product.stock > 0 && product.stock <= 5 && (
+          <p className="text-xs font-medium text-amber-700">
+            {t("onlyXLeft", { count: product.stock })}
+          </p>
+        )}
+
         {!compact && (
           <div className="mt-auto flex items-center gap-2 pt-3">
             <button
               type="button"
               onClick={() => addItem(product)}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-barn-600 px-3 py-2 text-sm font-medium text-white hover:bg-barn-700 transition"
+              disabled={product.stock === 0}
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-barn-600 px-3 py-2 text-sm font-medium text-white hover:bg-barn-700 transition disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:hover:bg-neutral-400"
             >
               <ShoppingCart className="h-4 w-4" />
-              {t("addToCart")}
+              {product.stock === 0 ? t("outOfStock") : t("addToCart")}
             </button>
             <button
               type="button"

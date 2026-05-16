@@ -49,6 +49,7 @@
     "submitting": "Enviando...",
     "outOfStock": "Sin stock",
     "inStock": "En stock",
+    "onlyXLeft": "Solo quedan {count} en stock",
     "you_save": "Ahorras"
   },
   "home": {
@@ -119,7 +120,9 @@
     "quantity": "Cantidad",
     "remove": "Eliminar",
     "item": "artículo",
-    "items": "artículos"
+    "items": "artículos",
+    "checkoutError": "El pago no pudo iniciarse.",
+    "checkoutErrorBody": "Por favor revise su carrito y vuelva a intentarlo."
   },
   "wishlist": {
     "title": "Sus Favoritos",

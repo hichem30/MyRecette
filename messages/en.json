@@ -49,6 +49,7 @@
     "submitting": "Submitting...",
     "outOfStock": "Out of stock",
     "inStock": "In stock",
+    "onlyXLeft": "Only {count} left in stock",
     "you_save": "You save"
   },
   "home": {
@@ -119,7 +120,9 @@
     "quantity": "Quantity",
     "remove": "Remove",
     "item": "item",
-    "items": "items"
+    "items": "items",
+    "checkoutError": "Checkout could not start.",
+    "checkoutErrorBody": "Please review your cart and try again."
   },
   "wishlist": {
     "title": "Your Wishlist",

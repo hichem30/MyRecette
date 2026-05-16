@@ -3,6 +3,11 @@ import Stripe from "stripe";
 import { getStripeClient } from "@/lib/stripe/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/server";
 
+interface StockItem {
+  product_id: string;
+  quantity: number;
+}
+
 export async function POST(req: Request) {
   const stripe = getStripeClient();
   if (!stripe) {
@@ -28,19 +33,60 @@ export async function POST(req: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     const admin = getSupabaseAdminClient();
     if (admin) {
+      // Decode our internal product IDs from session metadata (set when we
+      // created the checkout session). Same order as Stripe's line_items.
+      let metaItems: StockItem[] = [];
+      const raw = session.metadata?.items;
+      if (typeof raw === "string") {
+        try {
+          const parsed = JSON.parse(raw) as unknown;
+          if (Array.isArray(parsed)) {
+            metaItems = parsed.filter(
+              (x): x is StockItem =>
+                typeof x === "object" &&
+                x !== null &&
+                typeof (x as StockItem).product_id === "string" &&
+                typeof (x as StockItem).quantity === "number",
+            );
+          }
+        } catch {
+          /* malformed metadata — skip silently */
+        }
+      }
+
       const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
-      const items = lineItems.data.map((li) => ({
+      const items = lineItems.data.map((li, idx) => ({
+        product_id: metaItems[idx]?.product_id,
         product_name: li.description ?? li.price?.nickname ?? "Product",
         quantity: li.quantity ?? 1,
         unit_amount: (li.amount_total ?? 0) / (li.quantity ?? 1),
       }));
-      await admin.from("orders").insert({
-        stripe_session_id: session.id,
-        customer_email: session.customer_details?.email ?? null,
-        total_amount: (session.amount_total ?? 0) / 100,
-        line_items: items,
-        status: "paid",
-      });
+
+      // Idempotency: orders.stripe_session_id is UNIQUE. If we've already
+      // processed this session (Stripe sometimes retries webhooks), the
+      // insert returns an error and we skip the stock decrement.
+      const { data: inserted, error: insertErr } = await admin
+        .from("orders")
+        .insert({
+          stripe_session_id: session.id,
+          customer_email: session.customer_details?.email ?? null,
+          total_amount: (session.amount_total ?? 0) / 100,
+          line_items: items,
+          status: "paid",
+        })
+        .select("id")
+        .single();
+
+      // Only decrement stock if the order was *newly* inserted.
+      if (inserted && !insertErr && metaItems.length > 0) {
+        const { error: rpcErr } = await admin.rpc("decrement_product_stock", {
+          items: metaItems,
+        });
+        if (rpcErr) {
+          // Log but do not fail the webhook — the order is already saved.
+          console.error("decrement_product_stock failed:", rpcErr.message);
+        }
+      }
     }
   }
 

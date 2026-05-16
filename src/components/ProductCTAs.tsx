@@ -11,15 +11,22 @@ export function ProductCTAs({ product }: { product: Product }) {
   const { addItem, toggleWishlist, isInWishlist } = useCart();
   const fav = isInWishlist(product.id);
   const [qty, setQty] = useState(1);
+  const outOfStock = product.stock <= 0;
+  const maxQty = Math.max(1, product.stock);
 
   return (
     <div className="mt-6 flex flex-wrap items-center gap-3">
-      <div className="flex items-center rounded-md border border-neutral-300">
+      <div
+        className={`flex items-center rounded-md border border-neutral-300 ${
+          outOfStock ? "opacity-50" : ""
+        }`}
+      >
         <button
           type="button"
           onClick={() => setQty((q) => Math.max(1, q - 1))}
+          disabled={outOfStock}
           aria-label="Decrease"
-          className="p-2 hover:bg-neutral-50"
+          className="p-2 hover:bg-neutral-50 disabled:cursor-not-allowed"
         >
           <Minus className="h-3 w-3" />
         </button>
@@ -27,20 +34,23 @@ export function ProductCTAs({ product }: { product: Product }) {
           type="number"
           inputMode="numeric"
           min={1}
+          max={maxQty}
           value={qty}
+          disabled={outOfStock}
           onChange={(e) => {
             const n = parseInt(e.target.value, 10);
-            if (!Number.isNaN(n) && n >= 1) setQty(n);
+            if (!Number.isNaN(n) && n >= 1) setQty(Math.min(n, maxQty));
             else if (e.target.value === "") setQty(1);
           }}
           aria-label="Quantity"
-          className="w-14 border-x border-neutral-300 bg-transparent py-2 text-center text-sm font-medium outline-none focus:bg-neutral-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-14 border-x border-neutral-300 bg-transparent py-2 text-center text-sm font-medium outline-none focus:bg-neutral-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:cursor-not-allowed"
         />
         <button
           type="button"
-          onClick={() => setQty((q) => q + 1)}
+          onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
+          disabled={outOfStock || qty >= maxQty}
           aria-label="Increase"
-          className="p-2 hover:bg-neutral-50"
+          className="p-2 hover:bg-neutral-50 disabled:cursor-not-allowed"
         >
           <Plus className="h-3 w-3" />
         </button>
@@ -49,10 +59,11 @@ export function ProductCTAs({ product }: { product: Product }) {
       <button
         type="button"
         onClick={() => addItem(product, qty)}
-        className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-barn-600 px-6 py-3 text-sm font-bold text-white hover:bg-barn-700 transition"
+        disabled={outOfStock}
+        className="inline-flex flex-1 items-center justify-center gap-2 rounded-md bg-barn-600 px-6 py-3 text-sm font-bold text-white hover:bg-barn-700 transition disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:hover:bg-neutral-400"
       >
         <ShoppingCart className="h-4 w-4" />
-        {t("addToCart")}
+        {outOfStock ? t("outOfStock") : t("addToCart")}
       </button>
 
       <button

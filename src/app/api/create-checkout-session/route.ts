@@ -54,6 +54,7 @@ export async function POST(req: Request) {
       unit_amount: number;
     };
   }> = [];
+  const stockDecrement: Array<{ product_id: string; quantity: number }> = [];
 
   for (const item of parsed.items) {
     const product = byId.get(item.product_id);
@@ -63,6 +64,30 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
+    // SECURITY: also enforce stock at checkout creation. The cart UI tries to
+    // prevent over-purchase but a malicious client can bypass it. We block
+    // here so the customer can never buy more than is actually in stock.
+    if (product.stock <= 0) {
+      return NextResponse.json(
+        {
+          error: `"${product.name[parsed.locale] ?? product.name.en}" is out of stock.`,
+          product_id: product.id,
+          stock: 0,
+        },
+        { status: 409 },
+      );
+    }
+    if (item.quantity > product.stock) {
+      return NextResponse.json(
+        {
+          error: `Only ${product.stock} of "${product.name[parsed.locale] ?? product.name.en}" available.`,
+          product_id: product.id,
+          stock: product.stock,
+        },
+        { status: 409 },
+      );
+    }
+
     lineItems.push({
       quantity: item.quantity,
       price_data: {
@@ -75,6 +100,7 @@ export async function POST(req: Request) {
         unit_amount: Math.round(Number(product.price) * 100),
       },
     });
+    stockDecrement.push({ product_id: product.id, quantity: item.quantity });
   }
 
   const origin =
@@ -92,7 +118,12 @@ export async function POST(req: Request) {
       locale: parsed.locale === "es" ? "es" : "en",
       success_url: `${origin}/${parsed.locale}/checkout/success?email={CHECKOUT_SESSION_CUSTOMER_EMAIL}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/${parsed.locale}/checkout/cancel`,
-      metadata: { source: "redbarn-storefront" },
+      metadata: {
+        source: "redbarn-storefront",
+        // Pass the verified items so the webhook can decrement stock without
+        // re-querying Stripe (also lets us tie back to our internal product IDs).
+        items: JSON.stringify(stockDecrement),
+      },
     });
 
     return NextResponse.json({ url: session.url });

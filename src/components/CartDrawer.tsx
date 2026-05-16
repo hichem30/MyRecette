@@ -13,10 +13,12 @@ export function CartDrawer() {
   const locale = useLocale() as "en" | "es";
   const t = useTranslations("cart");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function checkout() {
     if (items.length === 0) return;
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/create-checkout-session", {
         method: "POST",
@@ -33,13 +35,14 @@ export function CartDrawer() {
         }),
       });
       const data = await res.json();
-      if (data.url) {
+      if (res.ok && data.url) {
         window.location.href = data.url;
-      } else {
-        alert(data.error ?? "Stripe is not configured yet. Add your STRIPE_SECRET_KEY to .env.local.");
+        return;
       }
+      // Server returned a structured error (e.g. 409 "Only 2 left").
+      setError(typeof data.error === "string" ? data.error : t("checkoutError"));
     } catch {
-      alert("Stripe is not configured yet. Add your STRIPE_SECRET_KEY to .env.local.");
+      setError(t("checkoutError"));
     } finally {
       setLoading(false);
     }
@@ -157,6 +160,14 @@ export function CartDrawer() {
               <span className="font-bold text-neutral-900">{formatPrice(subtotal)}</span>
             </div>
             <p className="mb-3 text-xs text-neutral-500">{t("calculatedAtCheckout")}</p>
+            {error && (
+              <div
+                role="alert"
+                className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800"
+              >
+                {error}
+              </div>
+            )}
             <button
               onClick={checkout}
               disabled={loading}

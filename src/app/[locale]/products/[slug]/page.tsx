@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { setRequestLocale, getTranslations } from "next-intl/server";
@@ -17,6 +18,39 @@ export async function generateStaticParams() {
   const params: Array<{ locale: string; slug: string }> = [];
   for (const l of locales) for (const p of all) params.push({ locale: l, slug: p.slug });
   return params;
+}
+
+export async function generateMetadata({
+  params: { locale, slug },
+}: {
+  params: { locale: string; slug: string };
+}): Promise<Metadata> {
+  const product = await getProductBySlug(slug);
+  if (!product) return {};
+  const lang = locale as "en" | "es";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://redbarnmarket.netlify.app";
+  const url = `${base}/${lang}/products/${product.slug}`;
+  const title = `${product.name[lang]} — Red Barn Western Market`;
+  const description = product.description[lang]?.slice(0, 160) || product.name[lang];
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "Red Barn Western Market",
+      type: "website",
+      images: product.image_url ? [{ url: product.image_url, alt: product.name[lang] }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: product.image_url ? [product.image_url] : undefined,
+    },
+  };
 }
 
 export default async function ProductDetail({
@@ -121,10 +155,18 @@ export default async function ProductDetail({
             <div className="mt-4 flex items-center gap-3 text-xs text-neutral-500">
               <span
                 className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 font-semibold ${
-                  product.stock > 0 ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"
+                  product.stock === 0
+                    ? "bg-red-50 text-red-700"
+                    : product.stock <= 5
+                    ? "bg-amber-50 text-amber-700"
+                    : "bg-emerald-50 text-emerald-700"
                 }`}
               >
-                {product.stock > 0 ? `${product.stock} ${t("inStock")}` : t("outOfStock")}
+                {product.stock === 0
+                  ? t("outOfStock")
+                  : product.stock <= 5
+                  ? t("onlyXLeft", { count: product.stock })
+                  : `${product.stock} ${t("inStock")}`}
               </span>
               {product.free_shipping && (
                 <span className="inline-flex items-center gap-1 text-blue-600">

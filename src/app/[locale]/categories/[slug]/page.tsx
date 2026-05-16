@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/PageHeader";
@@ -11,6 +12,36 @@ export const dynamicParams = true;
 export async function generateStaticParams() {
   const cats = await getAllCategories();
   return locales.flatMap((locale) => cats.map((c) => ({ locale, slug: c.slug })));
+}
+
+export async function generateMetadata({
+  params: { locale, slug },
+}: {
+  params: { locale: string; slug: string };
+}): Promise<Metadata> {
+  const cat = await getCategoryBySlug(slug);
+  if (!cat) return {};
+  const lang = locale as "en" | "es";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://redbarnmarket.netlify.app";
+  const url = `${base}/${lang}/categories/${cat.slug}`;
+  const title = `${cat.name[lang]} — Red Barn Western Market`;
+  const description =
+    lang === "es"
+      ? `Explora todos los productos de ${cat.name.es} en Red Barn Western Market.`
+      : `Shop all ${cat.name.en} products at Red Barn Western Market.`;
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "Red Barn Western Market",
+      type: "website",
+      images: cat.image_url ? [{ url: cat.image_url, alt: cat.name[lang] }] : undefined,
+    },
+  };
 }
 
 export default async function CategoryDetail({

@@ -55,11 +55,19 @@ export interface BulkQuote {
 }
 
 export interface OrderLineItem {
-  product_id: string;
+  product_id?: string;
   product_name: string;
   quantity: number;
   unit_amount: number;
 }
+
+export type OrderStatus =
+  | "paid"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled"
+  | "refunded";
 
 export interface Order {
   id: string;
@@ -67,7 +75,8 @@ export interface Order {
   customer_email: string;
   total_amount: number;
   line_items: OrderLineItem[];
-  status: "paid" | "pending" | "refunded";
+  status: OrderStatus;
+  notes?: string | null;
   created_at: string;
 }
 
