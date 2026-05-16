@@ -12,6 +12,7 @@ export function LoginCard() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [marketingOptin, setMarketingOptin] = useState(false);
 
   async function signInWithProvider(provider: "google") {
     setError(null);
@@ -61,13 +62,27 @@ export function LoginCard() {
         window.location.href = dest;
       }
     } else {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: { marketing_optin: marketingOptin },
+        },
       });
-      if (error) setError(error.message);
-      else setInfo("Account created — check your email to confirm.");
+      if (error) {
+        setError(error.message);
+      } else {
+        // Best-effort update in case the auto-profile trigger doesn't pick up
+        // the marketing flag from user metadata yet.
+        if (data.user?.id && marketingOptin) {
+          await supabase
+            .from("profiles")
+            .update({ marketing_optin: true })
+            .eq("id", data.user.id);
+        }
+        setInfo("Account created — check your email to confirm.");
+      }
     }
     setSubmitting(false);
   }
@@ -123,6 +138,18 @@ export function LoginCard() {
           <input type="checkbox" className="rounded border-neutral-300 accent-barn-600" />
           {t("rememberMe")}
         </label>
+
+        {mode === "sign_up" && (
+          <label className="flex items-start gap-2 text-xs text-neutral-600">
+            <input
+              type="checkbox"
+              checked={marketingOptin}
+              onChange={(e) => setMarketingOptin(e.target.checked)}
+              className="mt-0.5 rounded border-neutral-300 accent-barn-600"
+            />
+            <span>{t("marketingOptin")}</span>
+          </label>
+        )}
 
         <button
           type="submit"

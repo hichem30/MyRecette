@@ -13,6 +13,10 @@ export default function AccountHome() {
     joined: null,
   });
   const [stats, setStats] = useState<{ orders: number; wishlist: number }>({ orders: 0, wishlist: 0 });
+  const [userId, setUserId] = useState<string | null>(null);
+  const [marketingOptin, setMarketingOptin] = useState(false);
+  const [savingOptin, setSavingOptin] = useState(false);
+  const [optinFeedback, setOptinFeedback] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) return;
@@ -22,7 +26,14 @@ export default function AccountHome() {
       const { data: userData } = await sb.auth.getUser();
       const user = userData.user;
       if (!user || cancelled) return;
+      setUserId(user.id);
       const meta = user.user_metadata ?? {};
+      const { data: profileRow } = await sb
+        .from("profiles")
+        .select("marketing_optin")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (!cancelled) setMarketingOptin(!!profileRow?.marketing_optin);
       setProfile({
         email: user.email ?? null,
         name:
@@ -52,6 +63,10 @@ export default function AccountHome() {
       memberSince: "Member since",
       viewOrders: "View order history",
       viewWishlist: "Open wishlist",
+      preferences: "Email preferences",
+      marketingLabel: "Send me promotions, discounts, and new arrival emails.",
+      marketingHelp: "You can change this anytime. We will only email you about Red Barn sales — never share your address.",
+      saved: "Preference saved.",
     },
     es: {
       title: "Mi Cuenta",
@@ -61,8 +76,33 @@ export default function AccountHome() {
       memberSince: "Miembro desde",
       viewOrders: "Ver historial de pedidos",
       viewWishlist: "Abrir favoritos",
+      preferences: "Preferencias de correo",
+      marketingLabel: "Quiero recibir promociones, descuentos y novedades por correo.",
+      marketingHelp: "Puede cambiarlo en cualquier momento. Solo le escribiremos sobre ofertas de Red Barn.",
+      saved: "Preferencia guardada.",
     },
   }[locale];
+
+  async function toggleMarketing(next: boolean) {
+    if (!userId || !isSupabaseConfigured()) return;
+    setSavingOptin(true);
+    setOptinFeedback(null);
+    const prev = marketingOptin;
+    setMarketingOptin(next);
+    const sb = getSupabaseBrowserClient();
+    const { error } = await sb
+      .from("profiles")
+      .update({ marketing_optin: next })
+      .eq("id", userId);
+    setSavingOptin(false);
+    if (error) {
+      setMarketingOptin(prev);
+      setOptinFeedback(error.message);
+    } else {
+      setOptinFeedback(labels.saved);
+      setTimeout(() => setOptinFeedback(null), 2000);
+    }
+  }
 
   const joinedStr = profile.joined
     ? new Date(profile.joined).toLocaleDateString(locale === "es" ? "es-ES" : "en-US", {
@@ -104,6 +144,32 @@ export default function AccountHome() {
           <p className="mt-1 text-lg font-semibold text-neutral-900">{joinedStr}</p>
         </div>
       </div>
+
+      <section className="mt-8 rounded-xl border border-neutral-200 bg-white p-5">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-700">
+          {labels.preferences}
+        </h2>
+        <label className="mt-3 flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={marketingOptin}
+            disabled={savingOptin || !userId}
+            onChange={(e) => toggleMarketing(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-neutral-300 accent-barn-600"
+          />
+          <span>
+            <span className="block text-sm font-semibold text-neutral-800">
+              {labels.marketingLabel}
+            </span>
+            <span className="mt-0.5 block text-xs text-neutral-500">
+              {labels.marketingHelp}
+            </span>
+          </span>
+        </label>
+        {optinFeedback && (
+          <p className="mt-2 text-xs text-emerald-700">{optinFeedback}</p>
+        )}
+      </section>
     </div>
   );
 }

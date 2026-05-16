@@ -1,11 +1,13 @@
 "use client";
 
-import { Check, ExternalLink, Edit2, Eye, EyeOff, Plus, Trash2, X } from "lucide-react";
+import { ArrowUpDown, Check, ExternalLink, Edit2, Eye, EyeOff, Plus, Trash2, X } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Product } from "@/lib/types";
 import { mockProducts } from "@/lib/data/mock-data";
+
+type SortKey = "created_desc" | "updated_desc" | "sales_desc" | "name_asc";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -14,6 +16,8 @@ export default function AdminProductsPage() {
   const [stockDraft, setStockDraft] = useState<number>(0);
   const [savingStockId, setSavingStockId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "low" | "out" | "draft">("all");
+  const [sort, setSort] = useState<SortKey>("created_desc");
+  const [salesByProduct, setSalesByProduct] = useState<Record<string, number>>({});
   const [publishingId, setPublishingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -23,13 +27,18 @@ export default function AdminProductsPage() {
       return;
     }
     const sb = getSupabaseBrowserClient();
-    sb.from("products")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        setProducts((data as Product[]) ?? []);
-        setLoading(false);
-      });
+    Promise.all([
+      sb.from("products").select("*").order("created_at", { ascending: false }),
+      sb.from("product_sales").select("product_id, units_sold"),
+    ]).then(([prodRes, salesRes]) => {
+      setProducts((prodRes.data as Product[]) ?? []);
+      const map: Record<string, number> = {};
+      for (const r of (salesRes.data as Array<{ product_id: string; units_sold: number }> | null) ?? []) {
+        map[r.product_id] = r.units_sold;
+      }
+      setSalesByProduct(map);
+      setLoading(false);
+    });
   }, []);
 
   async function deleteProduct(id: string) {
@@ -91,12 +100,29 @@ export default function AdminProductsPage() {
     setProducts((prev) => prev.map((x) => (x.id === p.id ? { ...x, published: next } : x)));
   }
 
-  const filtered = products.filter((p) => {
-    if (filter === "low") return p.stock > 0 && p.stock <= 5;
-    if (filter === "out") return p.stock === 0;
-    if (filter === "draft") return p.published === false;
-    return true;
-  });
+  const filtered = useMemo(() => {
+    const out = products.filter((p) => {
+      if (filter === "low") return p.stock > 0 && p.stock <= 5;
+      if (filter === "out") return p.stock === 0;
+      if (filter === "draft") return p.published === false;
+      return true;
+    });
+    const sorted = [...out];
+    sorted.sort((a, b) => {
+      if (sort === "name_asc") return (a.name.en ?? "").localeCompare(b.name.en ?? "");
+      if (sort === "sales_desc") return (salesByProduct[b.id] ?? 0) - (salesByProduct[a.id] ?? 0);
+      const aTime =
+        sort === "updated_desc"
+          ? new Date(a.updated_at ?? a.created_at ?? 0).getTime()
+          : new Date(a.created_at ?? 0).getTime();
+      const bTime =
+        sort === "updated_desc"
+          ? new Date(b.updated_at ?? b.created_at ?? 0).getTime()
+          : new Date(b.created_at ?? 0).getTime();
+      return bTime - aTime;
+    });
+    return sorted;
+  }, [products, filter, sort, salesByProduct]);
 
   const lowCount = products.filter((p) => p.stock > 0 && p.stock <= 5).length;
   const outCount = products.filter((p) => p.stock === 0).length;
@@ -161,6 +187,21 @@ export default function AdminProductsPage() {
         >
           Drafts ({draftCount})
         </button>
+        <div className="ml-auto inline-flex items-center gap-2 text-xs">
+          <label className="flex items-center gap-1.5 text-neutral-500">
+            <ArrowUpDown className="h-3.5 w-3.5" /> Sort by
+          </label>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            className="rounded-md border border-neutral-200 bg-white px-2 py-1.5 font-semibold text-neutral-700 focus:border-barn-500 focus:outline-none"
+          >
+            <option value="created_desc">Newest added</option>
+            <option value="updated_desc">Recently modified</option>
+            <option value="sales_desc">Best selling</option>
+            <option value="name_asc">Name (A → Z)</option>
+          </select>
+        </div>
       </div>
 
       {!isSupabaseConfigured() && (
@@ -246,6 +287,11 @@ export default function AdminProductsPage() {
                       {p.new_arrival && <span className="mr-1 rounded bg-barn-50 px-1.5 py-0.5 text-barn-700">NEW</span>}
                       {p.discount && <span className="mr-1 rounded bg-amber-50 px-1.5 py-0.5 text-amber-700">SALE</span>}
                       {p.featured && <span className="mr-1 rounded bg-emerald-50 px-1.5 py-0.5 text-emerald-700">FEAT</span>}
+                      {(salesByProduct[p.id] ?? 0) > 0 && (
+                        <span className="ml-1 text-[10px] text-neutral-500">
+                          · {salesByProduct[p.id]} sold
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">

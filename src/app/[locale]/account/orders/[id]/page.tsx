@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Package } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Package, Truck } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useLocale } from "next-intl";
@@ -9,7 +9,13 @@ import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/c
 import type { Order, OrderStatus } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 
-const STATUS_FLOW: OrderStatus[] = ["paid", "processing", "shipped", "delivered"];
+// Map the 6 admin statuses down to the 3 customer-facing stages.
+function customerStage(s: OrderStatus): 0 | 1 | 2 | -1 {
+  if (s === "paid" || s === "processing") return 0;
+  if (s === "shipped") return 1;
+  if (s === "delivered") return 2;
+  return -1; // cancelled / refunded
+}
 
 const STATUS_LABEL: Record<OrderStatus, { en: string; es: string; cls: string }> = {
   paid: { en: "Paid", es: "Pagado", cls: "bg-emerald-50 text-emerald-700" },
@@ -57,7 +63,10 @@ export default function MyOrderDetail() {
         subtotal: "Subtotal",
         total: "Total",
         backToOrders: "Back to orders",
-        timeline: "Status timeline",
+        timeline: "Shipping status",
+        stagePreparing: "Preparing",
+        stageShipped: "On the way",
+        stageArrived: "Arrived",
         cancelled: "This order was cancelled.",
         refunded: "This order was refunded.",
       },
@@ -70,7 +79,10 @@ export default function MyOrderDetail() {
         subtotal: "Subtotal",
         total: "Total",
         backToOrders: "Volver a pedidos",
-        timeline: "Cronología del estado",
+        timeline: "Estado del envío",
+        stagePreparing: "Preparando",
+        stageShipped: "En camino",
+        stageArrived: "Entregado",
         cancelled: "Este pedido fue cancelado.",
         refunded: "Este pedido fue reembolsado.",
       },
@@ -84,7 +96,12 @@ export default function MyOrderDetail() {
   if (order === null) return notFound();
 
   const status = order.status as OrderStatus;
-  const currentIdx = STATUS_FLOW.indexOf(status);
+  const stage = customerStage(status);
+  const stages: Array<{ key: string; label: string; Icon: typeof Package }> = [
+    { key: "prep", label: labels.stagePreparing, Icon: Package },
+    { key: "ship", label: labels.stageShipped, Icon: Truck },
+    { key: "arrived", label: labels.stageArrived, Icon: CheckCircle2 },
+  ];
   const date = new Date(order.created_at).toLocaleDateString(locale === "es" ? "es-ES" : "en-US", {
     year: "numeric",
     month: "long",
@@ -120,27 +137,51 @@ export default function MyOrderDetail() {
         </p>
       ) : (
         <div className="mt-6">
-          <p className="mb-2 text-xs font-bold uppercase tracking-wider text-neutral-500">
+          <p className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-500">
             {labels.timeline}
           </p>
-          <ol className="grid grid-cols-4 gap-1 text-center text-[10px] font-semibold uppercase tracking-wider">
-            {STATUS_FLOW.map((s, idx) => {
-              const done = idx <= currentIdx;
+          <ol className="relative grid grid-cols-3 gap-2">
+            {/* base line */}
+            <span
+              aria-hidden
+              className="absolute left-[16%] right-[16%] top-5 -z-0 h-1 rounded bg-neutral-200"
+            />
+            <span
+              aria-hidden
+              className="absolute left-[16%] top-5 -z-0 h-1 rounded bg-barn-600 transition-all"
+              style={{
+                width:
+                  stage <= 0
+                    ? "0%"
+                    : stage === 1
+                    ? "34%"
+                    : stage === 2
+                    ? "68%"
+                    : "0%",
+              }}
+            />
+            {stages.map((s, idx) => {
+              const done = idx <= stage;
+              const active = idx === stage;
+              const Icon = s.Icon;
               return (
-                <li
-                  key={s}
-                  className={`relative rounded-md px-2 py-2 ${
-                    done ? "bg-barn-600 text-white" : "bg-neutral-100 text-neutral-400"
-                  }`}
-                >
-                  {STATUS_LABEL[s][locale]}
-                  {idx < STATUS_FLOW.length - 1 && (
-                    <span
-                      className={`absolute right-[-2px] top-1/2 hidden h-[2px] w-1 -translate-y-1/2 sm:block ${
-                        done ? "bg-barn-600" : "bg-neutral-200"
-                      }`}
-                    />
-                  )}
+                <li key={s.key} className="relative z-10 flex flex-col items-center">
+                  <span
+                    className={`mb-1 flex h-10 w-10 items-center justify-center rounded-full border-2 transition ${
+                      done
+                        ? "border-barn-600 bg-barn-600 text-white"
+                        : "border-neutral-200 bg-white text-neutral-300"
+                    } ${active ? "ring-4 ring-barn-200" : ""}`}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span
+                    className={`text-[11px] font-semibold uppercase tracking-wider ${
+                      done ? "text-barn-700" : "text-neutral-400"
+                    }`}
+                  >
+                    {s.label}
+                  </span>
                 </li>
               );
             })}

@@ -4,10 +4,12 @@ import {
   LayoutDashboard,
   LogOut,
   Mail,
+  Megaphone,
   MessageSquare,
   Package,
   ShoppingBag,
   Tags,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -93,6 +95,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     { href: "/admin/orders", label: "Orders", Icon: ShoppingBag },
     { href: "/admin/messages", label: "Messages", Icon: Mail },
     { href: "/admin/quotes", label: "Quote Requests", Icon: MessageSquare },
+    { href: "/admin/campaigns", label: "Campaigns", Icon: Megaphone },
+    { href: "/admin/staff", label: "Staff", Icon: Users },
   ];
 
   return (
