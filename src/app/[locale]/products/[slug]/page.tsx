@@ -9,6 +9,9 @@ import { formatPrice } from "@/lib/utils";
 import { locales } from "@/lib/i18n/config";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCTAs } from "@/components/ProductCTAs";
+import { ProductShare } from "@/components/ProductShare";
+import { RecentlyViewed } from "@/components/RecentlyViewed";
+import { RecordProductView } from "@/components/RecordProductView";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -175,10 +178,18 @@ export default async function ProductDetail({
               )}
             </div>
 
-            <ProductCTAs product={product} />
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <div className="flex-1">
+                <ProductCTAs product={product} />
+              </div>
+              <ProductShare product={product} />
+            </div>
           </div>
         </div>
       </div>
+
+      <RecordProductView productId={product.id} />
+      <RecentlyViewed products={all} exclude={product.id} />
 
       {related.length > 0 && (
         <section className="bg-neutral-50 py-12">

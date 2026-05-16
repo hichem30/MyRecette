@@ -27,6 +27,7 @@ export interface Product {
   featured: boolean;
   best_seller?: boolean;
   free_shipping?: boolean;
+  published?: boolean;
   created_at?: string;
 }
 

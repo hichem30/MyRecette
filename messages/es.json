@@ -11,7 +11,9 @@
     "wishlist": "Favoritos",
     "login": "Iniciar Sesión",
     "logout": "Cerrar Sesión",
-    "admin": "Admin"
+    "admin": "Admin",
+    "account": "Mi Cuenta",
+    "myOrders": "Mis Pedidos"
   },
   "common": {
     "new": "NUEVO",
@@ -128,7 +130,8 @@
     "title": "Sus Favoritos",
     "empty": "Aún no ha guardado ningún producto.",
     "emptyCta": "Explorar productos",
-    "remove": "Eliminar"
+    "remove": "Eliminar",
+    "saveForLater": "Guardar para después"
   },
   "checkout": {
     "success": "Pago exitoso",

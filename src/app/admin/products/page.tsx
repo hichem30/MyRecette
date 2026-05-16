@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Edit2, Plus, Trash2, X } from "lucide-react";
+import { Check, ExternalLink, Edit2, Eye, EyeOff, Plus, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
@@ -13,7 +13,8 @@ export default function AdminProductsPage() {
   const [editingStockId, setEditingStockId] = useState<string | null>(null);
   const [stockDraft, setStockDraft] = useState<number>(0);
   const [savingStockId, setSavingStockId] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"all" | "low" | "out">("all");
+  const [filter, setFilter] = useState<"all" | "low" | "out" | "draft">("all");
+  const [publishingId, setPublishingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -72,14 +73,34 @@ export default function AdminProductsPage() {
     setEditingStockId(null);
   }
 
+  async function togglePublished(p: Product) {
+    const next = !(p.published ?? true);
+    setPublishingId(p.id);
+    if (!isSupabaseConfigured()) {
+      setProducts((prev) => prev.map((x) => (x.id === p.id ? { ...x, published: next } : x)));
+      setPublishingId(null);
+      return;
+    }
+    const sb = getSupabaseBrowserClient();
+    const { error } = await sb.from("products").update({ published: next }).eq("id", p.id);
+    setPublishingId(null);
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    setProducts((prev) => prev.map((x) => (x.id === p.id ? { ...x, published: next } : x)));
+  }
+
   const filtered = products.filter((p) => {
     if (filter === "low") return p.stock > 0 && p.stock <= 5;
     if (filter === "out") return p.stock === 0;
+    if (filter === "draft") return p.published === false;
     return true;
   });
 
   const lowCount = products.filter((p) => p.stock > 0 && p.stock <= 5).length;
   const outCount = products.filter((p) => p.stock === 0).length;
+  const draftCount = products.filter((p) => p.published === false).length;
 
   return (
     <div>
@@ -129,6 +150,16 @@ export default function AdminProductsPage() {
           }`}
         >
           Out of stock ({outCount})
+        </button>
+        <button
+          onClick={() => setFilter("draft")}
+          className={`rounded-md border px-3 py-1.5 font-semibold ${
+            filter === "draft"
+              ? "border-neutral-500 bg-neutral-100 text-neutral-700"
+              : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300"
+          }`}
+        >
+          Drafts ({draftCount})
         </button>
       </div>
 
@@ -209,20 +240,52 @@ export default function AdminProductsPage() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-xs">
+                      {p.published === false && (
+                        <span className="mr-1 rounded bg-neutral-200 px-1.5 py-0.5 font-bold text-neutral-700">DRAFT</span>
+                      )}
                       {p.new_arrival && <span className="mr-1 rounded bg-barn-50 px-1.5 py-0.5 text-barn-700">NEW</span>}
                       {p.discount && <span className="mr-1 rounded bg-amber-50 px-1.5 py-0.5 text-amber-700">SALE</span>}
                       {p.featured && <span className="mr-1 rounded bg-emerald-50 px-1.5 py-0.5 text-emerald-700">FEAT</span>}
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      <Link href={`/admin/products/${p.id}`} className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-barn-700">
-                        <Edit2 className="h-3.5 w-3.5" /> Edit
-                      </Link>
-                      <button
-                        onClick={() => deleteProduct(p.id)}
-                        className="ml-3 inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-red-700"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" /> Delete
-                      </button>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+                        <a
+                          href={`/en/products/${p.slug}${p.published === false ? "" : ""}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="View as customer"
+                          className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-barn-700"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" /> View
+                        </a>
+                        <button
+                          onClick={() => togglePublished(p)}
+                          disabled={publishingId === p.id}
+                          title={p.published === false ? "Publish" : "Unpublish"}
+                          className={`inline-flex items-center gap-1 text-xs hover:text-barn-700 disabled:opacity-50 ${
+                            p.published === false ? "text-emerald-700" : "text-neutral-600"
+                          }`}
+                        >
+                          {p.published === false ? (
+                            <>
+                              <Eye className="h-3.5 w-3.5" /> Publish
+                            </>
+                          ) : (
+                            <>
+                              <EyeOff className="h-3.5 w-3.5" /> Unpublish
+                            </>
+                          )}
+                        </button>
+                        <Link href={`/admin/products/${p.id}`} className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-barn-700">
+                          <Edit2 className="h-3.5 w-3.5" /> Edit
+                        </Link>
+                        <button
+                          onClick={() => deleteProduct(p.id)}
+                          className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-red-700"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" /> Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

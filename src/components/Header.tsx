@@ -1,8 +1,8 @@
 "use client";
 
-import { Heart, LogOut, Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { ChevronDown, Heart, LogOut, Menu, Package, Search, ShoppingCart, User, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Logo } from "./Logo";
 import { LanguageSelector } from "./LanguageSelector";
 import { Link, usePathname } from "@/lib/i18n/navigation";
@@ -16,8 +16,10 @@ export function Header() {
   const { itemCount, openCart, wishlist } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [authed, setAuthed] = useState<boolean>(false);
   const [displayName, setDisplayName] = useState<string | null>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const isHome = pathname === "/";
 
@@ -52,6 +54,15 @@ export function Header() {
       sub.subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    function close(e: MouseEvent) {
+      if (!userMenuRef.current?.contains(e.target as Node)) setUserMenuOpen(false);
+    }
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [userMenuOpen]);
 
   async function handleSignOut() {
     if (!isSupabaseConfigured()) return;
@@ -148,28 +159,62 @@ export function Header() {
             )}
           </button>
           {authed ? (
-            <div
-              className={cn(
-                "hidden sm:inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium",
-                isHome
-                  ? "border-white/30 text-white"
-                  : "border-neutral-300 text-neutral-700",
-              )}
-            >
-              <User className="h-3.5 w-3.5" />
-              <span className="max-w-[120px] truncate" title={displayName ?? ""}>
-                {displayName}
-              </span>
+            <div className="relative hidden sm:block" ref={userMenuRef}>
               <button
-                onClick={handleSignOut}
-                aria-label={t("logout")}
+                onClick={() => setUserMenuOpen((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={userMenuOpen}
                 className={cn(
-                  "ml-1 inline-flex h-6 w-6 items-center justify-center rounded-full transition",
-                  isHome ? "hover:bg-white/10" : "hover:bg-neutral-100 hover:text-barn-700",
+                  "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition",
+                  isHome
+                    ? "border-white/30 text-white hover:bg-white/10"
+                    : "border-neutral-300 text-neutral-700 hover:border-barn-600 hover:text-barn-700",
                 )}
               >
-                <LogOut className="h-3.5 w-3.5" />
+                <User className="h-3.5 w-3.5" />
+                <span className="max-w-[120px] truncate" title={displayName ?? ""}>
+                  {displayName}
+                </span>
+                <ChevronDown className="h-3 w-3" />
               </button>
+              {userMenuOpen && (
+                <div
+                  role="menu"
+                  className="absolute right-0 top-full z-30 mt-2 w-52 rounded-lg border border-neutral-200 bg-white p-1.5 text-neutral-800 shadow-xl"
+                >
+                  <Link
+                    href="/account"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-50"
+                  >
+                    <User className="h-4 w-4" /> {t("account")}
+                  </Link>
+                  <Link
+                    href="/account/orders"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-50"
+                  >
+                    <Package className="h-4 w-4" /> {t("myOrders")}
+                  </Link>
+                  <Link
+                    href="/account/wishlist"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-50"
+                  >
+                    <Heart className="h-4 w-4" /> {t("wishlist")}
+                  </Link>
+                  <div className="my-1 border-t border-neutral-100" />
+                  <button
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      handleSignOut();
+                    }}
+                    className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-50"
+                  >
+                    <LogOut className="h-4 w-4" /> {t("logout")}
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <Link
@@ -204,6 +249,7 @@ export function Header() {
             action="/products"
             method="GET"
             className="mx-auto flex max-w-3xl items-stretch gap-2"
+            onSubmit={() => setSearchOpen(false)}
           >
             <div className="flex flex-1 items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 py-2">
               <Search className="h-4 w-4 flex-none text-neutral-400" />
@@ -211,6 +257,7 @@ export function Header() {
                 name="q"
                 placeholder={t("search")}
                 className="flex-1 min-w-0 bg-transparent text-sm outline-none text-neutral-800"
+                autoFocus
               />
             </div>
             <button
@@ -239,10 +286,21 @@ export function Header() {
             ))}
             {authed ? (
               <>
-                <div className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-neutral-700">
-                  <User className="h-4 w-4" />
-                  <span className="truncate">{displayName}</span>
-                </div>
+                <div className="mt-2 border-t border-neutral-100 pt-2" />
+                <Link
+                  href="/account"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                >
+                  <User className="h-4 w-4" /> {t("account")}
+                </Link>
+                <Link
+                  href="/account/orders"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                >
+                  <Package className="h-4 w-4" /> {t("myOrders")}
+                </Link>
                 <button
                   onClick={() => {
                     setMobileOpen(false);
@@ -258,9 +316,9 @@ export function Header() {
               <Link
                 href="/login"
                 onClick={() => setMobileOpen(false)}
-                className="block rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
               >
-                {t("login")}
+                <User className="h-4 w-4" /> {t("login")}
               </Link>
             )}
           </div>

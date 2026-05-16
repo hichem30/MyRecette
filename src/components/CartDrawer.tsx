@@ -1,6 +1,6 @@
 "use client";
 
-import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { Heart, Minus, Plus, ShoppingBag, Trash2, Truck, X } from "lucide-react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
@@ -8,8 +8,10 @@ import { Link } from "@/lib/i18n/navigation";
 import { useCart } from "@/lib/cart/CartProvider";
 import { formatPrice } from "@/lib/utils";
 
+const FREE_SHIPPING_THRESHOLD = 50;
+
 export function CartDrawer() {
-  const { items, isCartOpen, closeCart, removeItem, updateQuantity, subtotal } = useCart();
+  const { items, isCartOpen, closeCart, removeItem, updateQuantity, subtotal, saveForLater } = useCart();
   const locale = useLocale() as "en" | "es";
   const t = useTranslations("cart");
   const [loading, setLoading] = useState(false);
@@ -47,6 +49,17 @@ export function CartDrawer() {
       setLoading(false);
     }
   }
+
+  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const pct = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  const freeShipMsg =
+    remaining === 0
+      ? locale === "en"
+        ? "You qualify for free shipping!"
+        : "¡Calificas para envío gratis!"
+      : locale === "en"
+      ? `Add ${formatPrice(remaining)} more for free shipping.`
+      : `Agrega ${formatPrice(remaining)} más para envío gratis.`;
 
   return (
     <>
@@ -86,6 +99,26 @@ export function CartDrawer() {
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto px-5 py-4">
+            <div
+              className={`mb-4 rounded-lg border px-3 py-2 text-xs ${
+                remaining === 0
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                  : "border-neutral-200 bg-neutral-50 text-neutral-700"
+              }`}
+            >
+              <div className="flex items-center gap-2 font-medium">
+                <Truck className="h-3.5 w-3.5" />
+                {freeShipMsg}
+              </div>
+              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-neutral-200">
+                <div
+                  className={`h-full rounded-full transition-all ${
+                    remaining === 0 ? "bg-emerald-500" : "bg-barn-600"
+                  }`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+            </div>
             <ul className="space-y-4">
               {items.map((item) => (
                 <li key={item.product_id} className="flex gap-3">
@@ -138,13 +171,24 @@ export function CartDrawer() {
                           <Plus className="h-3 w-3" />
                         </button>
                       </div>
-                      <button
-                        onClick={() => removeItem(item.product_id)}
-                        aria-label="Remove"
-                        className="text-neutral-400 hover:text-barn-700"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => saveForLater(item.product_id)}
+                          aria-label={locale === "en" ? "Save for later" : "Guardar para después"}
+                          title={locale === "en" ? "Save for later" : "Guardar para después"}
+                          className="text-neutral-400 hover:text-barn-700"
+                        >
+                          <Heart className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => removeItem(item.product_id)}
+                          aria-label={t("remove")}
+                          title={t("remove")}
+                          className="text-neutral-400 hover:text-barn-700"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </li>

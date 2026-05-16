@@ -23,6 +23,7 @@ export default function EditProduct() {
     discount: false,
     new_arrival: true,
     featured: false,
+    published: false,
   });
   const [categories, setCategories] = useState<Category[]>([]);
   const [saving, setSaving] = useState(false);
@@ -127,10 +128,15 @@ export default function EditProduct() {
           </select>
         </Field>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           <Toggle label="Discount" value={!!product.discount} onChange={(v) => setProduct((p) => ({ ...p, discount: v }))} />
           <Toggle label="New Arrival" value={!!product.new_arrival} onChange={(v) => setProduct((p) => ({ ...p, new_arrival: v }))} />
           <Toggle label="Featured" value={!!product.featured} onChange={(v) => setProduct((p) => ({ ...p, featured: v }))} />
+          <Toggle
+            label={product.published ? "Published (visible to customers)" : "Draft (admin only)"}
+            value={!!product.published}
+            onChange={(v) => setProduct((p) => ({ ...p, published: v }))}
+          />
         </div>
 
         {product.discount && (

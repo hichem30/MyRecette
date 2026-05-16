@@ -30,7 +30,12 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
   return cats.find((c) => c.slug === slug) ?? null;
 }
 
-export async function getAllProducts(): Promise<Product[]> {
+/**
+ * @param includeUnpublished if true, returns draft products too (admin only).
+ *   Default behaviour for the storefront filters them out client-side as well
+ *   as via RLS, so this is mostly a belt-and-suspenders convenience.
+ */
+export async function getAllProducts(includeUnpublished = false): Promise<Product[]> {
   if (!isSupabaseConfigured()) return mockProducts;
   try {
     const supabase = getSupabaseServerClient();
@@ -39,7 +44,9 @@ export async function getAllProducts(): Promise<Product[]> {
       .select("*")
       .order("created_at", { ascending: false });
     if (error || !data || data.length === 0) return mockProducts;
-    return data as Product[];
+    const rows = data as Product[];
+    if (includeUnpublished) return rows;
+    return rows.filter((p) => p.published !== false);
   } catch {
     return mockProducts;
   }

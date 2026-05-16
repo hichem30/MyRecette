@@ -10,8 +10,10 @@
     "cart": "Cart",
     "wishlist": "Wishlist",
     "login": "Login",
-    "logout": "Logout",
-    "admin": "Admin"
+    "logout": "Sign out",
+    "admin": "Admin",
+    "account": "My Account",
+    "myOrders": "My Orders"
   },
   "common": {
     "new": "NEW",
@@ -128,7 +130,8 @@
     "title": "Your Wishlist",
     "empty": "You have not saved any products yet.",
     "emptyCta": "Browse products",
-    "remove": "Remove"
+    "remove": "Remove",
+    "saveForLater": "Save for later"
   },
   "checkout": {
     "success": "Payment successful",

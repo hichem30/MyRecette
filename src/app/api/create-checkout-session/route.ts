@@ -116,7 +116,7 @@ export async function POST(req: Request) {
       shipping_address_collection: { allowed_countries: ["US", "CA", "MX"] },
       allow_promotion_codes: true,
       locale: parsed.locale === "es" ? "es" : "en",
-      success_url: `${origin}/${parsed.locale}/checkout/success?email={CHECKOUT_SESSION_CUSTOMER_EMAIL}&session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/${parsed.locale}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/${parsed.locale}/checkout/cancel`,
       metadata: {
         source: "redbarn-storefront",
