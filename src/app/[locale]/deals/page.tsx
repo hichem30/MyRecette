@@ -169,7 +169,7 @@ export default async function DealsPage({
             </h2>
             <p className="text-xs text-neutral-500">{tb("subtitle")}</p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {bundles.map((b) => {
               const inBundle = b.product_ids
                 .map((id) => productById.get(id))
@@ -177,49 +177,65 @@ export default async function DealsPage({
               const total = inBundle.reduce((s, p) => s + p.price, 0);
               const savings = Math.max(0, total - b.bundle_price);
               return (
-                <article key={b.id} className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-card">
+                <article
+                  key={b.id}
+                  className="flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-card"
+                >
                   {b.image_url && (
                     <div className="relative aspect-[16/9] bg-neutral-100">
                       <Image
                         src={b.image_url}
                         alt={b.name.en}
                         fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover"
                         loading="lazy"
                       />
                     </div>
                   )}
-                  <div className="p-5">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-amber-700">
-                      <Package2 className="h-4 w-4" /> {tb("bundleDeal")}
+                  <div className="flex flex-1 flex-col p-4">
+                    <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-700">
+                      <Package2 className="h-3.5 w-3.5" /> {tb("bundleDeal")}
                     </div>
-                    <h3 className="mt-2 font-serif text-xl font-bold text-neutral-900">{b.name.en}</h3>
+                    <h3 className="mt-2 font-serif text-lg font-bold leading-snug text-neutral-900">
+                      {b.name.en}
+                    </h3>
                     {b.description?.en && (
-                      <p className="mt-1 text-sm text-neutral-600">{b.description.en}</p>
+                      <p className="mt-1 line-clamp-2 text-xs text-neutral-600">{b.description.en}</p>
                     )}
 
-                    <ul className="mt-4 space-y-2 text-sm">
-                      {inBundle.map((p) => (
-                        <li key={p.id} className="flex items-center justify-between">
+                    {/* Compact item preview — show first 3 names, then "+N more" */}
+                    <p className="mt-3 text-xs text-neutral-600">
+                      <span className="font-semibold text-neutral-800">
+                        {inBundle.length} item{inBundle.length === 1 ? "" : "s"}:
+                      </span>{" "}
+                      {inBundle.slice(0, 3).map((p, i) => (
+                        <span key={p.id}>
                           <Link href={`/products/${p.slug}`} className="hover:text-barn-700">
                             {p.name.en}
                           </Link>
-                          <span className="text-xs text-neutral-500">{formatPrice(p.price)}</span>
-                        </li>
+                          {i < Math.min(2, inBundle.length - 1) ? ", " : ""}
+                        </span>
                       ))}
-                    </ul>
+                      {inBundle.length > 3 && (
+                        <span className="text-neutral-500"> +{inBundle.length - 3} more</span>
+                      )}
+                    </p>
 
-                    <div className="mt-4 flex items-baseline justify-between border-t border-neutral-100 pt-3">
-                      <div>
-                        <span className="text-2xl font-bold text-neutral-900">{formatPrice(b.bundle_price)}</span>
+                    <div className="mt-auto flex items-baseline justify-between border-t border-neutral-100 pt-3">
+                      <div className="flex flex-col">
+                        <span className="text-xl font-bold text-neutral-900">
+                          {formatPrice(b.bundle_price)}
+                        </span>
                         {savings > 0 && (
-                          <span className="ml-2 text-sm font-medium text-emerald-700">
+                          <span className="text-[11px] font-medium text-emerald-700">
                             {tb("save")} {formatPrice(savings)}
                           </span>
                         )}
                       </div>
-                      <span className="text-xs text-neutral-500">{tb("ifBoughtSeparately")} {formatPrice(total)}</span>
+                      <span className="text-[11px] text-neutral-400 line-through">
+                        {formatPrice(total)}
+                      </span>
                     </div>
                   </div>
                 </article>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Category, PromoCode, Product } from "@/lib/types";
@@ -31,13 +31,56 @@ const EMPTY_FORM: FormState = {
   applies_to_category_slugs: [],
 };
 
+function toLocalInput(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function promoToForm(p: PromoCode): FormState {
+  return {
+    code: p.code,
+    description: p.description ?? "",
+    discount_type: p.discount_type,
+    discount_value: Number(p.discount_value),
+    max_uses: p.max_uses != null ? String(p.max_uses) : "",
+    starts_at: toLocalInput(p.starts_at),
+    ends_at: toLocalInput(p.ends_at),
+    active: p.active,
+    applies_to_product_ids: p.applies_to_product_ids ?? [],
+    applies_to_category_slugs: p.applies_to_category_slugs ?? [],
+  };
+}
+
 export default function AdminPromosPage() {
   const [items, setItems] = useState<PromoCode[]>([]);
   const [products, setProducts] = useState<Pick<Product, "id" | "name" | "slug" | "category_slug">[]>([]);
   const [categories, setCategories] = useState<Pick<Category, "slug" | "name">[]>([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
+
+  function openCreate() {
+    setEditingId(null);
+    setForm(EMPTY_FORM);
+    setAdding(true);
+  }
+  function openEdit(p: PromoCode) {
+    setEditingId(p.id);
+    setForm(promoToForm(p));
+    setAdding(true);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+  function closeForm() {
+    setEditingId(null);
+    setAdding(false);
+    setForm(EMPTY_FORM);
+  }
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -58,7 +101,7 @@ export default function AdminPromosPage() {
     });
   }, []);
 
-  async function create(e: React.FormEvent) {
+  async function save(e: React.FormEvent) {
     e.preventDefault();
     if (!isSupabaseConfigured()) {
       alert("Configure Supabase to save.");
@@ -78,14 +121,27 @@ export default function AdminPromosPage() {
       applies_to_category_slugs:
         form.applies_to_category_slugs.length > 0 ? form.applies_to_category_slugs : null,
     };
-    const { data, error } = await sb.from("promo_codes").insert(payload).select().single();
-    if (error) {
-      alert(error.message);
-      return;
+    if (editingId) {
+      const { data, error } = await sb
+        .from("promo_codes")
+        .update(payload)
+        .eq("id", editingId)
+        .select()
+        .single();
+      if (error) {
+        alert(error.message);
+        return;
+      }
+      setItems((prev) => prev.map((x) => (x.id === editingId ? (data as PromoCode) : x)));
+    } else {
+      const { data, error } = await sb.from("promo_codes").insert(payload).select().single();
+      if (error) {
+        alert(error.message);
+        return;
+      }
+      setItems((prev) => [data as PromoCode, ...prev]);
     }
-    setItems((prev) => [data as PromoCode, ...prev]);
-    setAdding(false);
-    setForm(EMPTY_FORM);
+    closeForm();
   }
 
   async function toggleActive(p: PromoCode) {
@@ -119,7 +175,7 @@ export default function AdminPromosPage() {
           </p>
         </div>
         <button
-          onClick={() => setAdding((v) => !v)}
+          onClick={() => (adding ? closeForm() : openCreate())}
           className="inline-flex items-center gap-1.5 rounded-md bg-barn-600 px-4 py-2 text-sm font-bold text-white hover:bg-barn-700"
         >
           <Plus className="h-4 w-4" /> {adding ? "Cancel" : "New code"}
@@ -127,7 +183,12 @@ export default function AdminPromosPage() {
       </div>
 
       {adding && (
-        <form onSubmit={create} className="mb-5 grid gap-3 rounded-xl border border-neutral-200 bg-white p-4 sm:grid-cols-2">
+        <form onSubmit={save} className="mb-5 grid gap-3 rounded-xl border border-neutral-200 bg-white p-4 sm:grid-cols-2">
+          {editingId && (
+            <div className="sm:col-span-2 -mb-1 text-xs font-semibold uppercase tracking-wide text-barn-700">
+              Editing existing code
+            </div>
+          )}
           <label className="text-xs font-semibold text-neutral-700">
             Code
             <input
@@ -296,7 +357,7 @@ export default function AdminPromosPage() {
           </div>
 
           <button type="submit" className="sm:col-span-2 rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-bold text-white">
-            Create code
+            {editingId ? "Save changes" : "Create code"}
           </button>
         </form>
       )}
@@ -361,7 +422,16 @@ export default function AdminPromosPage() {
                       </button>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button onClick={() => remove(p.id)} className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-red-700">
+                      <button
+                        onClick={() => openEdit(p)}
+                        className="mr-3 inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-barn-700"
+                      >
+                        <Pencil className="h-3.5 w-3.5" /> Edit
+                      </button>
+                      <button
+                        onClick={() => remove(p.id)}
+                        className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-red-700"
+                      >
                         <Trash2 className="h-3.5 w-3.5" /> Delete
                       </button>
                     </td>

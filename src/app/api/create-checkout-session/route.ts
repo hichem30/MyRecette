@@ -163,7 +163,12 @@ export async function POST(req: Request) {
   }
 
   // -------------------------------------------------------------------
-  // Promo code — validate, build a Stripe coupon, mark as consumed.
+  // Promo code — validate, compute scoped discount, attach to checkout.
+  //
+  // If the promo is scoped to specific products / categories, the discount
+  // is computed only against the subtotal of those scoped cart items, and
+  // emitted as a Stripe `amount_off` coupon (never `percent_off`) so the
+  // percent can't silently apply to out-of-scope items in the cart.
   // -------------------------------------------------------------------
   const discounts: Array<{ coupon: string }> = [];
   let promoApplied: { code: string; coupon_id: string } | null = null;
@@ -190,6 +195,7 @@ export async function POST(req: Request) {
               NOT_YET: "Este código aún no es válido.",
               EXPIRED: "Este código ha expirado.",
               EXHAUSTED: "Este código ya alcanzó su límite de usos.",
+              NOT_APPLICABLE: "Este código no aplica a los productos en el carrito.",
             }[reason] ?? "Código no válido."
           : {
               NOT_FOUND: "Promo code not found.",
@@ -197,16 +203,71 @@ export async function POST(req: Request) {
               NOT_YET: "This code is not yet valid.",
               EXPIRED: "This code has expired.",
               EXHAUSTED: "This code has reached its usage limit.",
+              NOT_APPLICABLE: "This code doesn\u2019t apply to anything in your cart.",
             }[reason] ?? "Promo code not valid.";
       return NextResponse.json({ error: msg, promo_reason: reason }, { status: 400 });
     }
-    // Build an ephemeral Stripe coupon for this checkout.
-    try {
-      const coupon = await stripe.coupons.create(
-        promo.discount_type === "percent"
-          ? { percent_off: Number(promo.discount_value), duration: "once", name: promo.code }
-          : { amount_off: Math.round(Number(promo.discount_value) * 100), currency: "usd", duration: "once", name: promo.code },
+
+    // Re-read the scope arrays so we can clamp the discount to the in-scope subtotal.
+    const { data: promoRow } = await admin
+      .from("promo_codes")
+      .select("applies_to_product_ids, applies_to_category_slugs")
+      .ilike("code", promo.code)
+      .maybeSingle();
+    type Scope = {
+      applies_to_product_ids: string[] | null;
+      applies_to_category_slugs: string[] | null;
+    };
+    const scope = (promoRow as Scope | null) ?? {
+      applies_to_product_ids: null,
+      applies_to_category_slugs: null,
+    };
+    const productScope = new Set(scope.applies_to_product_ids ?? []);
+    const categoryScope = new Set(scope.applies_to_category_slugs ?? []);
+    const hasScope = productScope.size > 0 || categoryScope.size > 0;
+
+    let scopedCents = 0;
+    if (!hasScope) {
+      scopedCents = subtotalCents;
+    } else {
+      for (const s of stockDecrement) {
+        const p = byId.get(s.product_id);
+        if (!p) continue;
+        if (productScope.has(p.id) || categoryScope.has(p.category_slug)) {
+          scopedCents += Math.round(Number(p.price) * 100) * s.quantity;
+        }
+      }
+    }
+
+    let amountOffCents: number;
+    if (promo.discount_type === "percent") {
+      amountOffCents = Math.round((scopedCents * Number(promo.discount_value)) / 100);
+    } else {
+      amountOffCents = Math.min(
+        Math.round(Number(promo.discount_value) * 100),
+        scopedCents,
       );
+    }
+    if (amountOffCents <= 0) {
+      return NextResponse.json(
+        {
+          error:
+            parsed.locale === "es"
+              ? "Este código no aplica a los productos en el carrito."
+              : "This code doesn\u2019t apply to anything in your cart.",
+          promo_reason: "NOT_APPLICABLE",
+        },
+        { status: 400 },
+      );
+    }
+
+    try {
+      const coupon = await stripe.coupons.create({
+        amount_off: amountOffCents,
+        currency: "usd",
+        duration: "once",
+        name: promo.code,
+      });
       discounts.push({ coupon: coupon.id });
       promoApplied = { code: promo.code, coupon_id: coupon.id };
     } catch (e) {
