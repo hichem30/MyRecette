@@ -12,30 +12,30 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "^1.19.10",
     "@stripe/stripe-js": "^9.5.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
+    "@types/node": "^20",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "clsx": "^2.1.1",
     "lucide-react": "^0.469.0",
     "next": "^16.2.6",
     "next-intl": "^4.12.0",
+    "postcss": "^8",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "stripe": "^22.1.1",
     "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5",
+    "wrangler": "^4.92.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
-    "@opennextjs/cloudflare": "^1.19.10",
-    "@types/node": "^20",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.4",
-    "eslint-config-next": "^16.2.6",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5",
-    "wrangler": "^4.92.0"
+    "eslint-config-next": "^16.2.6"
   }
 }
