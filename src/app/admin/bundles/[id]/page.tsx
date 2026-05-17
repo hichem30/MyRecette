@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { revalidateAdmin } from "@/lib/admin/revalidate";
+import ImageUploader from "@/components/admin/ImageUploader";
 import { mockProducts } from "@/lib/data/mock-data";
 import type { Bundle, Product } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
@@ -95,8 +97,12 @@ export default function EditBundle() {
       ? await sb.from("bundles").insert(payload)
       : await sb.from("bundles").update(payload).eq("id", params.id);
     setSaving(false);
-    if (error) alert(error.message);
-    else router.replace("/admin/bundles");
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    await revalidateAdmin("bundles");
+    router.replace("/admin/bundles");
   }
 
   return (
@@ -137,11 +143,11 @@ export default function EditBundle() {
               className="adm-input"
             />
           </Field>
-          <Field label="Image URL (optional)">
-            <input
+          <Field label="Bundle Image (optional)">
+            <ImageUploader
               value={bundle.image_url ?? ""}
-              onChange={(e) => setBundle((b) => ({ ...b, image_url: e.target.value }))}
-              className="adm-input"
+              onChange={(url) => setBundle((b) => ({ ...b, image_url: url }))}
+              folder="bundles"
             />
           </Field>
         </div>

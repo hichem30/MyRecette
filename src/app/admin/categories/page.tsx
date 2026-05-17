@@ -3,6 +3,7 @@
 import { Percent, Plus, Trash2 } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { revalidateAdmin } from "@/lib/admin/revalidate";
 import { mockCategories } from "@/lib/data/mock-data";
 import type { Category } from "@/lib/types";
 
@@ -40,13 +41,17 @@ export default function AdminCategoriesPage() {
       .insert({ slug, name: { en: nameEn, es: nameEs } })
       .select()
       .single();
-    if (error) alert(error.message);
-    else if (data) {
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    if (data) {
       setItems((prev) => [...prev, data as Category]);
       setAdding(false);
       setNameEn("");
       setNameEs("");
       setSlug("");
+      await revalidateAdmin("categories", (data as Category).slug);
     }
   }
 
@@ -58,8 +63,12 @@ export default function AdminCategoriesPage() {
     }
     const sb = getSupabaseBrowserClient();
     const { error } = await sb.from("categories").delete().eq("id", id);
-    if (error) alert(error.message);
-    else setItems((p) => p.filter((c) => c.id !== id));
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    setItems((p) => p.filter((c) => c.id !== id));
+    await revalidateAdmin("categories");
   }
 
   async function saveDiscount(c: Category, percent: number, startsAt: string | null, endsAt: string | null) {
@@ -73,6 +82,7 @@ export default function AdminCategoriesPage() {
       alert(error.message);
       return;
     }
+    await revalidateAdmin("categories", c.slug);
     setItems((prev) =>
       prev.map((x) =>
         x.id === c.id

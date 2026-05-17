@@ -8,7 +8,7 @@ import { formatPrice } from "@/lib/utils";
 import { PageHeader } from "@/components/PageHeader";
 import type { Bundle, Product } from "@/lib/types";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 async function getActiveBundles(): Promise<Bundle[]> {
   if (!isSupabaseConfigured()) return [];
@@ -61,7 +61,14 @@ export default async function BundlesPage({
                 <article key={b.id} className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-card">
                   {b.image_url && (
                     <div className="relative aspect-[16/9] bg-neutral-100">
-                      <Image src={b.image_url} alt={b.name[lang]} fill className="object-cover" />
+                      <Image
+                        src={b.image_url}
+                        alt={b.name[lang]}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover"
+                        loading="lazy"
+                      />
                     </div>
                   )}
                   <div className="p-5">

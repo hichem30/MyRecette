@@ -4,6 +4,7 @@ import { Package2, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { revalidateAdmin } from "@/lib/admin/revalidate";
 import type { Bundle, Product } from "@/lib/types";
 import { mockProducts } from "@/lib/data/mock-data";
 import { formatPrice } from "@/lib/utils";
@@ -35,16 +36,24 @@ export default function AdminBundlesPage() {
     if (!isSupabaseConfigured()) return;
     const sb = getSupabaseBrowserClient();
     const { error } = await sb.from("bundles").delete().eq("id", id);
-    if (error) alert(error.message);
-    else setItems((prev) => prev.filter((x) => x.id !== id));
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    setItems((prev) => prev.filter((x) => x.id !== id));
+    await revalidateAdmin("bundles");
   }
 
   async function toggleActive(b: Bundle) {
     if (!isSupabaseConfigured()) return;
     const sb = getSupabaseBrowserClient();
     const { error } = await sb.from("bundles").update({ active: !b.active }).eq("id", b.id);
-    if (error) alert(error.message);
-    else setItems((prev) => prev.map((x) => (x.id === b.id ? { ...x, active: !b.active } : x)));
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    setItems((prev) => prev.map((x) => (x.id === b.id ? { ...x, active: !b.active } : x)));
+    await revalidateAdmin("bundles");
   }
 
   return (

@@ -13,7 +13,7 @@ import { ProductShare } from "@/components/ProductShare";
 import { RecentlyViewed } from "@/components/RecentlyViewed";
 import { RecordProductView } from "@/components/RecordProductView";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {

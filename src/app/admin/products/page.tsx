@@ -4,6 +4,7 @@ import { ArrowUpDown, Check, ExternalLink, Edit2, Eye, EyeOff, Plus, Trash2, X }
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { revalidateAdmin } from "@/lib/admin/revalidate";
 import type { Product } from "@/lib/types";
 import { mockProducts } from "@/lib/data/mock-data";
 
@@ -49,8 +50,12 @@ export default function AdminProductsPage() {
     }
     const sb = getSupabaseBrowserClient();
     const { error } = await sb.from("products").delete().eq("id", id);
-    if (error) alert(error.message);
-    else setProducts((prev) => prev.filter((p) => p.id !== id));
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+    await revalidateAdmin("products");
   }
 
   function startEditStock(p: Product) {
@@ -80,6 +85,7 @@ export default function AdminProductsPage() {
     }
     setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, stock: newStock } : p)));
     setEditingStockId(null);
+    await revalidateAdmin("products");
   }
 
   async function togglePublished(p: Product) {
@@ -97,6 +103,7 @@ export default function AdminProductsPage() {
       alert(error.message);
       return;
     }
+    await revalidateAdmin("products", p.slug);
     setProducts((prev) => prev.map((x) => (x.id === p.id ? { ...x, published: next } : x)));
   }
 

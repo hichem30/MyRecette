@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { revalidateAdmin } from "@/lib/admin/revalidate";
+import ImageUploader from "@/components/admin/ImageUploader";
 import type { Category, Product } from "@/lib/types";
 import { mockCategories, mockProducts } from "@/lib/data/mock-data";
 
@@ -66,8 +68,12 @@ export default function EditProduct() {
       ? await sb.from("products").insert(payload)
       : await sb.from("products").update(payload).eq("id", params.id);
     setSaving(false);
-    if (error) alert(error.message);
-    else router.replace("/admin/products");
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    await revalidateAdmin("products", payload.slug);
+    router.replace("/admin/products");
   }
 
   function setName(lang: "en" | "es", value: string) {
@@ -118,8 +124,12 @@ export default function EditProduct() {
           </Field>
         </div>
 
-        <Field label="Image URL">
-          <input value={product.image_url ?? ""} onChange={(e) => setProduct((p) => ({ ...p, image_url: e.target.value }))} className="adm-input" />
+        <Field label="Product Image">
+          <ImageUploader
+            value={product.image_url ?? ""}
+            onChange={(url) => setProduct((p) => ({ ...p, image_url: url }))}
+            folder="products"
+          />
         </Field>
 
         <Field label="Category">
