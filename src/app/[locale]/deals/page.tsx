@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Clock, Package2, Tag } from "lucide-react";
+import { ChevronRight, Clock, Package2, Percent, Tag } from "lucide-react";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { ProductCard } from "@/components/ProductCard";
@@ -60,6 +60,7 @@ export default async function DealsPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const lang = locale as "en" | "es";
   const t = await getTranslations("deals");
   const tb = await getTranslations("bundles");
   const [deals, bundles, products, promos] = await Promise.all([
@@ -105,159 +106,220 @@ export default async function DealsPage({
         </div>
       </section>
 
-      {promos.length > 0 && (
+      {/* ============================================================ */}
+      {/* SECTION 1 — DISCOUNTED PRODUCTS (rose / sale theme)            */}
+      {/* ============================================================ */}
+      {deals.length > 0 && (
         <section className="container-page py-12">
-          <div className="mb-6 flex items-end justify-between">
-            <h2 className="flex items-center gap-2 font-serif text-2xl font-bold">
-              <Tag className="h-6 w-6 text-amber-700" /> Active Promo Codes
-            </h2>
-            <p className="text-xs text-neutral-500">Use at checkout</p>
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-rose-700">
+                <Percent className="h-3.5 w-3.5" /> {lang === "en" ? "Sale" : "Oferta"}
+              </span>
+              <h2 className="mt-2 font-serif text-2xl font-bold">
+                {lang === "en" ? "Discounted Products" : "Productos con Descuento"}
+              </h2>
+              <p className="text-xs text-neutral-500">
+                {lang === "en"
+                  ? "Individual items currently on sale."
+                  : "Artículos individuales actualmente en oferta."}
+              </p>
+            </div>
+            <p className="text-xs text-neutral-500">{t("updatedDaily")}</p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {promos.map((promo) => {
-              const scopeNames: string[] = [];
-              if (promo.applies_to_category_slugs?.length) {
-                for (const s of promo.applies_to_category_slugs) {
-                  scopeNames.push(s.replace(/-/g, " "));
-                }
-              }
-              if (promo.applies_to_product_ids?.length) {
-                for (const id of promo.applies_to_product_ids) {
-                  const p = productById.get(id);
-                  if (p) scopeNames.push(p.name.en);
-                }
-              }
-              const scopeText = scopeNames.length > 0 ? scopeNames.join(", ") : "All products";
-              const valueLabel =
-                promo.discount_type === "percent"
-                  ? `${promo.discount_value}% off`
-                  : `${formatPrice(promo.discount_value)} off`;
-              return (
-                <article
-                  key={promo.id}
-                  className="flex flex-col gap-3 rounded-xl border-2 border-dashed border-amber-300 bg-amber-50/50 p-5"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <PromoCodeCopy code={promo.code} />
-                    <span className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-white">
-                      {valueLabel}
-                    </span>
-                  </div>
-                  {promo.description && (
-                    <p className="text-sm text-neutral-700">{promo.description}</p>
-                  )}
-                  <p className="text-xs text-neutral-500">
-                    <span className="font-semibold">Applies to:</span> {scopeText}
-                  </p>
-                  {promo.ends_at && (
-                    <p className="text-xs text-neutral-500">
-                      Expires {new Date(promo.ends_at).toLocaleDateString()}
-                    </p>
-                  )}
-                </article>
-              );
-            })}
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {deals.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
           </div>
         </section>
       )}
 
+      {/* ============================================================ */}
+      {/* SECTION 2 — BUNDLE DEALS (amber theme, clickable cards)       */}
+      {/* ============================================================ */}
       {bundles.length > 0 && (
-        <section className="container-page py-12">
-          <div className="mb-6 flex items-end justify-between">
-            <h2 className="flex items-center gap-2 font-serif text-2xl font-bold">
-              <Package2 className="h-6 w-6 text-amber-700" /> {tb("title")}
-            </h2>
-            <p className="text-xs text-neutral-500">{tb("subtitle")}</p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {bundles.map((b) => {
-              const inBundle = b.product_ids
-                .map((id) => productById.get(id))
-                .filter((x): x is Product => Boolean(x));
-              const total = inBundle.reduce((s, p) => s + p.price, 0);
-              const savings = Math.max(0, total - b.bundle_price);
-              return (
-                <article
-                  key={b.id}
-                  className="flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-card"
-                >
-                  {b.image_url && (
+        <section className="border-t border-neutral-100 bg-amber-50/30">
+          <div className="container-page py-12">
+            <div className="mb-6 flex items-end justify-between gap-4">
+              <div>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-amber-800">
+                  <Package2 className="h-3.5 w-3.5" />{" "}
+                  {lang === "en" ? "Bundles" : "Paquetes"}
+                </span>
+                <h2 className="mt-2 font-serif text-2xl font-bold">{tb("title")}</h2>
+                <p className="text-xs text-neutral-500">
+                  {lang === "en"
+                    ? "Multiple items packaged together at a discounted price."
+                    : "Varios artículos empaquetados juntos a precio reducido."}
+                </p>
+              </div>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {bundles.map((b) => {
+                const inBundle = b.product_ids
+                  .map((id) => productById.get(id))
+                  .filter((x): x is Product => Boolean(x));
+                const total = inBundle.reduce((s, p) => s + p.price, 0);
+                const savings = Math.max(0, total - b.bundle_price);
+                return (
+                  <Link
+                    key={b.id}
+                    href={`/bundles/${b.id}`}
+                    className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-card transition hover:-translate-y-0.5 hover:shadow-card-hover"
+                  >
                     <div className="relative aspect-[16/9] bg-neutral-100">
-                      <Image
-                        src={b.image_url}
-                        alt={b.name.en}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
-                  <div className="flex flex-1 flex-col p-4">
-                    <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-700">
-                      <Package2 className="h-3.5 w-3.5" /> {tb("bundleDeal")}
-                    </div>
-                    <h3 className="mt-2 font-serif text-lg font-bold leading-snug text-neutral-900">
-                      {b.name.en}
-                    </h3>
-                    {b.description?.en && (
-                      <p className="mt-1 line-clamp-2 text-xs text-neutral-600">{b.description.en}</p>
-                    )}
-
-                    {/* Compact item preview — show first 3 names, then "+N more" */}
-                    <p className="mt-3 text-xs text-neutral-600">
-                      <span className="font-semibold text-neutral-800">
-                        {inBundle.length} item{inBundle.length === 1 ? "" : "s"}:
-                      </span>{" "}
-                      {inBundle.slice(0, 3).map((p, i) => (
-                        <span key={p.id}>
-                          <Link href={`/products/${p.slug}`} className="hover:text-barn-700">
-                            {p.name.en}
-                          </Link>
-                          {i < Math.min(2, inBundle.length - 1) ? ", " : ""}
-                        </span>
-                      ))}
-                      {inBundle.length > 3 && (
-                        <span className="text-neutral-500"> +{inBundle.length - 3} more</span>
+                      {b.image_url ? (
+                        <Image
+                          src={b.image_url}
+                          alt={b.name.en}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover transition group-hover:scale-[1.02]"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-neutral-300">
+                          <Package2 className="h-12 w-12" />
+                        </div>
                       )}
-                    </p>
-
-                    <div className="mt-auto flex items-baseline justify-between border-t border-neutral-100 pt-3">
-                      <div className="flex flex-col">
-                        <span className="text-xl font-bold text-neutral-900">
-                          {formatPrice(b.bundle_price)}
-                        </span>
-                        {savings > 0 && (
-                          <span className="text-[11px] font-medium text-emerald-700">
-                            {tb("save")} {formatPrice(savings)}
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-[11px] text-neutral-400 line-through">
-                        {formatPrice(total)}
+                      <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-amber-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow">
+                        <Package2 className="h-3 w-3" />{" "}
+                        {lang === "en" ? "Bundle" : "Paquete"}
                       </span>
                     </div>
-                  </div>
-                </article>
-              );
-            })}
+                    <div className="flex flex-1 flex-col p-4">
+                      <h3 className="font-serif text-lg font-bold leading-snug text-neutral-900 group-hover:text-barn-700">
+                        {b.name.en}
+                      </h3>
+                      {b.description?.en && (
+                        <p className="mt-1 line-clamp-2 text-xs text-neutral-600">
+                          {b.description.en}
+                        </p>
+                      )}
+
+                      {/* Compact item preview — show first 3 names, then "+N more" */}
+                      <p className="mt-3 text-xs text-neutral-600">
+                        <span className="font-semibold text-neutral-800">
+                          {inBundle.length} item{inBundle.length === 1 ? "" : "s"}:
+                        </span>{" "}
+                        {inBundle.slice(0, 3).map((p, i) => (
+                          <span key={p.id}>
+                            {p.name.en}
+                            {i < Math.min(2, inBundle.length - 1) ? ", " : ""}
+                          </span>
+                        ))}
+                        {inBundle.length > 3 && (
+                          <span className="text-neutral-500">
+                            {" "}+{inBundle.length - 3} more
+                          </span>
+                        )}
+                      </p>
+
+                      <div className="mt-auto flex items-baseline justify-between border-t border-neutral-100 pt-3">
+                        <div className="flex flex-col">
+                          <span className="text-xl font-bold text-neutral-900">
+                            {formatPrice(b.bundle_price)}
+                          </span>
+                          {savings > 0 && (
+                            <span className="text-[11px] font-medium text-emerald-700">
+                              {tb("save")} {formatPrice(savings)}
+                            </span>
+                          )}
+                        </div>
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-barn-700">
+                          {lang === "en" ? "View bundle" : "Ver paquete"}
+                          <ChevronRight className="h-3.5 w-3.5" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </section>
       )}
 
-      <section className="container-page py-12">
-        <div className="mb-6 flex items-end justify-between">
-          <h2 className="font-serif text-2xl font-bold">
-            {t("dealsAvailable", { count: deals.length })}
-          </h2>
-          <p className="text-xs text-neutral-500">{t("updatedDaily")}</p>
-        </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {deals.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
+      {/* ============================================================ */}
+      {/* SECTION 3 — PROMO CODES (emerald theme, copy-to-clipboard)    */}
+      {/* ============================================================ */}
+      {promos.length > 0 && (
+        <section className="border-t border-neutral-100">
+          <div className="container-page py-12">
+            <div className="mb-6 flex items-end justify-between gap-4">
+              <div>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-emerald-800">
+                  <Tag className="h-3.5 w-3.5" />{" "}
+                  {lang === "en" ? "Codes" : "Códigos"}
+                </span>
+                <h2 className="mt-2 font-serif text-2xl font-bold">
+                  {lang === "en" ? "Active Promo Codes" : "Códigos Promocionales Activos"}
+                </h2>
+                <p className="text-xs text-neutral-500">
+                  {lang === "en"
+                    ? "Copy a code and paste it at checkout for instant savings."
+                    : "Copia un código y pégalo al pagar para ahorrar al instante."}
+                </p>
+              </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {promos.map((promo) => {
+                const scopeNames: string[] = [];
+                if (promo.applies_to_category_slugs?.length) {
+                  for (const s of promo.applies_to_category_slugs) {
+                    scopeNames.push(s.replace(/-/g, " "));
+                  }
+                }
+                if (promo.applies_to_product_ids?.length) {
+                  for (const id of promo.applies_to_product_ids) {
+                    const p = productById.get(id);
+                    if (p) scopeNames.push(p.name.en);
+                  }
+                }
+                const scopeText =
+                  scopeNames.length > 0
+                    ? scopeNames.join(", ")
+                    : lang === "en"
+                    ? "All products"
+                    : "Todos los productos";
+                const valueLabel =
+                  promo.discount_type === "percent"
+                    ? `${promo.discount_value}% off`
+                    : `${formatPrice(promo.discount_value)} off`;
+                return (
+                  <article
+                    key={promo.id}
+                    className="flex flex-col gap-3 rounded-xl border-2 border-dashed border-emerald-300 bg-emerald-50/50 p-5"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <PromoCodeCopy code={promo.code} />
+                      <span className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold text-white">
+                        {valueLabel}
+                      </span>
+                    </div>
+                    {promo.description && (
+                      <p className="text-sm text-neutral-700">{promo.description}</p>
+                    )}
+                    <p className="text-xs text-neutral-500">
+                      <span className="font-semibold">
+                        {lang === "en" ? "Applies to:" : "Aplica a:"}
+                      </span>{" "}
+                      {scopeText}
+                    </p>
+                    {promo.ends_at && (
+                      <p className="text-xs text-neutral-500">
+                        {lang === "en" ? "Expires" : "Vence"}{" "}
+                        {new Date(promo.ends_at).toLocaleDateString()}
+                      </p>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 }
