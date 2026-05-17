@@ -47,18 +47,18 @@ export function Header() {
         null;
       const first = fullName ? fullName.split(" ")[0] : null;
       setDisplayName(first ?? user.email ?? null);
-      // Fetch role from profile so we can show the Admin link.
-      if (user.id) {
-        supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .maybeSingle()
-          .then(({ data }) => {
-            if (cancelled) return;
-            setIsAdmin(data?.role === "admin");
-          });
-      }
+      // Use the canonical /api/whoami endpoint so the admin badge picks
+      // up the bootstrap owner email even if its profile.role somehow
+      // drifted to 'user'.
+      fetch("/api/whoami", { cache: "no-store" })
+        .then((r) => r.json() as Promise<{ isAdmin?: boolean }>)
+        .then((me) => {
+          if (cancelled) return;
+          setIsAdmin(Boolean(me.isAdmin));
+        })
+        .catch(() => {
+          /* keep current state on transient failure */
+        });
     }
 
     supabase.auth.getUser().then(({ data }) => applyUser(data.user));
@@ -143,7 +143,11 @@ export function Header() {
           >
             <Search className="h-4 w-4" />
           </button>
-          <LanguageSelector />
+          {/* Hide language toggle on mobile to free up space — it lives
+              inside the hamburger drawer below. */}
+          <div className="hidden md:block">
+            <LanguageSelector />
+          </div>
           <Link
             href="/wishlist"
             aria-label={t("wishlist")}
@@ -320,6 +324,10 @@ export function Header() {
                 {t(item.key)}
               </Link>
             ))}
+            <div className="mt-2 flex items-center justify-between rounded-md px-3 py-2">
+              <span className="text-sm font-medium text-neutral-700">{t("language")}</span>
+              <LanguageSelector />
+            </div>
             {authed ? (
               <>
                 <div className="mt-2 border-t border-neutral-100 pt-2" />

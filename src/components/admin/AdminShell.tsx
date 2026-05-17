@@ -100,22 +100,45 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     let cancelled = false;
 
     async function loadRole() {
-      const { data: userData } = await supabase.auth.getUser();
-      if (cancelled) return;
-      const user = userData.user;
-      if (!user) {
-        setStatus("anon");
-        setEmail(null);
-        return;
+      // Canonical role check via /api/whoami — self-heals the bootstrap
+      // owner email if the profile row drifted, and is resistant to any
+      // RLS quirks because the server can fall back to the service role.
+      try {
+        const res = await fetch("/api/whoami", { cache: "no-store" });
+        if (!res.ok) throw new Error(`whoami ${res.status}`);
+        const me = (await res.json()) as {
+          authenticated: boolean;
+          email: string | null;
+          isAdmin: boolean;
+        };
+        if (cancelled) return;
+        if (!me.authenticated) {
+          setStatus("anon");
+          setEmail(null);
+          return;
+        }
+        setEmail(me.email);
+        setStatus(me.isAdmin ? "admin" : "non_admin");
+      } catch {
+        // Fall back to a direct lookup if /api/whoami is unreachable
+        // (offline preview, etc.). Worst-case lands the user on /admin/login.
+        const { data: userData } = await supabase.auth.getUser();
+        if (cancelled) return;
+        const user = userData.user;
+        if (!user) {
+          setStatus("anon");
+          setEmail(null);
+          return;
+        }
+        setEmail(user.email ?? null);
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .maybeSingle();
+        if (cancelled) return;
+        setStatus(profile?.role === "admin" ? "admin" : "non_admin");
       }
-      setEmail(user.email ?? null);
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle();
-      if (cancelled) return;
-      setStatus(profile?.role === "admin" ? "admin" : "non_admin");
     }
 
     loadRole();

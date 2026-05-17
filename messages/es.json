@@ -14,7 +14,8 @@
     "logout": "Cerrar Sesión",
     "admin": "Admin",
     "account": "Mi Cuenta",
-    "myOrders": "Mis Pedidos"
+    "myOrders": "Mis Pedidos",
+    "language": "Idioma"
   },
   "common": {
     "new": "NUEVO",

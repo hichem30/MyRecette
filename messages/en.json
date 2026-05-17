@@ -14,7 +14,8 @@
     "logout": "Sign out",
     "admin": "Admin",
     "account": "My Account",
-    "myOrders": "My Orders"
+    "myOrders": "My Orders",
+    "language": "Language"
   },
   "common": {
     "new": "NEW",

@@ -45,24 +45,24 @@ export function LoginCard() {
 
     const supabase = getSupabaseBrowserClient();
     if (mode === "sign_in") {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         setError(error.message);
       } else {
-        const userId = data.user?.id;
         // Honour ?next= so we return the visitor to where they came from
         // (e.g. cart drawer -> /login?next=/products).
         const params = new URLSearchParams(window.location.search);
         const requested = params.get("next");
         let dest = requested && requested.startsWith("/") ? requested : "/";
-        if (userId) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("role")
-            .eq("id", userId)
-            .maybeSingle();
-          // Admins always land in /admin unless they came with an explicit ?next.
-          if (profile?.role === "admin" && !requested) dest = "/admin";
+        // Canonical role lookup via /api/whoami — also self-heals the
+        // bootstrap owner email if their profile.role somehow drifted
+        // to "user". Admins always land in /admin unless ?next is set.
+        try {
+          const res = await fetch("/api/whoami", { cache: "no-store" });
+          const me = (await res.json()) as { isAdmin?: boolean };
+          if (me.isAdmin && !requested) dest = "/admin";
+        } catch {
+          /* network blip — fall back to the requested or default dest */
         }
         window.location.href = dest;
       }

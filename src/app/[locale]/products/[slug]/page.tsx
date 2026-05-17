@@ -182,7 +182,8 @@ export default async function ProductDetail({
               )}
             </div>
 
-            <div className="mt-6 flex flex-wrap items-stretch gap-3">
+            {/* Single row on every viewport: qty + add-to-cart + wishlist + share */}
+            <div className="mt-6 flex items-stretch gap-2 sm:gap-3">
               <ProductCTAs product={product} />
               <ProductShare product={product} />
             </div>

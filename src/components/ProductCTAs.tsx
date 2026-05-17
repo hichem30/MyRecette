@@ -27,7 +27,7 @@ export function ProductCTAs({ product }: { product: Product }) {
           onClick={() => setQty((q) => Math.max(1, q - 1))}
           disabled={outOfStock}
           aria-label="Decrease"
-          className="p-2 hover:bg-neutral-50 disabled:cursor-not-allowed"
+          className="px-1.5 py-2 sm:p-2 hover:bg-neutral-50 disabled:cursor-not-allowed"
         >
           <Minus className="h-3 w-3" />
         </button>
@@ -44,14 +44,14 @@ export function ProductCTAs({ product }: { product: Product }) {
             else if (e.target.value === "") setQty(1);
           }}
           aria-label="Quantity"
-          className="w-14 border-x border-neutral-300 bg-transparent py-2 text-center text-sm font-medium outline-none focus:bg-neutral-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:cursor-not-allowed"
+          className="w-10 sm:w-14 border-x border-neutral-300 bg-transparent py-2 text-center text-sm font-medium outline-none focus:bg-neutral-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:cursor-not-allowed"
         />
         <button
           type="button"
           onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
           disabled={outOfStock || qty >= maxQty}
           aria-label="Increase"
-          className="p-2 hover:bg-neutral-50 disabled:cursor-not-allowed"
+          className="px-1.5 py-2 sm:p-2 hover:bg-neutral-50 disabled:cursor-not-allowed"
         >
           <Plus className="h-3 w-3" />
         </button>
@@ -61,10 +61,12 @@ export function ProductCTAs({ product }: { product: Product }) {
         type="button"
         onClick={() => addItem(product, qty)}
         disabled={outOfStock}
-        className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-md bg-barn-600 px-6 text-sm font-bold text-white hover:bg-barn-700 transition disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:hover:bg-neutral-400"
+        className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md bg-barn-600 px-3 sm:px-6 text-sm font-bold text-white hover:bg-barn-700 transition disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:hover:bg-neutral-400"
       >
-        <ShoppingCart className="h-4 w-4" />
-        {outOfStock ? t("outOfStock") : t("addToCart")}
+        <ShoppingCart className="h-4 w-4 flex-none" />
+        <span className="truncate">
+          {outOfStock ? t("outOfStock") : t("addToCart")}
+        </span>
       </button>
 
       <button
