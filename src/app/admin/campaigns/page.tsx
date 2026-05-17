@@ -8,7 +8,7 @@ import type { Product } from "@/lib/types";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-  "https://redbarnmarket.netlify.app";
+  "https://shop.redbarnmarket.workers.dev";
 
 export default function AdminCampaignsPage() {
   const [products, setProducts] = useState<Product[]>([]);

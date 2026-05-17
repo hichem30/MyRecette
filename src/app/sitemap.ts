@@ -16,7 +16,7 @@ const STATIC_PATHS = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://redbarnmarket.netlify.app";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://shop.redbarnmarket.workers.dev";
   const now = new Date();
 
   const entries: MetadataRoute.Sitemap = [];

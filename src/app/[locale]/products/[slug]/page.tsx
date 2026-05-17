@@ -32,7 +32,7 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
   if (!product) return {};
   const lang = locale as "en" | "es";
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://redbarnmarket.netlify.app";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://shop.redbarnmarket.workers.dev";
   const url = `${base}/${lang}/products/${product.slug}`;
   const title = `${product.name[lang]} — Red Barn Western Market`;
   const description = product.description[lang]?.slice(0, 160) || product.name[lang];

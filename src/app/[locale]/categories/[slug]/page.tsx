@@ -23,7 +23,7 @@ export async function generateMetadata({
   const cat = await getCategoryBySlug(slug);
   if (!cat) return {};
   const lang = locale as "en" | "es";
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://redbarnmarket.netlify.app";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://shop.redbarnmarket.workers.dev";
   const url = `${base}/${lang}/categories/${cat.slug}`;
   const title = `${cat.name[lang]} — Red Barn Western Market`;
   const description =
