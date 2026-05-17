@@ -62,6 +62,8 @@ export interface PromoCode {
   starts_at?: string | null;
   ends_at?: string | null;
   active: boolean;
+  applies_to_product_ids?: string[] | null;
+  applies_to_category_slugs?: string[] | null;
   created_at?: string;
 }
 

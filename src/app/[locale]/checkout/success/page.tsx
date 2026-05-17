@@ -23,22 +23,32 @@ interface StockItem {
 async function ensureOrderRecorded(sessionId: string | undefined): Promise<string | null> {
   if (!sessionId) return null;
   const stripe = getStripeClient();
-  if (!stripe) return null;
+  if (!stripe) {
+    console.warn("[checkout/success] stripe client unavailable, cannot back-fill");
+    return null;
+  }
   let session: Stripe.Checkout.Session;
   try {
     session = await stripe.checkout.sessions.retrieve(sessionId);
-  } catch {
+  } catch (err) {
+    console.error("[checkout/success] retrieve session failed:", err);
     return null;
   }
 
   if (session.payment_status !== "paid") {
+    console.log("[checkout/success] session not paid yet:", session.payment_status);
     return session.customer_details?.email ?? session.customer_email ?? null;
   }
 
   const rawEmail = session.customer_details?.email ?? session.customer_email ?? null;
   const email = rawEmail ? rawEmail.trim().toLowerCase() : null;
   const admin = getSupabaseAdminClient();
-  if (!admin) return email;
+  if (!admin) {
+    console.warn(
+      "[checkout/success] supabase admin client unavailable (SUPABASE_SERVICE_ROLE_KEY missing). Order will not be back-filled.",
+    );
+    return email;
+  }
 
   try {
     const { data: existing } = await admin
@@ -46,7 +56,10 @@ async function ensureOrderRecorded(sessionId: string | undefined): Promise<strin
       .select("id")
       .eq("stripe_session_id", session.id)
       .maybeSingle();
-    if (existing) return email;
+    if (existing) {
+      console.log("[checkout/success] order already present (webhook beat us):", session.id);
+      return email;
+    }
 
     let metaItems: StockItem[] = [];
     const raw = session.metadata?.items;
@@ -75,16 +88,30 @@ async function ensureOrderRecorded(sessionId: string | undefined): Promise<strin
       unit_amount: (li.amount_total ?? 0) / (li.quantity ?? 1),
     }));
 
-    await admin.from("orders").insert({
+    const { error: insertErr } = await admin.from("orders").insert({
       stripe_session_id: session.id,
       customer_email: email,
       total_amount: (session.amount_total ?? 0) / 100,
       line_items: items,
       status: "paid",
     });
+    if (insertErr) {
+      console.error("[checkout/success] order insert failed:", {
+        session_id: session.id,
+        email,
+        code: insertErr.code,
+        message: insertErr.message,
+        details: insertErr.details,
+      });
+    } else {
+      console.log("[checkout/success] order back-filled:", { session_id: session.id, email });
+    }
 
     if (metaItems.length > 0) {
-      await admin.rpc("decrement_product_stock", { items: metaItems });
+      const { error: stockErr } = await admin.rpc("decrement_product_stock", { items: metaItems });
+      if (stockErr) {
+        console.error("[checkout/success] decrement_product_stock failed:", stockErr.message);
+      }
     }
   } catch (err) {
     console.error("[checkout/success] failed to back-fill order:", err);

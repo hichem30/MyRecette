@@ -205,6 +205,12 @@ create table if not exists public.promo_codes (
   created_at     timestamptz not null default now()
 );
 
+-- Promo-code scope: limit which products / categories a code applies to.
+-- NULL or empty array → applies to every product (back-compat).
+alter table public.promo_codes
+  add column if not exists applies_to_product_ids  uuid[],
+  add column if not exists applies_to_category_slugs text[];
+
 -- Delivery zones (which US states / cities we ship to)
 create table if not exists public.delivery_zones (
   id         uuid primary key default gen_random_uuid(),
@@ -403,7 +409,14 @@ grant execute on function public.admin_subscriber_emails() to authenticated;
 drop function if exists public.is_admin();
 
 -- Promo code: validate + consume
-create or replace function public.validate_promo_code(p_code text)
+-- Drop old single-arg signature so PostgREST/Supabase only exposes the new
+-- one (avoids dual-overload ambiguity in the .rpc() client).
+drop function if exists public.validate_promo_code(text);
+
+create or replace function public.validate_promo_code(
+  p_code text,
+  p_cart_product_ids uuid[] default null
+)
 returns table (
   code           text,
   discount_type  text,
@@ -417,6 +430,8 @@ set search_path = public, pg_temp
 as $$
 declare
   rec public.promo_codes%rowtype;
+  scope_active boolean := false;
+  scope_ok     boolean := false;
 begin
   select * into rec from public.promo_codes
     where lower(promo_codes.code) = lower(trim(p_code))
@@ -441,11 +456,46 @@ begin
     return query select rec.code, rec.discount_type, rec.discount_value, false, 'EXHAUSTED'::text;
     return;
   end if;
+
+  -- Scope check. If the admin restricted this code to specific products /
+  -- categories, at least one cart item must match.
+  scope_active :=
+    (rec.applies_to_product_ids   is not null and array_length(rec.applies_to_product_ids,   1) > 0)
+    or (rec.applies_to_category_slugs is not null and array_length(rec.applies_to_category_slugs, 1) > 0);
+  if scope_active then
+    if p_cart_product_ids is not null and array_length(p_cart_product_ids, 1) > 0 then
+      if rec.applies_to_product_ids is not null
+         and array_length(rec.applies_to_product_ids, 1) > 0
+         and exists (
+           select 1 from unnest(p_cart_product_ids) cid
+           where cid = any(rec.applies_to_product_ids)
+         )
+      then
+        scope_ok := true;
+      end if;
+      if (not scope_ok)
+         and rec.applies_to_category_slugs is not null
+         and array_length(rec.applies_to_category_slugs, 1) > 0
+         and exists (
+           select 1 from public.products p
+           where p.id = any(p_cart_product_ids)
+             and p.category_slug = any(rec.applies_to_category_slugs)
+         )
+      then
+        scope_ok := true;
+      end if;
+    end if;
+    if not scope_ok then
+      return query select rec.code, rec.discount_type, rec.discount_value, false, 'NOT_APPLICABLE'::text;
+      return;
+    end if;
+  end if;
+
   return query select rec.code, rec.discount_type, rec.discount_value, true, 'OK'::text;
 end;
 $$;
 
-grant execute on function public.validate_promo_code(text) to anon, authenticated;
+grant execute on function public.validate_promo_code(text, uuid[]) to anon, authenticated;
 
 create or replace function public.consume_promo_code(p_code text)
 returns boolean

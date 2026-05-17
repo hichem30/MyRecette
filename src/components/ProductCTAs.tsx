@@ -1,13 +1,14 @@
 "use client";
 
 import { Heart, Minus, Plus, ShoppingCart } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { useCart } from "@/lib/cart/CartProvider";
 import type { Product } from "@/lib/types";
 
 export function ProductCTAs({ product }: { product: Product }) {
   const t = useTranslations("common");
+  const locale = useLocale() as "en" | "es";
   const { addItem, toggleWishlist, isInWishlist } = useCart();
   const fav = isInWishlist(product.id);
   const [qty, setQty] = useState(1);
@@ -68,7 +69,11 @@ export function ProductCTAs({ product }: { product: Product }) {
 
       <button
         type="button"
-        onClick={() => toggleWishlist(product.id)}
+        onClick={() => {
+          if (!toggleWishlist(product.id)) {
+            window.location.href = `/${locale}/login?next=${encodeURIComponent(`/${locale}/products/${product.slug}`)}`;
+          }
+        }}
         aria-label="Toggle wishlist"
         className={`inline-flex h-11 w-11 flex-none items-center justify-center rounded-md border ${
           fav

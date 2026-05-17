@@ -105,7 +105,12 @@ export function ProductCard({ product, compact = false }: { product: Product; co
             </button>
             <button
               type="button"
-              onClick={() => toggleWishlist(product.id)}
+              onClick={() => {
+                if (!toggleWishlist(product.id)) {
+                  // Auth required — bounce to login then back to the products page.
+                  window.location.href = `/${locale}/login?next=${encodeURIComponent(`/${locale}/products/${product.slug}`)}`;
+                }
+              }}
               aria-label="Toggle wishlist"
               className={`inline-flex h-9 w-9 items-center justify-center rounded-md border ${
                 fav

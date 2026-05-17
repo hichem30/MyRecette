@@ -50,14 +50,19 @@ export function LoginCard() {
         setError(error.message);
       } else {
         const userId = data.user?.id;
-        let dest = "/";
+        // Honour ?next= so we return the visitor to where they came from
+        // (e.g. cart drawer -> /login?next=/products).
+        const params = new URLSearchParams(window.location.search);
+        const requested = params.get("next");
+        let dest = requested && requested.startsWith("/") ? requested : "/";
         if (userId) {
           const { data: profile } = await supabase
             .from("profiles")
             .select("role")
             .eq("id", userId)
             .maybeSingle();
-          if (profile?.role === "admin") dest = "/admin";
+          // Admins always land in /admin unless they came with an explicit ?next.
+          if (profile?.role === "admin" && !requested) dest = "/admin";
         }
         window.location.href = dest;
       }

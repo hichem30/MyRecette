@@ -40,6 +40,30 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: msg }, { status: 400 });
   }
 
+  // SECURITY: require an authenticated user. Guest checkout is intentionally
+  // disabled so every order is owned by an account that can see it in
+  // /account/orders and be reached for support.
+  let signedInEmail: string | null = null;
+  try {
+    const supabaseUser = await getSupabaseRouteClient();
+    const { data: userData } = await supabaseUser.auth.getUser();
+    signedInEmail = userData.user?.email ?? null;
+  } catch {
+    /* fall through — signedInEmail stays null */
+  }
+  if (!signedInEmail) {
+    return NextResponse.json(
+      {
+        error:
+          parsed.locale === "es"
+            ? "Inicia sesi\u00f3n para finalizar la compra."
+            : "Please sign in to complete checkout.",
+        auth_required: true,
+      },
+      { status: 401 },
+    );
+  }
+
   const admin = getSupabaseAdminClient();
 
   // -------------------------------------------------------------------
@@ -144,7 +168,10 @@ export async function POST(req: Request) {
   const discounts: Array<{ coupon: string }> = [];
   let promoApplied: { code: string; coupon_id: string } | null = null;
   if (parsed.promo_code && admin) {
-    const { data: rows } = await admin.rpc("validate_promo_code", { p_code: parsed.promo_code });
+    const { data: rows } = await admin.rpc("validate_promo_code", {
+      p_code: parsed.promo_code,
+      p_cart_product_ids: stockDecrement.map((s) => s.product_id),
+    });
     type PromoCheck = {
       code: string;
       discount_type: "percent" | "amount";
@@ -199,17 +226,7 @@ export async function POST(req: Request) {
     process.env.NEXT_PUBLIC_SITE_URL ??
     "http://localhost:3000";
 
-  // If the visitor is signed in, pin their auth email to the Stripe session
-  // so the order saved by the webhook matches their account exactly (and
-  // shows up in their /account/orders history).
-  let signedInEmail: string | null = null;
-  try {
-    const supabase = await getSupabaseRouteClient();
-    const { data } = await supabase.auth.getUser();
-    signedInEmail = data.user?.email ?? null;
-  } catch {
-    /* anon checkout — Stripe will ask for the email itself */
-  }
+  // signedInEmail was resolved above as a precondition for this route.
 
   try {
     const session = await stripe.checkout.sessions.create({

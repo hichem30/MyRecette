@@ -42,6 +42,12 @@ export function CartDrawer() {
         window.location.href = data.url;
         return;
       }
+      // Auth required — bounce to login with a redirect back to /products.
+      if (res.status === 401 || data.auth_required) {
+        const next = encodeURIComponent("/products");
+        window.location.href = `/${locale}/login?next=${next}`;
+        return;
+      }
       // Server returned a structured error (e.g. 409 "Only 2 left").
       setError(typeof data.error === "string" ? data.error : t("checkoutError"));
     } catch {
@@ -143,7 +149,11 @@ export function CartDrawer() {
                       </div>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => saveForLater(item.product_id)}
+                          onClick={() => {
+                            if (!saveForLater(item.product_id)) {
+                              window.location.href = `/${locale}/login?next=${encodeURIComponent(`/${locale}/products`)}`;
+                            }
+                          }}
                           aria-label={locale === "en" ? "Save for later" : "Guardar para después"}
                           title={locale === "en" ? "Save for later" : "Guardar para después"}
                           className="text-neutral-400 hover:text-barn-700"

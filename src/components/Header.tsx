@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Heart, LogOut, Menu, Package, Search, ShoppingCart, User, X } from "lucide-react";
+import { ChevronDown, Heart, LayoutDashboard, LogOut, Menu, Package, Search, ShoppingCart, User, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "./Logo";
@@ -20,6 +20,7 @@ export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [authed, setAuthed] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
@@ -30,10 +31,11 @@ export function Header() {
     const supabase = getSupabaseBrowserClient();
     let cancelled = false;
 
-    function applyUser(user: { email?: string | null; user_metadata?: Record<string, unknown> } | null) {
+    function applyUser(user: { id?: string | null; email?: string | null; user_metadata?: Record<string, unknown> } | null) {
       if (cancelled) return;
       if (!user) {
         setAuthed(false);
+        setIsAdmin(false);
         setDisplayName(null);
         return;
       }
@@ -45,6 +47,18 @@ export function Header() {
         null;
       const first = fullName ? fullName.split(" ")[0] : null;
       setDisplayName(first ?? user.email ?? null);
+      // Fetch role from profile so we can show the Admin link.
+      if (user.id) {
+        supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .maybeSingle()
+          .then(({ data }) => {
+            if (cancelled) return;
+            setIsAdmin(data?.role === "admin");
+          });
+      }
     }
 
     supabase.auth.getUser().then(({ data }) => applyUser(data.user));
@@ -205,6 +219,21 @@ export function Header() {
                   >
                     <Heart className="h-4 w-4" /> {t("wishlist")}
                   </Link>
+                  {isAdmin && (
+                    <>
+                      <div className="my-1 border-t border-neutral-100" />
+                      {/* /admin is not locale-prefixed; force a hard navigation
+                          so the AdminShell layout (not LocaleLayout) takes over. */}
+                      {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                      <a
+                        href="/admin"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 rounded-md bg-barn-50 px-3 py-2 text-sm font-bold text-barn-700 hover:bg-barn-100"
+                      >
+                        <LayoutDashboard className="h-4 w-4" /> Admin Dashboard
+                      </a>
+                    </>
+                  )}
                   <div className="my-1 border-t border-neutral-100" />
                   <button
                     onClick={() => {

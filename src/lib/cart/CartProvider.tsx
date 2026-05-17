@@ -29,11 +29,12 @@ interface CartContextValue {
   openCart: () => void;
   closeCart: () => void;
   wishlist: string[];
-  toggleWishlist: (productId: string) => void;
+  toggleWishlist: (productId: string) => boolean;
   isInWishlist: (productId: string) => boolean;
-  saveForLater: (productId: string) => void;
+  saveForLater: (productId: string) => boolean;
   recent: string[];
   recordView: (productId: string) => void;
+  isAuthed: boolean;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -187,11 +188,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clear = useCallback(() => setItems([]), []);
 
   const toggleWishlist = useCallback(
-    (productId: string) => {
+    (productId: string): boolean => {
+      // Wishlist requires auth. Tell the caller so it can route to login.
+      if (!userId) return false;
       setWishlist((prev) => {
         const has = prev.includes(productId);
         const next = has ? prev.filter((id) => id !== productId) : [...prev, productId];
-        if (userId && isSupabaseConfigured()) {
+        if (isSupabaseConfigured()) {
           const supabase = getSupabaseBrowserClient();
           if (has) {
             supabase
@@ -207,6 +210,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
         return next;
       });
+      return true;
     },
     [userId],
   );
@@ -217,15 +221,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const saveForLater = useCallback(
-    (productId: string) => {
+    (productId: string): boolean => {
+      if (!userId) return false;
       setWishlist((prev) => (prev.includes(productId) ? prev : [...prev, productId]));
-      if (userId && isSupabaseConfigured()) {
+      if (isSupabaseConfigured()) {
         const supabase = getSupabaseBrowserClient();
         supabase
           .from("wishlists")
           .upsert({ user_id: userId, product_id: productId }, { onConflict: "user_id,product_id" });
       }
       setItems((prev) => prev.filter((i) => i.product_id !== productId));
+      return true;
     },
     [userId],
   );
@@ -255,6 +261,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       saveForLater,
       recent,
       recordView,
+      isAuthed: userId !== null,
     }),
     [
       items,
@@ -269,6 +276,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       saveForLater,
       recent,
       recordView,
+      userId,
     ],
   );
 
