@@ -1,6 +1,15 @@
 "use client";
 
-import { Mail, Megaphone, Package2, Tag, TicketPercent } from "lucide-react";
+import {
+  ClipboardCopy,
+  Mail,
+  Megaphone,
+  Package2,
+  Search,
+  Sparkles,
+  Tag,
+  TicketPercent,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { mockProducts } from "@/lib/data/mock-data";
@@ -9,6 +18,8 @@ import type { Bundle, Product, PromoCode } from "@/lib/types";
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
   "https://shop.redbarnmarket.workers.dev";
+
+type ProductFilter = "new" | "discount" | "all";
 
 export default function AdminCampaignsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,11 +30,13 @@ export default function AdminCampaignsPage() {
   const [selectedPromoIds, setSelectedPromoIds] = useState<Set<string>>(new Set());
   const [subscribers, setSubscribers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [productFilter, setProductFilter] = useState<"discount" | "all">("discount");
+  const [productFilter, setProductFilter] = useState<ProductFilter>("discount");
+  const [productSearch, setProductSearch] = useState("");
   const [subject, setSubject] = useState("New deals from Red Barn Western Market");
   const [intro, setIntro] = useState(
     "Hi there! Here are some fresh deals at Red Barn Western Market — stop by the yard or order online.",
   );
+  const [copyStatus, setCopyStatus] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -69,17 +82,40 @@ export default function AdminCampaignsPage() {
     });
   }, []);
 
-  const filteredProducts = useMemo(
-    () =>
-      productFilter === "discount"
-        ? products.filter((p) => p.discount)
-        : products,
-    [products, productFilter],
+  const filteredProducts = useMemo(() => {
+    const q = productSearch.trim().toLowerCase();
+    return products.filter((p) => {
+      if (productFilter === "discount" && !p.discount) return false;
+      if (productFilter === "new" && !p.new_arrival) return false;
+      if (q && !p.name.en.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [products, productFilter, productSearch]);
+
+  const newCount = useMemo(
+    () => products.filter((p) => p.new_arrival).length,
+    [products],
+  );
+  const discountCount = useMemo(
+    () => products.filter((p) => p.discount).length,
+    [products],
   );
 
   const selectedProducts = useMemo(
     () => products.filter((p) => selectedProductIds.has(p.id)),
     [products, selectedProductIds],
+  );
+  const selectedNewArrivals = useMemo(
+    () => selectedProducts.filter((p) => p.new_arrival),
+    [selectedProducts],
+  );
+  const selectedOnSale = useMemo(
+    () => selectedProducts.filter((p) => p.discount && !p.new_arrival),
+    [selectedProducts],
+  );
+  const selectedOtherProducts = useMemo(
+    () => selectedProducts.filter((p) => !p.discount && !p.new_arrival),
+    [selectedProducts],
   );
   const selectedBundles = useMemo(
     () => bundles.filter((b) => selectedBundleIds.has(b.id)),
@@ -102,20 +138,28 @@ export default function AdminCampaignsPage() {
     });
   }
 
+  function productLine(p: Product) {
+    const link = `${SITE_URL}/en/products/${p.slug}`;
+    const wasNow =
+      p.original_price && p.original_price > p.price
+        ? ` — was $${p.original_price.toFixed(2)}, now $${p.price.toFixed(2)}`
+        : ` — $${p.price.toFixed(2)}`;
+    return [`• ${p.name.en}${wasNow}`, `  ${link}`, ""];
+  }
+
   function buildBody() {
     const lines = [intro, ""];
-    if (selectedProducts.length > 0) {
+    if (selectedNewArrivals.length > 0) {
+      lines.push("— NEW ARRIVALS —");
+      for (const p of selectedNewArrivals) lines.push(...productLine(p));
+    }
+    if (selectedOnSale.length > 0) {
       lines.push("— ON SALE NOW —");
-      for (const p of selectedProducts) {
-        const link = `${SITE_URL}/en/products/${p.slug}`;
-        const wasNow =
-          p.original_price && p.original_price > p.price
-            ? ` — was $${p.original_price.toFixed(2)}, now $${p.price.toFixed(2)}`
-            : ` — $${p.price.toFixed(2)}`;
-        lines.push(`• ${p.name.en}${wasNow}`);
-        lines.push(`  ${link}`);
-        lines.push("");
-      }
+      for (const p of selectedOnSale) lines.push(...productLine(p));
+    }
+    if (selectedOtherProducts.length > 0) {
+      lines.push("— FEATURED PRODUCTS —");
+      for (const p of selectedOtherProducts) lines.push(...productLine(p));
     }
     if (selectedBundles.length > 0) {
       lines.push("— BUNDLE DEALS —");
@@ -171,11 +215,42 @@ export default function AdminCampaignsPage() {
     return lines.join("\n");
   }
 
+  function bccString() {
+    return subscribers.join(",");
+  }
+
   function mailtoHref() {
     const subjectEnc = encodeURIComponent(subject);
     const bodyEnc = encodeURIComponent(buildBody());
-    const bcc = subscribers.join(",");
-    return `mailto:?bcc=${encodeURIComponent(bcc)}&subject=${subjectEnc}&body=${bodyEnc}`;
+    return `mailto:?bcc=${encodeURIComponent(bccString())}&subject=${subjectEnc}&body=${bodyEnc}`;
+  }
+
+  async function copy(text: string, statusLabel: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyStatus(statusLabel);
+      setTimeout(() => setCopyStatus(null), 2500);
+    } catch {
+      setCopyStatus("Couldn't copy — your browser blocked it. Use the preview panel and copy manually.");
+      setTimeout(() => setCopyStatus(null), 4000);
+    }
+  }
+
+  async function openProtonMail() {
+    const fullBody =
+      `BCC (paste into the BCC field):\n${bccString()}\n\n` +
+      `Subject:\n${subject}\n\n` +
+      `${buildBody()}`;
+    await copy(fullBody, "Subject + BCC + body copied. Paste it into the Proton compose window.");
+    window.open("https://mail.proton.me/u/0/inbox?action=compose", "_blank", "noopener,noreferrer");
+  }
+
+  async function copyAll() {
+    const fullBody =
+      `BCC: ${bccString()}\n\n` +
+      `Subject: ${subject}\n\n` +
+      `${buildBody()}`;
+    await copy(fullBody, "Subject + BCC + body copied to clipboard.");
   }
 
   const totalSelected =
@@ -188,9 +263,9 @@ export default function AdminCampaignsPage() {
         <Megaphone className="h-5 w-5 text-barn-700" /> Email Campaigns
       </h1>
       <p className="mt-1 text-sm text-neutral-500">
-        Pick any combination of sale products, bundles and promo codes, then click{" "}
-        <strong>Compose email</strong>. Your default mail app opens with all opted‑in customers
-        in BCC and a ready‑to‑send body. Review and hit send from your own account.
+        Pick any combination of products (new arrivals, sale items, or anything in the catalog), bundle deals,
+        and promo codes. Then choose how you want to send: your default mail app, ProtonMail, or copy to clipboard
+        for any other tool.
       </p>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-4">
@@ -202,7 +277,7 @@ export default function AdminCampaignsPage() {
         <Stat
           label="Products"
           value={selectedProducts.length.toString()}
-          help="Sale items selected"
+          help={`${newCount} new · ${discountCount} on sale`}
         />
         <Stat
           label="Bundles"
@@ -216,16 +291,29 @@ export default function AdminCampaignsPage() {
         />
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_360px]">
+      <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_380px]">
         <div className="space-y-6">
           {/* PRODUCTS */}
           <section>
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-700 flex items-center gap-1.5">
-                <Tag className="h-3.5 w-3.5" /> Discounted products
+                <Tag className="h-3.5 w-3.5" /> Products
               </h2>
-              <div className="flex items-center gap-2 text-xs">
+              <div className="flex flex-wrap items-center gap-2 text-xs">
                 <button
+                  type="button"
+                  onClick={() => setProductFilter("new")}
+                  className={`rounded-md border px-2 py-1 font-semibold flex items-center gap-1 ${
+                    productFilter === "new"
+                      ? "border-barn-600 bg-barn-50 text-barn-700"
+                      : "border-neutral-200 bg-white text-neutral-600"
+                  }`}
+                >
+                  <Sparkles className="h-3 w-3" />
+                  New arrivals
+                </button>
+                <button
+                  type="button"
                   onClick={() => setProductFilter("discount")}
                   className={`rounded-md border px-2 py-1 font-semibold ${
                     productFilter === "discount"
@@ -236,22 +324,34 @@ export default function AdminCampaignsPage() {
                   On sale
                 </button>
                 <button
+                  type="button"
                   onClick={() => setProductFilter("all")}
                   className={`rounded-md border px-2 py-1 font-semibold ${
                     productFilter === "all"
-                      ? "border-barn-600 bg-barn-50 text-barn-700"
+                      ? "border-neutral-700 bg-neutral-100 text-neutral-800"
                       : "border-neutral-200 bg-white text-neutral-600"
                   }`}
                 >
                   All
                 </button>
                 <button
+                  type="button"
                   onClick={() => setSelectedProductIds(new Set())}
                   className="text-neutral-400 hover:text-neutral-700"
                 >
                   Clear
                 </button>
               </div>
+            </div>
+            <div className="mb-2 relative">
+              <Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+              <input
+                type="search"
+                value={productSearch}
+                onChange={(e) => setProductSearch(e.target.value)}
+                placeholder="Search by product name…"
+                className="w-full rounded-md border border-neutral-300 bg-white py-1.5 pl-8 pr-3 text-sm focus:border-barn-500 focus:outline-none"
+              />
             </div>
             <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
               <table className="w-full text-sm">
@@ -302,15 +402,16 @@ export default function AdminCampaignsPage() {
                           )}
                         </td>
                         <td className="px-3 py-2 text-xs text-neutral-500">
+                          {p.new_arrival && (
+                            <span className="mr-1 rounded bg-barn-50 px-1.5 py-0.5 text-barn-700">
+                              <Sparkles className="mr-1 inline h-3 w-3" />
+                              NEW
+                            </span>
+                          )}
                           {p.discount && (
                             <span className="mr-1 rounded bg-amber-50 px-1.5 py-0.5 text-amber-700">
                               <Tag className="mr-1 inline h-3 w-3" />
                               SALE
-                            </span>
-                          )}
-                          {p.new_arrival && (
-                            <span className="mr-1 rounded bg-barn-50 px-1.5 py-0.5 text-barn-700">
-                              NEW
                             </span>
                           )}
                         </td>
@@ -329,6 +430,7 @@ export default function AdminCampaignsPage() {
                 <Package2 className="h-3.5 w-3.5" /> Bundle deals
               </h2>
               <button
+                type="button"
                 onClick={() => setSelectedBundleIds(new Set())}
                 className="text-xs text-neutral-400 hover:text-neutral-700"
               >
@@ -390,6 +492,7 @@ export default function AdminCampaignsPage() {
                 <TicketPercent className="h-3.5 w-3.5" /> Promo codes
               </h2>
               <button
+                type="button"
                 onClick={() => setSelectedPromoIds(new Set())}
                 className="text-xs text-neutral-400 hover:text-neutral-700"
               >
@@ -482,23 +585,71 @@ export default function AdminCampaignsPage() {
               rows={3}
               className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-barn-500 focus:outline-none"
             />
-            <a
-              href={canCompose ? mailtoHref() : undefined}
-              aria-disabled={!canCompose}
-              onClick={(e) => {
-                if (!canCompose) e.preventDefault();
-              }}
-              className={`mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-md px-4 py-2 text-sm font-bold text-white transition ${
-                canCompose
-                  ? "bg-barn-600 hover:bg-barn-700"
-                  : "cursor-not-allowed bg-neutral-300"
-              }`}
-            >
-              <Mail className="h-4 w-4" />
-              Compose email
-            </a>
+
+            <div className="mt-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                Send with
+              </p>
+              <div className="mt-2 space-y-2">
+                <a
+                  href={canCompose ? mailtoHref() : undefined}
+                  aria-disabled={!canCompose}
+                  onClick={(e) => {
+                    if (!canCompose) e.preventDefault();
+                  }}
+                  className={`inline-flex w-full items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold text-white transition ${
+                    canCompose
+                      ? "bg-barn-600 hover:bg-barn-700"
+                      : "cursor-not-allowed bg-neutral-300"
+                  }`}
+                >
+                  <Mail className="h-4 w-4" />
+                  Default mail app
+                </a>
+                <button
+                  type="button"
+                  onClick={openProtonMail}
+                  disabled={!canCompose}
+                  className={`inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-semibold transition ${
+                    canCompose
+                      ? "border-[#6D4AFF] bg-white text-[#6D4AFF] hover:bg-[#6D4AFF] hover:text-white"
+                      : "cursor-not-allowed border-neutral-200 bg-neutral-100 text-neutral-400"
+                  }`}
+                >
+                  <Mail className="h-4 w-4" />
+                  ProtonMail (web)
+                </button>
+                <button
+                  type="button"
+                  onClick={copyAll}
+                  disabled={!canCompose}
+                  className={`inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-semibold transition ${
+                    canCompose
+                      ? "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-500"
+                      : "cursor-not-allowed border-neutral-200 bg-neutral-100 text-neutral-400"
+                  }`}
+                >
+                  <ClipboardCopy className="h-4 w-4" />
+                  Copy to clipboard
+                </button>
+              </div>
+              <p className="mt-2 text-[11px] leading-snug text-neutral-500">
+                <strong>Default mail app</strong> opens whatever you have set as your system mailer
+                (including Mozilla Thunderbird if it&apos;s the default).{" "}
+                <strong>ProtonMail (web)</strong> copies the email and opens a new Proton compose
+                tab — paste with Ctrl/Cmd + V.{" "}
+                <strong>Copy to clipboard</strong> works with anything else (Gmail web, Outlook,
+                Apple Mail, etc.).
+              </p>
+              {copyStatus && (
+                <p className="mt-2 rounded-md bg-emerald-50 px-2 py-1.5 text-[11px] font-medium text-emerald-800">
+                  {copyStatus}
+                </p>
+              )}
+            </div>
+
             {!canCompose && (
-              <p className="mt-2 text-[11px] text-neutral-500">
+              <p className="mt-3 text-[11px] text-neutral-500">
                 {subscribers.length === 0
                   ? "No customers have opted in yet."
                   : "Pick at least one product, bundle or promo first."}

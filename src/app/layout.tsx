@@ -12,14 +12,34 @@ export const metadata: Metadata = {
   applicationName: "Red Barn Western Market",
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/icons/icon-192.png",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/icons/apple-touch-icon.png",
   },
   openGraph: {
     type: "website",
     title: "Red Barn Western Market — Sand Springs, OK",
     description: "Lumber, feed, hardware, and ranch supplies since 1987.",
     locale: "en_US",
+    images: [
+      {
+        url: "/icons/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Red Barn Western Market — Sand Springs, OK",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Red Barn Western Market — Sand Springs, OK",
+    description: "Lumber, feed, hardware, and ranch supplies since 1987.",
+    images: ["/icons/og-image.png"],
   },
 };
 

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#FAF7F2" />
+  <rect x="0" y="0" width="1200" height="80" fill="#8B2A18" />
+  <rect x="0" y="550" width="1200" height="80" fill="#8B2A18" />
+  <g transform="translate(180 195)">
+    <rect width="240" height="240" rx="44" fill="#8B2A18" />
+    <g transform="translate(45 45)" fill="white">
+      <path d="M19 69 L75 25 L131 69 L131 126 a6 6 0 0 1 -6 6 h-31 v-37 h-37 v37 h-31 a6 6 0 0 1 -6 -6 Z" />
+    </g>
+  </g>
+  <g transform="translate(490 250)" fill="#1c1917">
+    <text x="0" y="0" font-family="Georgia, 'Playfair Display', serif" font-size="76" font-weight="700" fill="#8B2A18">Red Barn</text>
+    <text x="0" y="80" font-family="Georgia, 'Playfair Display', serif" font-size="56" font-weight="600">Western Market</text>
+    <text x="0" y="150" font-family="Inter, system-ui, sans-serif" font-size="26" letter-spacing="2" fill="#525252">LUMBER · FEED · HARDWARE · RANCH SUPPLIES</text>
+    <text x="0" y="190" font-family="Inter, system-ui, sans-serif" font-size="22" fill="#737373">Sand Springs, OK · Serving Tulsa County since 1987</text>
+  </g>
+</svg>
