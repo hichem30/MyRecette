@@ -52,7 +52,7 @@ export default async function DealsPage({
       <section className="relative isolate overflow-hidden bg-neutral-900 text-white">
         <div className="absolute inset-0 -z-10">
           <Image
-            src="https://images.unsplash.com/photo-1582719188393-bb71ca45dbb9?auto=format&fit=crop&w=2000&q=70"
+            src="https://images.unsplash.com/photo-1582719188393-bb71ca45dbb9?auto=format&fit=crop&w=1280&q=70"
             alt=""
             fill
             sizes="100vw"

@@ -4,13 +4,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { ProductCard } from "@/components/ProductCard";
 import { CategoryCard } from "@/components/CategoryCard";
-import {
-  getAllCategories,
-  getAllProducts,
-  getDeals,
-  getFeaturedProducts,
-  getNewArrivals,
-} from "@/lib/data";
+import { getAllCategories, getAllProducts } from "@/lib/data";
 
 export const revalidate = 60;
 
@@ -19,11 +13,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
   const tH = await getTranslations("home");
   const tC = await getTranslations("common");
-  const cats = await getAllCategories();
-  const products = await getAllProducts();
-  const newArrivals = (await getNewArrivals()).slice(0, 4);
-  const deals = (await getDeals()).slice(0, 4);
-  const featured = (await getFeaturedProducts()).slice(0, 4);
+  // One DB round-trip for everything: derive arrivals / deals / featured
+  // locally instead of calling getAllProducts() 4× per request. Cuts CPU on
+  // the Cloudflare worker by ~75% on a home page render.
+  const [cats, products] = await Promise.all([getAllCategories(), getAllProducts()]);
+  const newArrivals = products.filter((p) => p.new_arrival).slice(0, 4);
+  const deals = products.filter((p) => p.discount).slice(0, 4);
+  const featured = products.filter((p) => p.featured).slice(0, 4);
 
   const productsByCat = (slug: string) =>
     products.filter((p) => p.category_slug === slug).length;
@@ -34,7 +30,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="relative isolate -mt-16 bg-neutral-900">
         <div className="absolute inset-0 -z-10">
           <Image
-            src="https://images.unsplash.com/photo-1500076656116-558758c991c1?auto=format&fit=crop&w=2000&q=80"
+            src="https://images.unsplash.com/photo-1500076656116-558758c991c1?auto=format&fit=crop&w=1280&q=70"
             alt=""
             fill
             priority

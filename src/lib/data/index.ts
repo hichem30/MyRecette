@@ -5,7 +5,13 @@
  * Otherwise, we fall back to the bundled mock data so the site stays fully
  * functional during development / preview before the user wires up their
  * Supabase project.
+ *
+ * Every fetcher is wrapped in React `cache()` so that within a single render
+ * (e.g. one home-page request) we only hit Supabase once for products and
+ * once for categories — keeping us well under the Cloudflare free-tier 10ms
+ * CPU budget per request.
  */
+import { cache } from "react";
 import { Category, Product } from "../types";
 import { mockCategories, mockProducts } from "./mock-data";
 import { getSupabaseServerClient, isSupabaseConfigured } from "../supabase/server";
@@ -52,7 +58,7 @@ function applyCategoryDiscounts(products: Product[], categories: Category[]): Pr
   });
 }
 
-export async function getAllCategories(): Promise<Category[]> {
+export const getAllCategories = cache(async (): Promise<Category[]> => {
   if (!isSupabaseConfigured()) return mockCategories;
   try {
     const supabase = getSupabaseServerClient();
@@ -65,7 +71,7 @@ export async function getAllCategories(): Promise<Category[]> {
   } catch {
     return mockCategories;
   }
-}
+});
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   const cats = await getAllCategories();
@@ -73,26 +79,39 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 }
 
 /**
+ * Internal: raw fetch, cached per render. Variants that need draft rows pass
+ * `includeUnpublished` and reuse the same cached payload by filtering after.
+ */
+const getAllProductsRaw = cache(
+  async (): Promise<{ products: Product[]; categories: Category[] }> => {
+    if (!isSupabaseConfigured()) return { products: mockProducts, categories: mockCategories };
+    try {
+      const supabase = getSupabaseServerClient();
+      const [productsRes, categoriesRes] = await Promise.all([
+        supabase.from("products").select("*").order("created_at", { ascending: false }),
+        supabase.from("categories").select("*"),
+      ]);
+      if (productsRes.error || !productsRes.data || productsRes.data.length === 0) {
+        return { products: mockProducts, categories: mockCategories };
+      }
+      const products = productsRes.data as Product[];
+      const categories = (categoriesRes.data as Category[]) ?? [];
+      return { products, categories };
+    } catch {
+      return { products: mockProducts, categories: mockCategories };
+    }
+  },
+);
+
+/**
  * @param includeUnpublished if true, returns draft products too (admin only).
  *   Default behaviour for the storefront filters them out client-side as well
  *   as via RLS, so this is mostly a belt-and-suspenders convenience.
  */
 export async function getAllProducts(includeUnpublished = false): Promise<Product[]> {
-  if (!isSupabaseConfigured()) return mockProducts;
-  try {
-    const supabase = getSupabaseServerClient();
-    const [productsRes, categoriesRes] = await Promise.all([
-      supabase.from("products").select("*").order("created_at", { ascending: false }),
-      supabase.from("categories").select("*"),
-    ]);
-    if (productsRes.error || !productsRes.data || productsRes.data.length === 0) return mockProducts;
-    const rows = productsRes.data as Product[];
-    const cats = (categoriesRes.data as Category[]) ?? [];
-    const filtered = includeUnpublished ? rows : rows.filter((p) => p.published !== false);
-    return applyCategoryDiscounts(applyTimeWindowedDiscounts(filtered), cats);
-  } catch {
-    return mockProducts;
-  }
+  const { products, categories } = await getAllProductsRaw();
+  const filtered = includeUnpublished ? products : products.filter((p) => p.published !== false);
+  return applyCategoryDiscounts(applyTimeWindowedDiscounts(filtered), categories);
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {

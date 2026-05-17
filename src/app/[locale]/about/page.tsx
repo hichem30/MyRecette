@@ -3,6 +3,10 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Award, DollarSign, Hammer, Heart, MapPin, Users } from "lucide-react";
 import { Link } from "@/lib/i18n/navigation";
 
+// Static content only — pre-render at build time and serve from ASSETS
+// binding so the page never invokes the worker.
+export const dynamic = "force-static";
+
 export default async function AboutPage({
   params,
 }: {
@@ -19,7 +23,7 @@ export default async function AboutPage({
       <section className="relative isolate overflow-hidden bg-neutral-900 text-white">
         <div className="absolute inset-0 -z-10">
           <Image
-            src="https://images.unsplash.com/photo-1500076656116-558758c991c1?auto=format&fit=crop&w=2000&q=70"
+            src="https://images.unsplash.com/photo-1500076656116-558758c991c1?auto=format&fit=crop&w=1280&q=70"
             alt=""
             fill
             priority
@@ -165,7 +169,7 @@ export default async function AboutPage({
       <section className="relative isolate overflow-hidden bg-neutral-900 py-16 text-white">
         <div className="absolute inset-0 -z-10">
           <Image
-            src="https://images.unsplash.com/photo-1500076656116-558758c991c1?auto=format&fit=crop&w=2000&q=70"
+            src="https://images.unsplash.com/photo-1500076656116-558758c991c1?auto=format&fit=crop&w=1280&q=70"
             alt=""
             fill
             sizes="100vw"

@@ -20,4 +20,12 @@
     "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_51TXJ7yICIZJg9BDtv9Y4vr9Fa3uiqB2edgbf7QzjUMiHpeV3ec7wN2oYqyDGNA2HGbpdWyE6UX3AlaN1VPqYhM1s00TR3iscl6",
     "ADMIN_BOOTSTRAP_EMAIL": "redbarnmarket@protonmail.com"
   }
+  // To enable the OpenNext ISR cache on Cloudflare KV (recommended on
+  // the free plan — keeps worker CPU < 10ms per cached page request),
+  // create a namespace once:
+  //   npx wrangler kv namespace create NEXT_INC_CACHE_KV
+  // then paste the returned id below and re-deploy:
+  // ,"kv_namespaces": [
+  //   { "binding": "NEXT_INC_CACHE_KV", "id": "<paste-id-here>" }
+  // ]
 }

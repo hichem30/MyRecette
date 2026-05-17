@@ -2,6 +2,10 @@ import { Award, Headphones, Lock, Truck } from "lucide-react";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { LoginCard } from "@/components/LoginCard";
 
+// LoginCard handles all dynamic state client-side; the page shell is fully
+// static so it ships from CDN with zero worker CPU.
+export const dynamic = "force-static";
+
 export default async function LoginPage({
   params,
 }: {

@@ -4,6 +4,10 @@ import { PageHeader } from "@/components/PageHeader";
 import { ContactForm } from "@/components/ContactForm";
 import { BulkQuoteForm } from "@/components/BulkQuoteForm";
 
+// Static content + client-rendered forms — pre-render the shell at build
+// time, no worker invocation per visit.
+export const dynamic = "force-static";
+
 export default async function ContactPage({
   params,
 }: {
