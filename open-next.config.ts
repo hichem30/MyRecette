@@ -1,20 +1,25 @@
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
 
 /**
- * Cloudflare Workers free plan limits each request to 10ms CPU. Without a
- * persistent ISR backend OpenNext re-renders every page on every request
- * which trivially blows that budget on cold isolates.
+ * KV-backed incremental cache is the recommended long-term setup on
+ * Cloudflare Workers (free up to 100k reads/day, ~$0.50/M reads after
+ * that — peanuts even at thousands of customers). It lets ISR pages
+ * serve from a global KV store with ~0ms worker CPU per cached hit,
+ * keeping the free plan's 10ms CPU budget safe forever.
  *
- * KV is free up to 100k reads/day & 1k writes/day, plenty for a storefront
- * with ISR=60s. Pages are served from KV until the revalidate window
- * elapses, after which one request triggers a re-build and the next ~99
- * requests are served from KV again with ~0ms worker CPU.
+ * To turn it on (one-time, dashboard-only — see KV_SETUP.md):
+ *   1. Create the namespace in the Cloudflare dashboard.
+ *   2. Paste the resulting namespace id into the `kv_namespaces`
+ *      block in wrangler.jsonc.
+ *   3. Uncomment the two `// KV:` lines below and redeploy.
  *
- * Provision the namespace once with:
- *   npx wrangler kv namespace create NEXT_INC_CACHE_KV
- * then paste the returned id into wrangler.jsonc under kv_namespaces.
+ * We default to no incremental cache so deploys never fail because of
+ * a missing KV binding — the storefront ISR-renders per request, which
+ * is fine for the current traffic level and only becomes a CPU concern
+ * once you're seeing real production load.
  */
+// KV: import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
+
 export default defineCloudflareConfig({
-  incrementalCache: kvIncrementalCache,
+  // KV: incrementalCache: kvIncrementalCache,
 });
