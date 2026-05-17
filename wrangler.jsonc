@@ -25,7 +25,7 @@
   // create a namespace once:
   //   npx wrangler kv namespace create NEXT_INC_CACHE_KV
   // then paste the returned id below and re-deploy:
-  // ,"kv_namespaces": [
-  //   { "binding": "NEXT_INC_CACHE_KV", "id": "<paste-id-here>" }
-  // ]
+   ,"kv_namespaces": [
+     { "binding": "NEXT_INC_CACHE_KV", "id": "398d8f4e6c2d449eb60ff08274477f9b" }
+    ]
 }
