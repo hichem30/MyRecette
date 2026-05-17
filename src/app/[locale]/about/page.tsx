@@ -4,10 +4,11 @@ import { Award, DollarSign, Hammer, Heart, MapPin, Users } from "lucide-react";
 import { Link } from "@/lib/i18n/navigation";
 
 export default async function AboutPage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("about");
   const lang = locale as "en" | "es";

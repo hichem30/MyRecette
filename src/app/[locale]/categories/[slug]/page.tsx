@@ -15,10 +15,11 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({
-  params: { locale, slug },
+  params,
 }: {
-  params: { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
+  const { locale, slug } = await params;
   const cat = await getCategoryBySlug(slug);
   if (!cat) return {};
   const lang = locale as "en" | "es";
@@ -45,10 +46,11 @@ export async function generateMetadata({
 }
 
 export default async function CategoryDetail({
-  params: { locale, slug },
+  params,
 }: {
-  params: { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 }) {
+  const { locale, slug } = await params;
   setRequestLocale(locale);
   const cat = await getCategoryBySlug(slug);
   if (!cat) notFound();

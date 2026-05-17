@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   }
 
   // Authenticate the caller and confirm they are themselves an admin.
-  const sbSession = getSupabaseRouteClient();
+  const sbSession = await getSupabaseRouteClient();
   const {
     data: { user: caller },
     error: userErr,

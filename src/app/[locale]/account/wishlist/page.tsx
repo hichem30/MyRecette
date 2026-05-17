@@ -5,10 +5,11 @@ import { getAllProducts } from "@/lib/data";
 export const revalidate = 60;
 
 export default async function AccountWishlist({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("wishlist");
   const products = await getAllProducts();

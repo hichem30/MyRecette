@@ -7,10 +7,11 @@ import { getDeals } from "@/lib/data";
 export const revalidate = 60;
 
 export default async function DealsPage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("deals");
   const deals = await getDeals();

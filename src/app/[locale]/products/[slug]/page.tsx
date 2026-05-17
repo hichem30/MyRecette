@@ -24,10 +24,11 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({
-  params: { locale, slug },
+  params,
 }: {
-  params: { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
+  const { locale, slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return {};
   const lang = locale as "en" | "es";
@@ -57,10 +58,11 @@ export async function generateMetadata({
 }
 
 export default async function ProductDetail({
-  params: { locale, slug },
+  params,
 }: {
-  params: { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 }) {
+  const { locale, slug } = await params;
   setRequestLocale(locale);
   const product = await getProductBySlug(slug);
   if (!product) notFound();

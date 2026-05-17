@@ -14,7 +14,8 @@ import {
 
 export const revalidate = 60;
 
-export default async function HomePage({ params: { locale } }: { params: { locale: string } }) {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   setRequestLocale(locale);
   const tH = await getTranslations("home");
   const tC = await getTranslations("common");

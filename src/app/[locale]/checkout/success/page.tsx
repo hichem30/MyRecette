@@ -20,17 +20,19 @@ async function lookupEmail(sessionId: string | undefined): Promise<string | null
 }
 
 export default async function SuccessPage({
-  params: { locale },
+  params,
   searchParams,
 }: {
-  params: { locale: string };
-  searchParams: { email?: string; session_id?: string };
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ email?: string; session_id?: string }>;
 }) {
+  const { locale } = await params;
+  const sp = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("checkout");
   const email =
-    (searchParams.email && searchParams.email.includes("@") ? searchParams.email : null) ??
-    (await lookupEmail(searchParams.session_id)) ??
+    (sp.email && sp.email.includes("@") ? sp.email : null) ??
+    (await lookupEmail(sp.session_id)) ??
     (locale === "en" ? "your inbox" : "su correo");
   return (
     <section className="container-page flex flex-col items-center py-20 text-center">

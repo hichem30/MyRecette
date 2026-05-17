@@ -7,10 +7,11 @@ import { ProductsListing } from "@/components/ProductsListing";
 export const revalidate = 60;
 
 export default async function ProductsPage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("products");
   const [products, categories] = await Promise.all([getAllProducts(), getAllCategories()]);

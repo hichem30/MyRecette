@@ -5,10 +5,11 @@ import { ContactForm } from "@/components/ContactForm";
 import { BulkQuoteForm } from "@/components/BulkQuoteForm";
 
 export default async function ContactPage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("contact");
 

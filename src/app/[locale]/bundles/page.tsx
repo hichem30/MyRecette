@@ -25,10 +25,11 @@ async function getActiveBundles(): Promise<Bundle[]> {
 }
 
 export default async function BundlesPage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("bundles");
   const lang = locale as "en" | "es";

@@ -5,7 +5,7 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
   if (code) {
-    const supabase = getSupabaseRouteClient();
+    const supabase = await getSupabaseRouteClient();
     await supabase.auth.exchangeCodeForSession(code);
   }
   // Validate `next` to prevent open-redirect: must be a relative path

@@ -7,10 +7,11 @@ import { getAllCategories, getAllProducts } from "@/lib/data";
 export const revalidate = 60;
 
 export default async function CategoriesPage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("categories");
   const [cats, products] = await Promise.all([getAllCategories(), getAllProducts()]);
