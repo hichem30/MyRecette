@@ -60,9 +60,20 @@ export default function EditProduct() {
       return;
     }
     const sb = getSupabaseBrowserClient();
+    // Spanish has been deprecated — mirror the English text into the `es`
+    // slot so the existing JSONB columns still validate and any old `[lang]`
+    // reads on the storefront keep working.
+    const en = product.name?.en ?? "";
+    const descEn = product.description?.en ?? "";
+    const dtEn = product.discount_text?.en ?? "";
     const payload = {
       ...product,
-      slug: product.slug || (product.name?.en ?? "").toLowerCase().replace(/\s+/g, "-"),
+      name: { en, es: en },
+      description: { en: descEn, es: descEn },
+      discount_text: product.discount
+        ? { en: dtEn, es: dtEn }
+        : product.discount_text ?? null,
+      slug: product.slug || en.toLowerCase().replace(/\s+/g, "-"),
     };
     const { error } = isNew
       ? await sb.from("products").insert(payload)
@@ -76,14 +87,14 @@ export default function EditProduct() {
     router.replace("/admin/products");
   }
 
-  function setName(lang: "en" | "es", value: string) {
-    setProduct((p) => ({ ...p, name: { ...(p.name ?? { en: "", es: "" }), [lang]: value } }));
+  function setName(value: string) {
+    setProduct((p) => ({ ...p, name: { en: value, es: value } }));
   }
-  function setDesc(lang: "en" | "es", value: string) {
-    setProduct((p) => ({ ...p, description: { ...(p.description ?? { en: "", es: "" }), [lang]: value } }));
+  function setDesc(value: string) {
+    setProduct((p) => ({ ...p, description: { en: value, es: value } }));
   }
-  function setDiscountText(lang: "en" | "es", value: string) {
-    setProduct((p) => ({ ...p, discount_text: { ...(p.discount_text ?? { en: "", es: "" }), [lang]: value } }));
+  function setDiscountText(value: string) {
+    setProduct((p) => ({ ...p, discount_text: { en: value, es: value } }));
   }
 
   return (
@@ -94,23 +105,13 @@ export default function EditProduct() {
       <h1 className="mt-3 font-serif text-2xl font-bold">{isNew ? "Add Product" : "Edit Product"}</h1>
 
       <form onSubmit={save} className="mt-6 space-y-5 rounded-xl border border-neutral-200 bg-white p-6">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Name (English)">
-            <input required value={product.name?.en ?? ""} onChange={(e) => setName("en", e.target.value)} className="adm-input" />
-          </Field>
-          <Field label="Name (Spanish)">
-            <input value={product.name?.es ?? ""} onChange={(e) => setName("es", e.target.value)} className="adm-input" />
-          </Field>
-        </div>
+        <Field label="Name">
+          <input required value={product.name?.en ?? ""} onChange={(e) => setName(e.target.value)} className="adm-input" />
+        </Field>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Description (English)">
-            <textarea rows={3} value={product.description?.en ?? ""} onChange={(e) => setDesc("en", e.target.value)} className="adm-input" />
-          </Field>
-          <Field label="Description (Spanish)">
-            <textarea rows={3} value={product.description?.es ?? ""} onChange={(e) => setDesc("es", e.target.value)} className="adm-input" />
-          </Field>
-        </div>
+        <Field label="Description">
+          <textarea rows={3} value={product.description?.en ?? ""} onChange={(e) => setDesc(e.target.value)} className="adm-input" />
+        </Field>
 
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label="Price (USD)">
@@ -155,14 +156,9 @@ export default function EditProduct() {
 
         {product.discount && (
           <>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Discount Text (English)">
-                <input value={product.discount_text?.en ?? ""} onChange={(e) => setDiscountText("en", e.target.value)} placeholder="22% OFF" className="adm-input" />
-              </Field>
-              <Field label="Discount Text (Spanish)">
-                <input value={product.discount_text?.es ?? ""} onChange={(e) => setDiscountText("es", e.target.value)} placeholder="22% DESC" className="adm-input" />
-              </Field>
-            </div>
+            <Field label="Discount Text">
+              <input value={product.discount_text?.en ?? ""} onChange={(e) => setDiscountText(e.target.value)} placeholder="22% OFF" className="adm-input" />
+            </Field>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Discount starts (optional)">
                 <input

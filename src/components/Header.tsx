@@ -4,7 +4,6 @@ import { ChevronDown, Heart, LayoutDashboard, LogOut, Menu, Package, Search, Sho
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "./Logo";
-import { LanguageSelector } from "./LanguageSelector";
 import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { useCart } from "@/lib/cart/CartProvider";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
@@ -143,11 +142,6 @@ export function Header() {
           >
             <Search className="h-4 w-4" />
           </button>
-          {/* Hide language toggle on mobile to free up space — it lives
-              inside the hamburger drawer below. */}
-          <div className="hidden md:block">
-            <LanguageSelector />
-          </div>
           <Link
             href="/wishlist"
             aria-label={t("wishlist")}
@@ -324,10 +318,6 @@ export function Header() {
                 {t(item.key)}
               </Link>
             ))}
-            <div className="mt-2 flex items-center justify-between rounded-md px-3 py-2">
-              <span className="text-sm font-medium text-neutral-700">{t("language")}</span>
-              <LanguageSelector />
-            </div>
             {authed ? (
               <>
                 <div className="mt-2 border-t border-neutral-100 pt-2" />

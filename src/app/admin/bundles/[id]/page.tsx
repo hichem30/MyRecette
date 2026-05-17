@@ -55,7 +55,7 @@ export default function EditBundle() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return products;
-    return products.filter((p) => p.name.en.toLowerCase().includes(q) || p.name.es.toLowerCase().includes(q));
+    return products.filter((p) => p.name.en.toLowerCase().includes(q));
   }, [products, search]);
 
   function toggle(productId: string) {
@@ -83,9 +83,13 @@ export default function EditBundle() {
       return;
     }
     const sb = getSupabaseBrowserClient();
+    // Spanish is deprecated — mirror the English text into `es` so the JSONB
+    // columns keep their existing shape.
+    const en = bundle.name?.en ?? "";
+    const descEn = bundle.description?.en ?? "";
     const payload = {
-      name: bundle.name,
-      description: bundle.description,
+      name: { en, es: en },
+      description: { en: descEn, es: descEn },
       bundle_price: bundle.bundle_price,
       image_url: bundle.image_url || null,
       product_ids: bundle.product_ids,
@@ -113,23 +117,13 @@ export default function EditBundle() {
       <h1 className="mt-3 font-serif text-2xl font-bold">{isNew ? "New Bundle" : "Edit Bundle"}</h1>
 
       <form onSubmit={save} className="mt-6 space-y-5 rounded-xl border border-neutral-200 bg-white p-6">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Name (EN)">
-            <input required value={bundle.name?.en ?? ""} onChange={(e) => setBundle((b) => ({ ...b, name: { en: e.target.value, es: b.name?.es ?? "" } }))} className="adm-input" />
-          </Field>
-          <Field label="Name (ES)">
-            <input value={bundle.name?.es ?? ""} onChange={(e) => setBundle((b) => ({ ...b, name: { en: b.name?.en ?? "", es: e.target.value } }))} className="adm-input" />
-          </Field>
-        </div>
+        <Field label="Name">
+          <input required value={bundle.name?.en ?? ""} onChange={(e) => setBundle((b) => ({ ...b, name: { en: e.target.value, es: e.target.value } }))} className="adm-input" />
+        </Field>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Description (EN)">
-            <textarea rows={2} value={bundle.description?.en ?? ""} onChange={(e) => setBundle((b) => ({ ...b, description: { en: e.target.value, es: b.description?.es ?? "" } }))} className="adm-input" />
-          </Field>
-          <Field label="Description (ES)">
-            <textarea rows={2} value={bundle.description?.es ?? ""} onChange={(e) => setBundle((b) => ({ ...b, description: { en: b.description?.en ?? "", es: e.target.value } }))} className="adm-input" />
-          </Field>
-        </div>
+        <Field label="Description">
+          <textarea rows={2} value={bundle.description?.en ?? ""} onChange={(e) => setBundle((b) => ({ ...b, description: { en: e.target.value, es: e.target.value } }))} className="adm-input" />
+        </Field>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Bundle price (USD)">

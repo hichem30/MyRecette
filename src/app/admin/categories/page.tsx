@@ -12,7 +12,6 @@ export default function AdminCategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [nameEn, setNameEn] = useState("");
-  const [nameEs, setNameEs] = useState("");
   const [slug, setSlug] = useState("");
   const [editingDiscount, setEditingDiscount] = useState<string | null>(null);
 
@@ -36,9 +35,11 @@ export default function AdminCategoriesPage() {
       return;
     }
     const sb = getSupabaseBrowserClient();
+    // Spanish is deprecated — mirror English into the `es` slot to keep the
+    // existing JSONB column shape valid.
     const { data, error } = await sb
       .from("categories")
-      .insert({ slug, name: { en: nameEn, es: nameEs } })
+      .insert({ slug, name: { en: nameEn, es: nameEn } })
       .select()
       .single();
     if (error) {
@@ -49,7 +50,6 @@ export default function AdminCategoriesPage() {
       setItems((prev) => [...prev, data as Category]);
       setAdding(false);
       setNameEn("");
-      setNameEs("");
       setSlug("");
       await revalidateAdmin("categories", (data as Category).slug);
     }
@@ -109,11 +109,10 @@ export default function AdminCategoriesPage() {
       </div>
 
       {adding && (
-        <form onSubmit={add} className="mb-5 grid gap-3 rounded-xl border border-neutral-200 bg-white p-4 sm:grid-cols-3">
+        <form onSubmit={add} className="mb-5 grid gap-3 rounded-xl border border-neutral-200 bg-white p-4 sm:grid-cols-2">
           <input placeholder="Slug" required value={slug} onChange={(e) => setSlug(e.target.value)} className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm" />
-          <input placeholder="Name (EN)" required value={nameEn} onChange={(e) => setNameEn(e.target.value)} className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm" />
-          <input placeholder="Name (ES)" value={nameEs} onChange={(e) => setNameEs(e.target.value)} className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm" />
-          <button type="submit" className="sm:col-span-3 rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-bold text-white">Create</button>
+          <input placeholder="Name" required value={nameEn} onChange={(e) => setNameEn(e.target.value)} className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm" />
+          <button type="submit" className="sm:col-span-2 rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-bold text-white">Create</button>
         </form>
       )}
 
@@ -122,24 +121,22 @@ export default function AdminCategoriesPage() {
           <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
             <tr>
               <th className="px-4 py-3">Slug</th>
-              <th className="px-4 py-3">Name (EN)</th>
-              <th className="px-4 py-3">Name (ES)</th>
+              <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Discount</th>
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-100">
             {loading ? (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-neutral-400">Loading...</td></tr>
+              <tr><td colSpan={4} className="px-4 py-8 text-center text-neutral-400">Loading...</td></tr>
             ) : items.length === 0 ? (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-neutral-400">No categories yet.</td></tr>
+              <tr><td colSpan={4} className="px-4 py-8 text-center text-neutral-400">No categories yet.</td></tr>
             ) : (
               items.map((c) => (
                 <Fragment key={c.id}>
                   <tr>
                     <td className="px-4 py-3 font-mono text-xs">{c.slug}</td>
                     <td className="px-4 py-3">{c.name.en}</td>
-                    <td className="px-4 py-3 text-neutral-500">{c.name.es}</td>
                     <td className="px-4 py-3 text-xs">
                       {c.discount_percent && c.discount_percent > 0 ? (
                         <span className="rounded-full bg-amber-100 px-2 py-0.5 font-bold text-amber-800">
@@ -163,7 +160,7 @@ export default function AdminCategoriesPage() {
                   </tr>
                   {editingDiscount === c.id && (
                     <tr className="bg-neutral-50">
-                      <td colSpan={5} className="px-4 py-4">
+                      <td colSpan={4} className="px-4 py-4">
                         <DiscountEditor category={c} onSave={(p, s, e) => saveDiscount(c, p, s, e)} />
                       </td>
                     </tr>
