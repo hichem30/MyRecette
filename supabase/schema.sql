@@ -403,10 +403,10 @@ $$;
 revoke all on function public.admin_subscriber_emails() from public, anon;
 grant execute on function public.admin_subscriber_emails() to authenticated;
 
--- Drop the old public.is_admin now that nothing references it. Done
--- after admin_list_users/admin_subscriber_emails are recreated to use
--- private.is_admin so the dependency chain is clean.
-drop function if exists public.is_admin();
+-- Drop the old public.is_admin. CASCADE removes any RLS policies that
+-- still reference the old function — that's fine because Section 4
+-- below recreates every policy from scratch using private.is_admin().
+drop function if exists public.is_admin() cascade;
 
 -- Promo code: validate + consume
 -- Drop old single-arg signature so PostgREST/Supabase only exposes the new
