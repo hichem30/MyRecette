@@ -2,7 +2,6 @@
 
 import { ChevronDown, ChevronRight, Copy, Mail, Search, X } from "lucide-react";
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Order, OrderStatus } from "@/lib/types";
 
 const STATUS_OPTIONS: OrderStatus[] = [
@@ -38,33 +37,43 @@ export default function AdminOrdersPage() {
   }, []);
 
   useEffect(() => {
-    if (!isSupabaseConfigured()) {
-      setItems([]);
-      setLoading(false);
-      return;
-    }
-    const sb = getSupabaseBrowserClient();
-    sb.from("orders").select("*").order("created_at", { ascending: false }).then(({ data }) => {
-      setItems((data as Order[]) ?? []);
-      setLoading(false);
-    });
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/orders", { cache: "no-store" });
+        const json = (await res.json()) as { orders?: Order[] };
+        if (cancelled) return;
+        setItems(json.orders ?? []);
+      } catch {
+        if (!cancelled) setItems([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function changeStatus(id: string, status: OrderStatus) {
     setSavingStatusId(id);
-    if (!isSupabaseConfigured()) {
+    try {
+      const res = await fetch(`/api/admin/orders/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const json = (await res.json()) as { ok?: boolean; error?: string };
+      if (!res.ok || !json.ok) {
+        alert(json.error ?? "Could not update order");
+        return;
+      }
       setItems((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Could not update order");
+    } finally {
       setSavingStatusId(null);
-      return;
     }
-    const sb = getSupabaseBrowserClient();
-    const { error } = await sb.from("orders").update({ status }).eq("id", id);
-    setSavingStatusId(null);
-    if (error) {
-      alert(error.message);
-      return;
-    }
-    setItems((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
   }
 
   function copyEmail(e: string | null | undefined) {
@@ -87,12 +96,6 @@ export default function AdminOrdersPage() {
         {filteredItems.length} of {items.length} order{items.length === 1 ? "" : "s"}
         {emailFilter ? ` matching “${emailFilter}”` : ""}.
       </p>
-
-      {!isSupabaseConfigured() && (
-        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-          Orders are written by the Stripe webhook into Supabase. Configure both before this works.
-        </div>
-      )}
 
       <div className="mt-4 flex items-center gap-2 rounded-md border border-neutral-300 bg-white px-3 py-2">
         <Search className="h-4 w-4 flex-none text-neutral-400" />

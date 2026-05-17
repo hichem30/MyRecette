@@ -4,7 +4,6 @@ import { ChevronRight, Package } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
-import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Order, OrderStatus } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 
@@ -23,29 +22,18 @@ export default function MyOrdersPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isSupabaseConfigured()) {
-      setLoading(false);
-      return;
-    }
-    const sb = getSupabaseBrowserClient();
     let cancelled = false;
     async function load() {
-      const { data: userData } = await sb.auth.getUser();
-      const email = userData.user?.email;
-      if (!email) {
+      try {
+        const res = await fetch("/api/orders/mine", { cache: "no-store" });
+        const json = (await res.json()) as { orders?: Order[] };
+        if (cancelled) return;
+        setOrders(json.orders ?? []);
+      } catch {
+        if (!cancelled) setOrders([]);
+      } finally {
         if (!cancelled) setLoading(false);
-        return;
       }
-      // Case-insensitive match — Stripe Checkout normalises but the user
-      // may have edited it, and Postgres `=` is case-sensitive.
-      const { data } = await sb
-        .from("orders")
-        .select("*")
-        .ilike("customer_email", email)
-        .order("created_at", { ascending: false });
-      if (cancelled) return;
-      setOrders((data as Order[]) ?? []);
-      setLoading(false);
     }
     load();
     return () => {

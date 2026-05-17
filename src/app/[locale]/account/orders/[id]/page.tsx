@@ -5,7 +5,6 @@ import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useLocale } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
-import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Order, OrderStatus } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 
@@ -33,20 +32,21 @@ export default function MyOrderDetail() {
   const [order, setOrder] = useState<Order | null | undefined>(undefined);
 
   useEffect(() => {
-    if (!isSupabaseConfigured() || !id) {
+    if (!id) {
       setOrder(null);
       return;
     }
-    const sb = getSupabaseBrowserClient();
     let cancelled = false;
-    sb.from("orders")
-      .select("*")
-      .eq("id", id)
-      .maybeSingle()
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const res = await fetch(`/api/orders/mine/${id}`, { cache: "no-store" });
+        const json = (await res.json()) as { order?: Order | null };
         if (cancelled) return;
-        setOrder((data as Order | null) ?? null);
-      });
+        setOrder(json.order ?? null);
+      } catch {
+        if (!cancelled) setOrder(null);
+      }
+    })();
     return () => {
       cancelled = true;
     };

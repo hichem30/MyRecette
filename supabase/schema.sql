@@ -646,12 +646,17 @@ create policy "orders admin write" on public.orders
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
 
+-- Customer can read their own orders. We compare the row's email to the
+-- JWT's `email` claim — authenticated users can't read `auth.users`
+-- directly so a subquery there would always return NULL, which is what
+-- previously made the /account/orders page come back empty even when
+-- the order row existed.
 drop policy if exists "orders user read own" on public.orders;
 create policy "orders user read own" on public.orders
   for select using (
     customer_email is not null
-    and lower(customer_email) = (
-      select lower(email) from auth.users where id = (select auth.uid())
+    and lower(customer_email) = lower(
+      coalesce((auth.jwt() ->> 'email')::text, '')
     )
   );
 

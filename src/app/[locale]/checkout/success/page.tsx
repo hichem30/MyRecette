@@ -1,123 +1,10 @@
 import { CheckCircle2 } from "lucide-react";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import type Stripe from "stripe";
 import { Link } from "@/lib/i18n/navigation";
 import { CartClearOnMount } from "@/components/CartClearOnMount";
-import { getStripeClient } from "@/lib/stripe/server";
-import { getSupabaseAdminClient } from "@/lib/supabase/server";
+import { CheckoutSuccessRecorder } from "@/components/CheckoutSuccessRecorder";
 
 export const dynamic = "force-dynamic";
-
-interface StockItem {
-  product_id: string;
-  quantity: number;
-}
-
-/**
- * Safety net for missed webhooks: if the Stripe webhook hasn't reached us
- * yet (e.g. wrong secret, transient network), but the customer landed on
- * /checkout/success after a real successful payment, we still want their
- * order to appear in /account/orders. So we look up the session ourselves
- * and upsert into the DB (idempotent via the unique stripe_session_id).
- */
-async function ensureOrderRecorded(sessionId: string | undefined): Promise<string | null> {
-  if (!sessionId) return null;
-  const stripe = getStripeClient();
-  if (!stripe) {
-    console.warn("[checkout/success] stripe client unavailable, cannot back-fill");
-    return null;
-  }
-  let session: Stripe.Checkout.Session;
-  try {
-    session = await stripe.checkout.sessions.retrieve(sessionId);
-  } catch (err) {
-    console.error("[checkout/success] retrieve session failed:", err);
-    return null;
-  }
-
-  if (session.payment_status !== "paid") {
-    console.log("[checkout/success] session not paid yet:", session.payment_status);
-    return session.customer_details?.email ?? session.customer_email ?? null;
-  }
-
-  const rawEmail = session.customer_details?.email ?? session.customer_email ?? null;
-  const email = rawEmail ? rawEmail.trim().toLowerCase() : null;
-  const admin = getSupabaseAdminClient();
-  if (!admin) {
-    console.warn(
-      "[checkout/success] supabase admin client unavailable (SUPABASE_SERVICE_ROLE_KEY missing). Order will not be back-filled.",
-    );
-    return email;
-  }
-
-  try {
-    const { data: existing } = await admin
-      .from("orders")
-      .select("id")
-      .eq("stripe_session_id", session.id)
-      .maybeSingle();
-    if (existing) {
-      console.log("[checkout/success] order already present (webhook beat us):", session.id);
-      return email;
-    }
-
-    let metaItems: StockItem[] = [];
-    const raw = session.metadata?.items;
-    if (typeof raw === "string") {
-      try {
-        const parsed = JSON.parse(raw) as unknown;
-        if (Array.isArray(parsed)) {
-          metaItems = parsed.filter(
-            (x): x is StockItem =>
-              typeof x === "object" &&
-              x !== null &&
-              typeof (x as StockItem).product_id === "string" &&
-              typeof (x as StockItem).quantity === "number",
-          );
-        }
-      } catch {
-        /* malformed metadata — skip silently */
-      }
-    }
-
-    const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
-    const items = lineItems.data.map((li, idx) => ({
-      product_id: metaItems[idx]?.product_id,
-      product_name: li.description ?? li.price?.nickname ?? "Product",
-      quantity: li.quantity ?? 1,
-      unit_amount: (li.amount_total ?? 0) / (li.quantity ?? 1),
-    }));
-
-    const { error: insertErr } = await admin.from("orders").insert({
-      stripe_session_id: session.id,
-      customer_email: email,
-      total_amount: (session.amount_total ?? 0) / 100,
-      line_items: items,
-      status: "paid",
-    });
-    if (insertErr) {
-      console.error("[checkout/success] order insert failed:", {
-        session_id: session.id,
-        email,
-        code: insertErr.code,
-        message: insertErr.message,
-        details: insertErr.details,
-      });
-    } else {
-      console.log("[checkout/success] order back-filled:", { session_id: session.id, email });
-    }
-
-    if (metaItems.length > 0) {
-      const { error: stockErr } = await admin.rpc("decrement_product_stock", { items: metaItems });
-      if (stockErr) {
-        console.error("[checkout/success] decrement_product_stock failed:", stockErr.message);
-      }
-    }
-  } catch (err) {
-    console.error("[checkout/success] failed to back-fill order:", err);
-  }
-  return email;
-}
 
 export default async function SuccessPage({
   params,
@@ -130,16 +17,14 @@ export default async function SuccessPage({
   const sp = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("checkout");
-  let backfilledEmail: string | null = null;
-  try {
-    backfilledEmail = await ensureOrderRecorded(sp.session_id);
-  } catch (err) {
-    console.error("[checkout/success] ensureOrderRecorded threw:", err);
-  }
+  const sessionId = sp.session_id ?? "";
   const email =
-    (sp.email && sp.email.includes("@") ? sp.email : null) ??
-    backfilledEmail ??
-    (locale === "en" ? "your inbox" : "su correo");
+    sp.email && sp.email.includes("@")
+      ? sp.email
+      : locale === "en"
+        ? "your inbox"
+        : "su correo";
+
   return (
     <section className="container-page flex flex-col items-center py-20 text-center">
       <CartClearOnMount />
@@ -150,6 +35,11 @@ export default async function SuccessPage({
       <p className="mt-2 max-w-md text-sm text-neutral-600">
         {t("successBody", { email })}
       </p>
+
+      {sessionId && (
+        <CheckoutSuccessRecorder sessionId={sessionId} locale={locale as "en" | "es"} />
+      )}
+
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
         <Link
           href="/account/orders"
