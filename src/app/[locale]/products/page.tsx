@@ -4,7 +4,7 @@ import { getAllCategories, getAllProducts } from "@/lib/data";
 import { PageHeader } from "@/components/PageHeader";
 import { ProductsListing } from "@/components/ProductsListing";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export default async function ProductsPage({
   params,

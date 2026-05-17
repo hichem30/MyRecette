@@ -8,7 +8,7 @@ import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/se
 import { formatPrice } from "@/lib/utils";
 import type { Bundle, Product } from "@/lib/types";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 async function getActiveBundles(): Promise<Bundle[]> {
   if (!isSupabaseConfigured()) return [];

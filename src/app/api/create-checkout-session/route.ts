@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getStripeClient } from "@/lib/stripe/server";
 import { getAllProducts } from "@/lib/data";
-import { getSupabaseAdminClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient, getSupabaseRouteClient } from "@/lib/supabase/server";
 
 const BodySchema = z.object({
   items: z
@@ -199,6 +199,18 @@ export async function POST(req: Request) {
     process.env.NEXT_PUBLIC_SITE_URL ??
     "http://localhost:3000";
 
+  // If the visitor is signed in, pin their auth email to the Stripe session
+  // so the order saved by the webhook matches their account exactly (and
+  // shows up in their /account/orders history).
+  let signedInEmail: string | null = null;
+  try {
+    const supabase = await getSupabaseRouteClient();
+    const { data } = await supabase.auth.getUser();
+    signedInEmail = data.user?.email ?? null;
+  } catch {
+    /* anon checkout — Stripe will ask for the email itself */
+  }
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -210,12 +222,14 @@ export async function POST(req: Request) {
       allow_promotion_codes: discounts.length === 0,
       discounts: discounts.length > 0 ? discounts : undefined,
       locale: parsed.locale === "es" ? "es" : "en",
+      ...(signedInEmail ? { customer_email: signedInEmail } : {}),
       success_url: `${origin}/${parsed.locale}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/${parsed.locale}/checkout/cancel`,
       metadata: {
         source: "redbarn-storefront",
         items: JSON.stringify(stockDecrement),
         ...(promoApplied ? { promo_code: promoApplied.code } : {}),
+        ...(signedInEmail ? { user_email: signedInEmail } : {}),
       },
     });
 

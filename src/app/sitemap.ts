@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getAllCategories, getAllProducts } from "@/lib/data";
 import { locales } from "@/lib/i18n/config";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 const STATIC_PATHS = [
   "",

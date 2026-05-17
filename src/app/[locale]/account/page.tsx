@@ -43,7 +43,7 @@ export default function AccountHome() {
         joined: user.created_at ?? null,
       });
       const [{ count: o }, { count: w }] = await Promise.all([
-        sb.from("orders").select("id", { count: "exact", head: true }).eq("customer_email", user.email ?? ""),
+        sb.from("orders").select("id", { count: "exact", head: true }).ilike("customer_email", user.email ?? ""),
         sb.from("wishlists").select("user_id", { count: "exact", head: true }).eq("user_id", user.id),
       ]);
       if (!cancelled) setStats({ orders: o ?? 0, wishlist: w ?? 0 });

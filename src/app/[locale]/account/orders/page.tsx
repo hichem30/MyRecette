@@ -36,10 +36,12 @@ export default function MyOrdersPage() {
         if (!cancelled) setLoading(false);
         return;
       }
+      // Case-insensitive match — Stripe Checkout normalises but the user
+      // may have edited it, and Postgres `=` is case-sensitive.
       const { data } = await sb
         .from("orders")
         .select("*")
-        .eq("customer_email", email)
+        .ilike("customer_email", email)
         .order("created_at", { ascending: false });
       if (cancelled) return;
       setOrders((data as Order[]) ?? []);

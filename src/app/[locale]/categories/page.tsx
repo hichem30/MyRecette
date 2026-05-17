@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { CategoryCard } from "@/components/CategoryCard";
 import { getAllCategories, getAllProducts } from "@/lib/data";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 export default async function CategoriesPage({
   params,

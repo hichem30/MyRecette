@@ -6,7 +6,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { getAllCategories, getCategoryBySlug, getProductsByCategory } from "@/lib/data";
 import { locales } from "@/lib/i18n/config";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {

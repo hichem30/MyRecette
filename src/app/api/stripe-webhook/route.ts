@@ -84,11 +84,17 @@ export async function POST(req: Request) {
       // Idempotency: orders.stripe_session_id is UNIQUE. If we've already
       // processed this session (Stripe sometimes retries webhooks), the
       // insert returns an error and we skip the stock decrement.
+      // Normalise the email to lowercase so the customer-facing query
+      // (`orders.customer_email = auth.users.email`) matches reliably.
+      const rawEmail =
+        session.customer_details?.email ?? session.customer_email ?? null;
+      const customerEmail = rawEmail ? rawEmail.trim().toLowerCase() : null;
+
       const { data: inserted, error: insertErr } = await admin
         .from("orders")
         .insert({
           stripe_session_id: session.id,
-          customer_email: session.customer_details?.email ?? null,
+          customer_email: customerEmail,
           total_amount: (session.amount_total ?? 0) / 100,
           line_items: items,
           status: "paid",
