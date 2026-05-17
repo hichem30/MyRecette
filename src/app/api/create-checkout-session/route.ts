@@ -303,6 +303,11 @@ export async function POST(req: Request) {
         : { allow_promotion_codes: true }),
       locale: parsed.locale === "es" ? "es" : "en",
       ...(signedInEmail ? { customer_email: signedInEmail } : {}),
+      // Force Stripe to email a receipt to the buyer after successful
+      // payment, regardless of the dashboard's "Successful payments" toggle.
+      ...(signedInEmail
+        ? { payment_intent_data: { receipt_email: signedInEmail } }
+        : {}),
       success_url: `${origin}/${parsed.locale}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/${parsed.locale}/checkout/cancel`,
       metadata: {
