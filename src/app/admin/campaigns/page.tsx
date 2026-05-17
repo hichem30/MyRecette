@@ -2,6 +2,7 @@
 
 import {
   ClipboardCopy,
+  Download,
   ImageIcon,
   Mail,
   Megaphone,
@@ -29,7 +30,9 @@ export default function AdminCampaignsPage() {
   const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(new Set());
   const [selectedBundleIds, setSelectedBundleIds] = useState<Set<string>>(new Set());
   const [selectedPromoIds, setSelectedPromoIds] = useState<Set<string>>(new Set());
-  const [subscribers, setSubscribers] = useState<string[]>([]);
+  const [subscribers, setSubscribers] = useState<
+    Array<{ email: string; subscribed_at: string | null }>
+  >([]);
   const [loading, setLoading] = useState(true);
   const [productFilter, setProductFilter] = useState<ProductFilter>("discount");
   const [productSearch, setProductSearch] = useState("");
@@ -75,10 +78,13 @@ export default function AdminCampaignsPage() {
         (c) => c.max_uses == null || c.uses_count < c.max_uses,
       );
       setPromos(liveCodes);
-      const emails = ((subRes.data as Array<{ email: string }>) ?? [])
-        .map((r) => r.email)
-        .filter((e): e is string => !!e);
-      setSubscribers(emails);
+      const rows = ((subRes.data as Array<{
+        email: string;
+        subscribed_at?: string | null;
+      }>) ?? [])
+        .filter((r) => !!r.email)
+        .map((r) => ({ email: r.email, subscribed_at: r.subscribed_at ?? null }));
+      setSubscribers(rows);
       setLoading(false);
     });
   }, []);
@@ -325,7 +331,39 @@ export default function AdminCampaignsPage() {
   }
 
   function bccString() {
-    return subscribers.join(",");
+    return subscribers.map((s) => s.email).join(",");
+  }
+
+  function exportSubscribersCsv() {
+    if (subscribers.length === 0) {
+      setCopyStatus("No subscribers to export.");
+      window.setTimeout(() => setCopyStatus(null), 2400);
+      return;
+    }
+    // EmailOctopus accepts a CSV with an `email_address` column (plus
+    // any custom fields). We also include `subscribed_at` as a custom
+    // field so the import preserves the original opt-in date.
+    const header = "email_address,subscribed_at";
+    const escape = (v: string) => {
+      if (/[",\n]/.test(v)) return `"${v.replace(/"/g, '""')}"`;
+      return v;
+    };
+    const lines = subscribers.map(
+      (s) => `${escape(s.email)},${escape(s.subscribed_at ?? "")}`,
+    );
+    const csv = `${header}\n${lines.join("\n")}\n`;
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `red-barn-subscribers-${stamp}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setCopyStatus(`Exported ${subscribers.length} subscriber${subscribers.length === 1 ? "" : "s"} to CSV.`);
+    window.setTimeout(() => setCopyStatus(null), 2400);
   }
 
   function mailtoHref() {
@@ -391,10 +429,25 @@ export default function AdminCampaignsPage() {
         <Megaphone className="h-5 w-5 text-barn-700" /> Email Campaigns
       </h1>
       <p className="mt-1 text-sm text-neutral-500">
-        Pick any combination of products (new arrivals, sale items, or anything in the catalog), bundle deals,
-        and promo codes. Then choose how you want to send: your default mail app, ProtonMail, or copy to clipboard
-        for any other tool.
+        Pick any combination of products, bundles, and promo codes — then either copy the styled HTML into
+        Mailspring/Gmail/etc, or export the subscriber list as CSV for a service like EmailOctopus.
       </p>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={exportSubscribersCsv}
+          disabled={loading || subscribers.length === 0}
+          className="inline-flex items-center gap-1.5 rounded-md border border-neutral-300 bg-white px-3 py-2 text-xs font-semibold text-neutral-700 hover:border-barn-600 hover:text-barn-700 disabled:cursor-not-allowed disabled:opacity-50"
+          title="Download every opted-in subscriber as a CSV file you can upload to EmailOctopus, Mailchimp, Brevo, etc."
+        >
+          <Download className="h-3.5 w-3.5" />
+          Export subscribers (CSV)
+        </button>
+        <span className="text-[11px] text-neutral-500">
+          For EmailOctopus → New list → Add subscribers → Upload CSV.
+        </span>
+      </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-4">
         <Stat

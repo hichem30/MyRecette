@@ -387,13 +387,16 @@ revoke all on function public.admin_list_users() from public, anon;
 grant execute on function public.admin_list_users() to authenticated;
 
 -- admin_subscriber_emails (campaigns page)
+-- Drop old single-column signature so PostgREST exposes only the new one.
+drop function if exists public.admin_subscriber_emails();
+
 create or replace function public.admin_subscriber_emails()
-returns table (email text)
+returns table (email text, subscribed_at timestamptz)
 language sql
 security definer
 set search_path = public, pg_temp
 as $$
-  select p.email
+  select p.email, p.created_at
   from public.profiles p
   where private.is_admin()
     and p.marketing_optin = true
