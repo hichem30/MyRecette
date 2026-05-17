@@ -295,6 +295,7 @@ export async function POST(req: Request) {
       line_items: lineItems,
       automatic_tax: { enabled: false },
       shipping_address_collection: { allowed_countries: ["US"] },
+      phone_number_collection: { enabled: true },
       // Stripe rejects both fields together (even allow_promotion_codes:false
       // + discounts errors). Include exactly one based on whether we already
       // attached an internal coupon.

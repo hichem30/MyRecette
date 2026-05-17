@@ -211,11 +211,30 @@ export async function POST(req: Request): Promise<NextResponse<OrderDiagnostics>
     unit_amount: (li.amount_total ?? 0) / (li.quantity ?? 1),
   }));
 
+  // Stripe Checkout's shipping_address_collection puts the address on
+  // session.collected_information.shipping_details (API 2024-12+).
+  const shipping = session.collected_information?.shipping_details ?? null;
+  const shippingName = shipping?.name ?? null;
+  const shippingAddress = shipping?.address
+    ? {
+        line1: shipping.address.line1 ?? null,
+        line2: shipping.address.line2 ?? null,
+        city: shipping.address.city ?? null,
+        state: shipping.address.state ?? null,
+        postal_code: shipping.address.postal_code ?? null,
+        country: shipping.address.country ?? null,
+      }
+    : null;
+  const customerPhone = session.customer_details?.phone ?? null;
+
   const { data: inserted, error: insertErr } = await admin
     .from("orders")
     .insert({
       stripe_session_id: sessionId,
       customer_email: email,
+      customer_phone: customerPhone,
+      shipping_name: shippingName,
+      shipping_address: shippingAddress,
       total_amount: (session.amount_total ?? 0) / 100,
       line_items: items,
       status: "paid",

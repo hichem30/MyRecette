@@ -87,6 +87,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<"loading" | "anon" | "non_admin" | "admin">("loading");
   const [email, setEmail] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // Don't auth-gate the login page
   const isLogin = pathname === "/admin/login";
@@ -162,6 +163,42 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     setMobileOpen(false);
   }, [pathname]);
 
+  // Poll the unread-messages count for the sidebar badge. Only runs once
+  // the user is confirmed admin so non-admins never trigger the query.
+  useEffect(() => {
+    if (status !== "admin") return;
+    if (!isSupabaseConfigured()) return;
+    const supabase = getSupabaseBrowserClient();
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    async function load() {
+      try {
+        const { count } = await supabase
+          .from("messages")
+          .select("id", { count: "exact", head: true })
+          .eq("read", false);
+        if (!cancelled) setUnreadCount(count ?? 0);
+      } catch {
+        /* network blip — try again on the next tick */
+      }
+      if (!cancelled) timer = setTimeout(load, 30_000);
+    }
+    load();
+
+    // Refresh immediately when the messages page reports a state change.
+    function onUpdate() {
+      load();
+    }
+    window.addEventListener("messages:read-changed", onUpdate);
+
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+      window.removeEventListener("messages:read-changed", onUpdate);
+    };
+  }, [status, pathname]);
+
   async function signOut() {
     if (!isSupabaseConfigured()) {
       router.replace("/admin/login");
@@ -205,6 +242,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             {group.items.map(({ href, label, Icon }) => {
               const active =
                 href === pathname || (href !== "/admin" && pathname.startsWith(href));
+              const badge = href === "/admin/messages" && unreadCount > 0 ? unreadCount : 0;
               return (
                 <Link
                   key={href}
@@ -217,6 +255,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 >
                   <Icon className={`h-4 w-4 flex-none ${active ? "text-barn-700" : "text-neutral-400"}`} />
                   <span className="truncate">{label}</span>
+                  {badge > 0 && (
+                    <span
+                      className="ml-auto inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-barn-600 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
+                      aria-label={`${badge} unread`}
+                    >
+                      {badge > 99 ? "99+" : badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}

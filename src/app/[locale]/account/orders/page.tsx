@@ -110,7 +110,9 @@ export default function MyOrdersPage() {
                         <span className="text-xs font-bold uppercase tracking-wider text-neutral-500">
                           {labels.order}
                         </span>
-                        <span className="font-mono text-xs text-neutral-700">#{o.id.slice(0, 8)}</span>
+                        <span className="font-mono text-xs font-bold text-neutral-800">
+                          {o.order_number ?? `#${o.id.slice(0, 8)}`}
+                        </span>
                         <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${st.cls}`}>
                           {st[locale]}
                         </span>

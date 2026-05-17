@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, CheckCircle2, Package, Truck } from "lucide-react";
+import { ArrowLeft, CheckCircle2, MapPin, Package, Truck } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useLocale } from "next-intl";
@@ -67,8 +67,10 @@ export default function MyOrderDetail() {
         stagePreparing: "Preparing",
         stageShipped: "On the way",
         stageArrived: "Arrived",
-        cancelled: "This order was cancelled.",
+        cancelled: "This order was cancelled by Red Barn. Contact us at (918) 555-0123 if you have questions.",
         refunded: "This order was refunded.",
+        deliverTo: "Deliver to",
+        orderNumber: "Order #",
       },
       es: {
         title: "Detalles del pedido",
@@ -83,8 +85,10 @@ export default function MyOrderDetail() {
         stagePreparing: "Preparando",
         stageShipped: "En camino",
         stageArrived: "Entregado",
-        cancelled: "Este pedido fue cancelado.",
+        cancelled: "Este pedido fue cancelado por Red Barn. Contáctenos al (918) 555-0123 si tiene preguntas.",
         refunded: "Este pedido fue reembolsado.",
+        deliverTo: "Entregar a",
+        orderNumber: "Pedido #",
       },
     })[locale],
     [locale],
@@ -121,7 +125,10 @@ export default function MyOrderDetail() {
         <div>
           <h1 className="font-serif text-2xl font-bold">{labels.title}</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            <span className="font-mono">#{order.id.slice(0, 8)}</span> · {labels.placed} {date}
+            <span className="font-mono font-bold text-neutral-800">
+              {order.order_number ?? `#${order.id.slice(0, 8)}`}
+            </span>{" "}
+            · {labels.placed} {date}
           </p>
         </div>
         <span
@@ -188,6 +195,32 @@ export default function MyOrderDetail() {
           </ol>
         </div>
       )}
+
+      {order.shipping_address ? (
+        <div className="mt-6 rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+          <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-500">
+            <MapPin className="h-3.5 w-3.5" /> {labels.deliverTo}
+          </p>
+          <p className="mt-2 text-sm text-neutral-800">
+            {order.shipping_name ? (
+              <>
+                <span className="font-semibold">{order.shipping_name}</span>
+                <br />
+              </>
+            ) : null}
+            {order.shipping_address.line1}
+            {order.shipping_address.line2 ? <>, {order.shipping_address.line2}</> : null}
+            <br />
+            {[
+              order.shipping_address.city,
+              order.shipping_address.state,
+              order.shipping_address.postal_code,
+            ]
+              .filter(Boolean)
+              .join(", ")}
+          </p>
+        </div>
+      ) : null}
 
       <h2 className="mt-8 mb-3 text-sm font-bold uppercase tracking-wider text-neutral-500">
         <Package className="mr-1 inline h-4 w-4" /> {labels.items}

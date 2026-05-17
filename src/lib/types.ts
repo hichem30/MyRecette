@@ -114,10 +114,23 @@ export type OrderStatus =
   | "cancelled"
   | "refunded";
 
+export interface ShippingAddress {
+  line1?: string | null;
+  line2?: string | null;
+  city?: string | null;
+  state?: string | null;
+  postal_code?: string | null;
+  country?: string | null;
+}
+
 export interface Order {
   id: string;
+  order_number?: string | null;
   stripe_session_id: string;
   customer_email: string;
+  customer_phone?: string | null;
+  shipping_name?: string | null;
+  shipping_address?: ShippingAddress | null;
   total_amount: number;
   line_items: OrderLineItem[];
   status: OrderStatus;

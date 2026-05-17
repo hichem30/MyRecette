@@ -762,6 +762,101 @@ create policy "product_images_admin_delete" on storage.objects
     and (select private.is_admin())
   );
 
+-- ---------------------------------------------------------------------
+-- 6. Order numbers + shipping address (idempotent)
+-- ---------------------------------------------------------------------
+
+alter table public.orders
+  add column if not exists order_number    text,
+  add column if not exists shipping_name   text,
+  add column if not exists shipping_address jsonb,
+  add column if not exists customer_phone  text;
+
+create unique index if not exists orders_order_number_uniq
+  on public.orders (order_number);
+
+-- Generate a human-friendly alphanumeric order number, e.g. RB-A3K9X2P7.
+-- 8 chars from a 32-char alphabet that excludes confusing chars
+-- (0/O, 1/I/L) -> ~1.1 trillion combinations; the unique index protects
+-- against the astronomically unlikely collision.
+create or replace function private.generate_order_number()
+returns text
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  alphabet constant text := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  out_code text;
+  i int;
+begin
+  out_code := 'RB-';
+  for i in 1..8 loop
+    out_code := out_code || substr(alphabet, 1 + floor(random() * length(alphabet))::int, 1);
+  end loop;
+  return out_code;
+end;
+$$;
+
+revoke all on function private.generate_order_number() from public, anon, authenticated;
+
+-- Trigger: assign order_number on insert if not provided, retrying on
+-- the very unlikely event of a collision.
+create or replace function private.assign_order_number()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  candidate text;
+  attempts  int := 0;
+begin
+  if new.order_number is not null and new.order_number <> '' then
+    return new;
+  end if;
+  loop
+    candidate := private.generate_order_number();
+    attempts := attempts + 1;
+    if not exists (select 1 from public.orders where order_number = candidate) then
+      new.order_number := candidate;
+      return new;
+    end if;
+    if attempts > 10 then
+      raise exception 'Could not generate unique order_number after 10 attempts';
+    end if;
+  end loop;
+end;
+$$;
+
+revoke all on function private.assign_order_number() from public, anon, authenticated;
+
+drop trigger if exists on_order_assign_number on public.orders;
+create trigger on_order_assign_number
+  before insert on public.orders
+  for each row execute procedure private.assign_order_number();
+
+-- Backfill any pre-existing rows that don't have an order_number yet.
+do $$
+declare r record; new_num text; attempts int;
+begin
+  for r in select id from public.orders where order_number is null loop
+    attempts := 0;
+    loop
+      new_num := private.generate_order_number();
+      attempts := attempts + 1;
+      begin
+        update public.orders set order_number = new_num where id = r.id;
+        exit;
+      exception when unique_violation then
+        if attempts > 10 then
+          raise exception 'Backfill could not generate unique order_number';
+        end if;
+      end;
+    end loop;
+  end loop;
+end $$;
+
 -- =====================================================================
 -- Done. Future schema changes should edit THIS file and re-run it
 -- rather than adding new incremental migration files.
