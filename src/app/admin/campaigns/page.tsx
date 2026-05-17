@@ -2,6 +2,7 @@
 
 import {
   ClipboardCopy,
+  ImageIcon,
   Mail,
   Megaphone,
   Package2,
@@ -147,6 +148,114 @@ export default function AdminCampaignsPage() {
     return [`• ${p.name.en}${wasNow}`, `  ${link}`, ""];
   }
 
+  function htmlEscape(s: string) {
+    return s
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function productCardHtml(p: Product) {
+    const link = `${SITE_URL}/en/products/${p.slug}`;
+    const img = p.image_url
+      ? `<a href="${link}" style="display:inline-block"><img src="${htmlEscape(p.image_url)}" alt="${htmlEscape(p.name.en)}" width="140" style="display:block;width:140px;height:140px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb" /></a>`
+      : "";
+    const priceHtml =
+      p.original_price && p.original_price > p.price
+        ? `<span style="color:#737373;text-decoration:line-through;margin-right:6px">$${p.original_price.toFixed(2)}</span><strong style="color:#8B2A18">$${p.price.toFixed(2)}</strong>`
+        : `<strong>$${p.price.toFixed(2)}</strong>`;
+    return `
+<tr>
+  <td style="padding:8px 12px 8px 0;vertical-align:top;width:160px">${img}</td>
+  <td style="padding:8px 0;vertical-align:top">
+    <p style="margin:0 0 4px 0;font-size:15px;font-weight:600">
+      <a href="${link}" style="color:#1c1917;text-decoration:none">${htmlEscape(p.name.en)}</a>
+    </p>
+    <p style="margin:0 0 6px 0;font-size:14px">${priceHtml}</p>
+    <p style="margin:0"><a href="${link}" style="color:#8B2A18;font-size:13px">Shop this item →</a></p>
+  </td>
+</tr>`;
+  }
+
+  function bundleCardHtml(b: Bundle) {
+    const link = `${SITE_URL}/en/bundles/${b.id}`;
+    const itemCount = (b.product_ids ?? []).length;
+    const img = b.image_url
+      ? `<a href="${link}" style="display:inline-block"><img src="${htmlEscape(b.image_url)}" alt="${htmlEscape(b.name.en)}" width="140" style="display:block;width:140px;height:140px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb" /></a>`
+      : "";
+    return `
+<tr>
+  <td style="padding:8px 12px 8px 0;vertical-align:top;width:160px">${img}</td>
+  <td style="padding:8px 0;vertical-align:top">
+    <p style="margin:0 0 4px 0;font-size:15px;font-weight:600">
+      <a href="${link}" style="color:#1c1917;text-decoration:none">${htmlEscape(b.name.en)}</a>
+    </p>
+    <p style="margin:0 0 4px 0;font-size:14px"><strong style="color:#8B2A18">$${Number(b.bundle_price).toFixed(2)}</strong> · ${itemCount} items</p>
+    ${b.description?.en ? `<p style="margin:0 0 6px 0;font-size:13px;color:#525252">${htmlEscape(b.description.en)}</p>` : ""}
+    <p style="margin:0"><a href="${link}" style="color:#8B2A18;font-size:13px">See bundle details →</a></p>
+  </td>
+</tr>`;
+  }
+
+  function promoCardHtml(c: PromoCode) {
+    const valueStr =
+      c.discount_type === "percent"
+        ? `${c.discount_value}% off`
+        : `$${Number(c.discount_value).toFixed(2)} off`;
+    const expiry = c.ends_at
+      ? ` <span style="color:#737373">(expires ${new Date(c.ends_at).toLocaleDateString()})</span>`
+      : "";
+    const scope: string[] = [];
+    if (c.applies_to_product_ids?.length) {
+      scope.push(`${c.applies_to_product_ids.length} specific products`);
+    }
+    if (c.applies_to_category_slugs?.length) {
+      scope.push(`categories: ${c.applies_to_category_slugs.join(", ")}`);
+    }
+    if (scope.length === 0) scope.push("all products");
+    return `
+<tr><td style="padding:8px 0">
+  <div style="border:2px dashed #10b981;border-radius:10px;padding:14px;background:#ecfdf5">
+    <p style="margin:0 0 4px 0;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#047857;font-weight:700">Use code at checkout</p>
+    <p style="margin:0 0 4px 0;font-size:22px;font-weight:800;color:#1c1917">${htmlEscape(c.code)} <span style="font-size:15px;font-weight:600;color:#047857">— ${valueStr}</span>${expiry}</p>
+    ${c.description ? `<p style="margin:0 0 6px 0;font-size:14px;color:#374151">${htmlEscape(c.description)}</p>` : ""}
+    <p style="margin:0;font-size:12px;color:#525252">Applies to: ${htmlEscape(scope.join("; "))}</p>
+  </div>
+</td></tr>`;
+  }
+
+  function buildHtmlBody() {
+    const sections: string[] = [];
+    if (selectedNewArrivals.length > 0) {
+      sections.push(
+        `<h2 style="margin:24px 0 8px 0;font-size:16px;text-transform:uppercase;letter-spacing:1.5px;color:#8B2A18;border-bottom:2px solid #8B2A18;padding-bottom:6px">New arrivals</h2><table cellpadding="0" cellspacing="0" border="0" style="width:100%">${selectedNewArrivals.map(productCardHtml).join("")}</table>`,
+      );
+    }
+    if (selectedOnSale.length > 0) {
+      sections.push(
+        `<h2 style="margin:24px 0 8px 0;font-size:16px;text-transform:uppercase;letter-spacing:1.5px;color:#b45309;border-bottom:2px solid #b45309;padding-bottom:6px">On sale now</h2><table cellpadding="0" cellspacing="0" border="0" style="width:100%">${selectedOnSale.map(productCardHtml).join("")}</table>`,
+      );
+    }
+    if (selectedOtherProducts.length > 0) {
+      sections.push(
+        `<h2 style="margin:24px 0 8px 0;font-size:16px;text-transform:uppercase;letter-spacing:1.5px;color:#1c1917;border-bottom:2px solid #1c1917;padding-bottom:6px">Featured products</h2><table cellpadding="0" cellspacing="0" border="0" style="width:100%">${selectedOtherProducts.map(productCardHtml).join("")}</table>`,
+      );
+    }
+    if (selectedBundles.length > 0) {
+      sections.push(
+        `<h2 style="margin:24px 0 8px 0;font-size:16px;text-transform:uppercase;letter-spacing:1.5px;color:#b45309;border-bottom:2px solid #f59e0b;padding-bottom:6px">Bundle deals</h2><table cellpadding="0" cellspacing="0" border="0" style="width:100%">${selectedBundles.map(bundleCardHtml).join("")}</table>`,
+      );
+    }
+    if (selectedPromos.length > 0) {
+      sections.push(
+        `<h2 style="margin:24px 0 8px 0;font-size:16px;text-transform:uppercase;letter-spacing:1.5px;color:#047857;border-bottom:2px solid #10b981;padding-bottom:6px">Promo codes</h2><table cellpadding="0" cellspacing="0" border="0" style="width:100%">${selectedPromos.map(promoCardHtml).join("")}</table>`,
+      );
+    }
+    const intro_html = htmlEscape(intro).replace(/\n/g, "<br/>");
+    return `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;max-width:640px;color:#1c1917;line-height:1.5"><p style="margin:0 0 16px 0;font-size:15px">${intro_html}</p>${sections.join("")}<hr style="border:none;border-top:1px solid #e5e7eb;margin:28px 0 12px 0" /><p style="margin:0 0 4px 0;font-size:13px;color:#525252">Visit us in person: 308 S. 209th W. Ave., Sand Springs, OK · (918) 245-8112</p><p style="margin:0 0 12px 0;font-size:13px">Shop online: <a href="${SITE_URL}" style="color:#8B2A18">${SITE_URL}</a></p><p style="margin:0;font-size:11px;color:#a3a3a3">You're receiving this because you opted in to marketing emails on our website. To unsubscribe, sign in at <a href="${SITE_URL}/en/account" style="color:#a3a3a3">${SITE_URL}/en/account</a> and turn off the marketing toggle.</p></div>`;
+  }
+
   function buildBody() {
     const lines = [intro, ""];
     if (selectedNewArrivals.length > 0) {
@@ -236,21 +345,40 @@ export default function AdminCampaignsPage() {
     }
   }
 
-  async function openProtonMail() {
-    const fullBody =
-      `BCC (paste into the BCC field):\n${bccString()}\n\n` +
-      `Subject:\n${subject}\n\n` +
-      `${buildBody()}`;
-    await copy(fullBody, "Subject + BCC + body copied. Paste it into the Proton compose window.");
-    window.open("https://mail.proton.me/u/0/inbox?action=compose", "_blank", "noopener,noreferrer");
-  }
-
   async function copyAll() {
     const fullBody =
       `BCC: ${bccString()}\n\n` +
       `Subject: ${subject}\n\n` +
       `${buildBody()}`;
-    await copy(fullBody, "Subject + BCC + body copied to clipboard.");
+    await copy(fullBody, "Subject + BCC + body copied as plain text.");
+  }
+
+  async function copyHtml() {
+    const html = buildHtmlBody();
+    const headerText = `BCC: ${bccString()}\n\nSubject: ${subject}\n\n`;
+    const text = headerText + buildBody();
+    try {
+      if (
+        typeof window !== "undefined" &&
+        typeof window.ClipboardItem !== "undefined" &&
+        navigator.clipboard &&
+        "write" in navigator.clipboard
+      ) {
+        const item = new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([text], { type: "text/plain" }),
+        });
+        await navigator.clipboard.write([item]);
+        setCopyStatus(
+          "Email copied with images. Open Mailspring → New message → paste BCC + Subject + body.",
+        );
+        setTimeout(() => setCopyStatus(null), 4000);
+      } else {
+        await copy(html, "HTML copied (raw markup). Paste into a 'View as HTML' editor.");
+      }
+    } catch {
+      await copy(html, "HTML copied (raw markup) — your browser blocked rich-text copy.");
+    }
   }
 
   const totalSelected =
@@ -608,16 +736,16 @@ export default function AdminCampaignsPage() {
                 </a>
                 <button
                   type="button"
-                  onClick={openProtonMail}
+                  onClick={copyHtml}
                   disabled={!canCompose}
                   className={`inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-semibold transition ${
                     canCompose
-                      ? "border-[#6D4AFF] bg-white text-[#6D4AFF] hover:bg-[#6D4AFF] hover:text-white"
+                      ? "border-barn-600 bg-white text-barn-700 hover:bg-barn-50"
                       : "cursor-not-allowed border-neutral-200 bg-neutral-100 text-neutral-400"
                   }`}
                 >
-                  <Mail className="h-4 w-4" />
-                  ProtonMail (web)
+                  <ImageIcon className="h-4 w-4" />
+                  Copy with images (HTML)
                 </button>
                 <button
                   type="button"
@@ -630,16 +758,18 @@ export default function AdminCampaignsPage() {
                   }`}
                 >
                   <ClipboardCopy className="h-4 w-4" />
-                  Copy to clipboard
+                  Copy as plain text
                 </button>
               </div>
               <p className="mt-2 text-[11px] leading-snug text-neutral-500">
                 <strong>Default mail app</strong> opens whatever you have set as your system mailer
-                (including Mozilla Thunderbird if it&apos;s the default).{" "}
-                <strong>ProtonMail (web)</strong> copies the email and opens a new Proton compose
-                tab — paste with Ctrl/Cmd + V.{" "}
-                <strong>Copy to clipboard</strong> works with anything else (Gmail web, Outlook,
-                Apple Mail, etc.).
+                — Mailspring, Thunderbird, Apple Mail, etc. The body is plain text only (mailto:
+                doesn&apos;t support images).{" "}
+                <strong>Copy with images (HTML)</strong> copies the full styled email with product
+                photos. Open Mailspring → New message → paste with Ctrl/Cmd + V → images render
+                inline. Then paste the BCC list from the header on top.{" "}
+                <strong>Copy as plain text</strong> for any other tool (Gmail web, Outlook, Apple
+                Mail).
               </p>
               {copyStatus && (
                 <p className="mt-2 rounded-md bg-emerald-50 px-2 py-1.5 text-[11px] font-medium text-emerald-800">
