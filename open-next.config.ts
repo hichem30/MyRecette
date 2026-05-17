@@ -1,18 +1,21 @@
 import { defineCloudflareConfig } from "@opennextjs/cloudflare";
-import kvIncrementalCache from "@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache";
+import dummyIncrementalCache from "@opennextjs/aws/overrides/incrementalCache/dummy.js";
 
 /**
- * KV-backed incremental cache. ISR pages serve from Cloudflare's global
- * KV store with ~0ms worker CPU per cached hit, which keeps the free
- * plan's 10ms per-request budget safe at any traffic level.
+ * Incremental cache override.
  *
- * Free tier is 100k reads + 1k writes / day. Beyond that it's $0.50
- * per million reads — a busy storefront with 50k daily visitors costs
- * roughly $0.10 / month.
+ * Previously used `kvIncrementalCache` which writes all ISR pages to
+ * Cloudflare KV on every deploy (~115 keys per deploy). The free plan
+ * caps KV bulk writes at 1k/day, so multiple deploys per day eventually
+ * fail with code 10048 ("free usage limit for this operation for today").
  *
- * Binding is set up via wrangler.jsonc (kv_namespaces) and the matching
- * KV namespace must exist in the Cloudflare dashboard. See KV_SETUP.md.
+ * Switched to the no-op `dummyIncrementalCache` so the deploy never
+ * touches KV. Pages render on demand (still fast — sub-100ms — at this
+ * traffic level). When upgrading to the Workers Paid plan ($5/mo, no
+ * KV write cap), swap this back to `kvIncrementalCache` from
+ * `@opennextjs/cloudflare/overrides/incremental-cache/kv-incremental-cache`
+ * and add the `kv_namespaces` binding back to wrangler.jsonc.
  */
 export default defineCloudflareConfig({
-  incrementalCache: kvIncrementalCache,
+  incrementalCache: dummyIncrementalCache,
 });
