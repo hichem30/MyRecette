@@ -98,12 +98,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (cancelled) return;
       setUserId(uid);
       if (!uid) {
-        // Signed out — clear browser-side wishlist so the device looks clean.
-        // The DB-side wishlist stays under the user's account.
+        // Signed out — clear browser-side cart + wishlist so the next
+        // person on the same device starts fresh. The DB-side wishlist
+        // stays attached to the user's account for when they sign back in.
         dbSynced.current = false;
         setWishlist([]);
+        setItems([]);
         try {
           window.localStorage.removeItem(WISHLIST_KEY);
+          window.localStorage.removeItem(STORAGE_KEY);
         } catch {
           /* ignore */
         }

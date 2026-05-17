@@ -22,7 +22,8 @@ const PATH_MAP: Record<string, string[]> = {
     "/en/categories",
     "/es/categories",
   ],
-  bundles: ["/en/bundles", "/es/bundles"],
+  // Bundles are surfaced inside /deals.
+  bundles: ["/en/deals", "/es/deals"],
   promos: [],
   delivery: [],
 };

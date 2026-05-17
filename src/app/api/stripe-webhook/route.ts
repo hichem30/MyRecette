@@ -23,7 +23,15 @@ export async function POST(req: Request) {
   const rawBody = await req.text();
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(rawBody, sig, secret);
+    // Async variant uses Web Crypto (SubtleCrypto) — required for
+    // Cloudflare Workers where Node's `crypto` is not available.
+    event = await stripe.webhooks.constructEventAsync(
+      rawBody,
+      sig,
+      secret,
+      undefined,
+      Stripe.createSubtleCryptoProvider(),
+    );
   } catch (err) {
     const msg = err instanceof Error ? err.message : "bad sig";
     return NextResponse.json({ error: `Webhook Error: ${msg}` }, { status: 400 });

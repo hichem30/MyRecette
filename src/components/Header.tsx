@@ -77,7 +77,6 @@ export function Header() {
     { href: "/", key: "home" },
     { href: "/products", key: "products" },
     { href: "/deals", key: "deals" },
-    { href: "/bundles", key: "bundles" },
     { href: "/categories", key: "categories" },
     { href: "/about", key: "about" },
     { href: "/contact", key: "contact" },
