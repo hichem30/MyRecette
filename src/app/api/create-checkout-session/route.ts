@@ -295,10 +295,12 @@ export async function POST(req: Request) {
       line_items: lineItems,
       automatic_tax: { enabled: false },
       shipping_address_collection: { allowed_countries: ["US"] },
-      // If we already applied an internal promo, suppress Stripe's own promo box
-      // so the customer can't stack discounts.
-      allow_promotion_codes: discounts.length === 0,
-      discounts: discounts.length > 0 ? discounts : undefined,
+      // Stripe rejects both fields together (even allow_promotion_codes:false
+      // + discounts errors). Include exactly one based on whether we already
+      // attached an internal coupon.
+      ...(discounts.length > 0
+        ? { discounts }
+        : { allow_promotion_codes: true }),
       locale: parsed.locale === "es" ? "es" : "en",
       ...(signedInEmail ? { customer_email: signedInEmail } : {}),
       success_url: `${origin}/${parsed.locale}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
