@@ -5,7 +5,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { ChevronRight, Truck } from "lucide-react";
 import { Link } from "@/lib/i18n/navigation";
 import { getAllProducts, getProductBySlug } from "@/lib/data";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, isDiscountWindowActive } from "@/lib/utils";
 import { locales } from "@/lib/i18n/config";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCTAs } from "@/components/ProductCTAs";
@@ -124,11 +124,13 @@ export default async function ProductDetail({
                   {t("new")}
                 </span>
               )}
-              {product.discount && product.discount_text && (
-                <span className="rounded-md bg-amber-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
-                  {product.discount_text[lang]}
-                </span>
-              )}
+              {product.discount &&
+                product.discount_text &&
+                isDiscountWindowActive(product.discount_starts_at, product.discount_ends_at) && (
+                  <span className="rounded-md bg-amber-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                    {product.discount_text[lang]}
+                  </span>
+                )}
             </div>
           </div>
 

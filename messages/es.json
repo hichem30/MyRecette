@@ -3,6 +3,7 @@
     "home": "Inicio",
     "products": "Productos",
     "deals": "Ofertas",
+    "bundles": "Paquetes",
     "categories": "Categorías",
     "about": "Nosotros",
     "contact": "Contacto",
@@ -267,13 +268,21 @@
     "ranchSupport": "Soporte Real",
     "securePrivate": "Seguro y Privado"
   },
+  "bundles": {
+    "title": "Paquetes Promocionales",
+    "subtitle": "Ahorre más al comprar estos productos juntos.",
+    "bundleDeal": "Paquete",
+    "save": "Ahorra",
+    "ifBoughtSeparately": "Comprados por separado:",
+    "empty": "No hay paquetes disponibles en este momento — vuelva pronto."
+  },
   "footer": {
     "tagline": "Su mercado local de confianza en Sand Springs, OK. Madera, alimento, ferretería y más para rancho, granja y familia.",
     "quickLinks": "ENLACES",
     "categoriesHeading": "CATEGORÍAS",
     "contactUs": "CONTÁCTENOS",
     "stayInLoop": "MANTÉNGASE INFORMADO",
-    "stayInLoopBody": "Reciba ofertas, novedades y consejos en su correo.",
+    "stayInLoopBody": "Reciba ofertas, novedades y paquetes promocionales en su correo.",
     "emailPlaceholder": "Su correo electrónico",
     "subscribe": "Suscribirse",
     "thanks": "¡Gracias — está suscrito!",

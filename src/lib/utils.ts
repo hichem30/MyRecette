@@ -20,3 +20,20 @@ export function slugify(value: string): string {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 }
+
+/** Whether a time-limited discount window is active right now. */
+export function isDiscountWindowActive(
+  startsAt?: string | null,
+  endsAt?: string | null,
+  now: Date = new Date(),
+): boolean {
+  if (startsAt) {
+    const s = new Date(startsAt);
+    if (!Number.isNaN(s.getTime()) && s > now) return false;
+  }
+  if (endsAt) {
+    const e = new Date(endsAt);
+    if (!Number.isNaN(e.getTime()) && e < now) return false;
+  }
+  return true;
+}

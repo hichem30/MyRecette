@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Mail, MapPin, Phone, Twitter, Youtube } from "lucide-react";
+import { Facebook, Mail, MapPin, Phone } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
 import { Logo } from "./Logo";
@@ -18,21 +18,15 @@ export async function Footer() {
           <Logo variant="light" />
           <p className="mt-4 text-sm leading-relaxed text-neutral-400">{tF("tagline")}</p>
           <div className="mt-5 flex gap-2">
-            {[
-              { href: "https://facebook.com/redbarnwesternmarket", label: "Facebook", Icon: Facebook },
-              { href: "#", label: "Instagram", Icon: Instagram },
-              { href: "#", label: "Twitter", Icon: Twitter },
-              { href: "#", label: "YouTube", Icon: Youtube },
-            ].map(({ href, label, Icon }) => (
-              <a
-                key={label}
-                href={href}
-                aria-label={label}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-neutral-800 text-neutral-300 hover:bg-barn-600 hover:text-white transition"
-              >
-                <Icon className="h-4 w-4" />
-              </a>
-            ))}
+            <a
+              href="https://facebook.com/redbarnwesternmarket"
+              aria-label="Facebook"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-neutral-800 text-neutral-300 hover:bg-barn-600 hover:text-white transition"
+            >
+              <Facebook className="h-4 w-4" />
+            </a>
           </div>
         </div>
 

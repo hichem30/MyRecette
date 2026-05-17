@@ -32,7 +32,18 @@ export async function POST(req: Request) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const admin = getSupabaseAdminClient();
-    if (admin) {
+    if (!admin) {
+      console.error(
+        "[stripe-webhook] SUPABASE_SERVICE_ROLE_KEY not set — cannot write order",
+        { session_id: session.id },
+      );
+      // Return 200 so Stripe doesn't retry forever, but flag the problem.
+      return NextResponse.json(
+        { received: true, warning: "Supabase admin client unavailable; order not saved." },
+        { status: 200 },
+      );
+    }
+    {
       // Decode our internal product IDs from session metadata (set when we
       // created the checkout session). Same order as Stripe's line_items.
       let metaItems: StockItem[] = [];
@@ -77,6 +88,23 @@ export async function POST(req: Request) {
         .select("id")
         .single();
 
+      if (insertErr) {
+        // 23505 = unique_violation (duplicate stripe_session_id, idempotent retry — fine).
+        const isDuplicate =
+          (insertErr as { code?: string }).code === "23505" ||
+          insertErr.message?.includes("duplicate key");
+        if (!isDuplicate) {
+          console.error(
+            "[stripe-webhook] failed to insert order",
+            { session_id: session.id, error: insertErr.message, details: insertErr },
+          );
+          return NextResponse.json(
+            { received: true, error: `order insert failed: ${insertErr.message}` },
+            { status: 200 },
+          );
+        }
+      }
+
       // Only decrement stock if the order was *newly* inserted.
       if (inserted && !insertErr && metaItems.length > 0) {
         const { error: rpcErr } = await admin.rpc("decrement_product_stock", {
@@ -84,7 +112,7 @@ export async function POST(req: Request) {
         });
         if (rpcErr) {
           // Log but do not fail the webhook — the order is already saved.
-          console.error("decrement_product_stock failed:", rpcErr.message);
+          console.error("[stripe-webhook] decrement_product_stock failed:", rpcErr.message);
         }
       }
     }

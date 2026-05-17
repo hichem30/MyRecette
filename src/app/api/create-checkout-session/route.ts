@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getStripeClient } from "@/lib/stripe/server";
 import { getAllProducts } from "@/lib/data";
+import { getSupabaseAdminClient } from "@/lib/supabase/server";
 
 const BodySchema = z.object({
   items: z
@@ -14,6 +15,9 @@ const BodySchema = z.object({
     .min(1)
     .max(50),
   locale: z.enum(["en", "es"]).default("en"),
+  promo_code: z.string().trim().optional(),
+  ship_state: z.string().trim().length(2).optional(),
+  ship_city: z.string().trim().optional(),
 });
 
 export async function POST(req: Request) {
@@ -36,9 +40,40 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: msg }, { status: 400 });
   }
 
-  // SECURITY: always look up the canonical price/name/image from the database
-  // (or trusted mock data). Never trust client-provided prices — a malicious
-  // user could otherwise post `price: 0.01` and buy a $1000 item for a penny.
+  const admin = getSupabaseAdminClient();
+
+  // -------------------------------------------------------------------
+  // Delivery zone check — block out-of-zone addresses up front.
+  // -------------------------------------------------------------------
+  if (admin && parsed.ship_state) {
+    const { data: zones } = await admin
+      .from("delivery_zones")
+      .select("state_code, city");
+    const list = (zones ?? []) as Array<{ state_code: string; city: string | null }>;
+    if (list.length > 0) {
+      const wantState = parsed.ship_state.toUpperCase();
+      const wantCity = (parsed.ship_city ?? "").trim().toLowerCase();
+      const ok = list.some((z) => {
+        if (z.state_code !== wantState) return false;
+        if (!z.city) return true; // entire state allowed
+        return z.city.trim().toLowerCase() === wantCity;
+      });
+      if (!ok) {
+        return NextResponse.json(
+          {
+            error:
+              parsed.locale === "es"
+                ? "Lo sentimos — no entregamos a esa dirección todavía."
+                : "Sorry — we don't deliver to that address yet.",
+            zones: list,
+          },
+          { status: 409 },
+        );
+      }
+    }
+  }
+
+  // SECURITY: always look up the canonical price/name/image from the database.
   const catalog = await getAllProducts();
   const byId = new Map(catalog.map((p) => [p.id, p]));
 
@@ -55,6 +90,7 @@ export async function POST(req: Request) {
     };
   }> = [];
   const stockDecrement: Array<{ product_id: string; quantity: number }> = [];
+  let subtotalCents = 0;
 
   for (const item of parsed.items) {
     const product = byId.get(item.product_id);
@@ -64,9 +100,6 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
-    // SECURITY: also enforce stock at checkout creation. The cart UI tries to
-    // prevent over-purchase but a malicious client can bypass it. We block
-    // here so the customer can never buy more than is actually in stock.
     if (product.stock <= 0) {
       return NextResponse.json(
         {
@@ -88,6 +121,7 @@ export async function POST(req: Request) {
       );
     }
 
+    const unitCents = Math.round(Number(product.price) * 100);
     lineItems.push({
       quantity: item.quantity,
       price_data: {
@@ -97,11 +131,68 @@ export async function POST(req: Request) {
           images: product.image_url ? [product.image_url] : undefined,
           metadata: { product_id: product.id },
         },
-        unit_amount: Math.round(Number(product.price) * 100),
+        unit_amount: unitCents,
       },
     });
     stockDecrement.push({ product_id: product.id, quantity: item.quantity });
+    subtotalCents += unitCents * item.quantity;
   }
+
+  // -------------------------------------------------------------------
+  // Promo code — validate, build a Stripe coupon, mark as consumed.
+  // -------------------------------------------------------------------
+  const discounts: Array<{ coupon: string }> = [];
+  let promoApplied: { code: string; coupon_id: string } | null = null;
+  if (parsed.promo_code && admin) {
+    const { data: rows } = await admin.rpc("validate_promo_code", { p_code: parsed.promo_code });
+    type PromoCheck = {
+      code: string;
+      discount_type: "percent" | "amount";
+      discount_value: number;
+      valid: boolean;
+      reason: string;
+    };
+    const promo = Array.isArray(rows) ? (rows[0] as PromoCheck | undefined) : undefined;
+    if (!promo || !promo.valid) {
+      const reason = promo?.reason ?? "NOT_FOUND";
+      const msg =
+        parsed.locale === "es"
+          ? {
+              NOT_FOUND: "Código no válido.",
+              INACTIVE: "Este código está deshabilitado.",
+              NOT_YET: "Este código aún no es válido.",
+              EXPIRED: "Este código ha expirado.",
+              EXHAUSTED: "Este código ya alcanzó su límite de usos.",
+            }[reason] ?? "Código no válido."
+          : {
+              NOT_FOUND: "Promo code not found.",
+              INACTIVE: "This code is disabled.",
+              NOT_YET: "This code is not yet valid.",
+              EXPIRED: "This code has expired.",
+              EXHAUSTED: "This code has reached its usage limit.",
+            }[reason] ?? "Promo code not valid.";
+      return NextResponse.json({ error: msg, promo_reason: reason }, { status: 400 });
+    }
+    // Build an ephemeral Stripe coupon for this checkout.
+    try {
+      const coupon = await stripe.coupons.create(
+        promo.discount_type === "percent"
+          ? { percent_off: Number(promo.discount_value), duration: "once", name: promo.code }
+          : { amount_off: Math.round(Number(promo.discount_value) * 100), currency: "usd", duration: "once", name: promo.code },
+      );
+      discounts.push({ coupon: coupon.id });
+      promoApplied = { code: promo.code, coupon_id: coupon.id };
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "could not apply promo";
+      return NextResponse.json({ error: msg }, { status: 500 });
+    }
+  }
+
+  // -------------------------------------------------------------------
+  // Free shipping: if every item has free_shipping=true, advertise as free
+  // (we don't currently charge shipping otherwise either, but the flag is
+  // preserved in stock metadata for future shipping rates).
+  // -------------------------------------------------------------------
 
   const origin =
     req.headers.get("origin") ??
@@ -113,20 +204,31 @@ export async function POST(req: Request) {
       mode: "payment",
       line_items: lineItems,
       automatic_tax: { enabled: false },
-      shipping_address_collection: { allowed_countries: ["US", "CA", "MX"] },
-      allow_promotion_codes: true,
+      shipping_address_collection: { allowed_countries: ["US"] },
+      // If we already applied an internal promo, suppress Stripe's own promo box
+      // so the customer can't stack discounts.
+      allow_promotion_codes: discounts.length === 0,
+      discounts: discounts.length > 0 ? discounts : undefined,
       locale: parsed.locale === "es" ? "es" : "en",
       success_url: `${origin}/${parsed.locale}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/${parsed.locale}/checkout/cancel`,
       metadata: {
         source: "redbarn-storefront",
-        // Pass the verified items so the webhook can decrement stock without
-        // re-querying Stripe (also lets us tie back to our internal product IDs).
         items: JSON.stringify(stockDecrement),
+        ...(promoApplied ? { promo_code: promoApplied.code } : {}),
       },
     });
 
-    return NextResponse.json({ url: session.url });
+    // Atomically bump promo uses_count. If this fails the order still goes
+    // through — we'd rather slightly over-allow a code than block checkout.
+    if (promoApplied && admin) {
+      const { error: rpcErr } = await admin.rpc("consume_promo_code", { p_code: promoApplied.code });
+      if (rpcErr) {
+        console.error("[checkout] consume_promo_code failed:", rpcErr.message);
+      }
+    }
+
+    return NextResponse.json({ url: session.url, subtotal_cents: subtotalCents });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Unknown error";
     return NextResponse.json({ error: msg }, { status: 500 });

@@ -24,6 +24,9 @@ export default function EditProduct() {
     new_arrival: true,
     featured: false,
     published: false,
+    free_shipping: false,
+    discount_starts_at: null,
+    discount_ends_at: null,
   });
   const [categories, setCategories] = useState<Category[]>([]);
   const [saving, setSaving] = useState(false);
@@ -132,6 +135,7 @@ export default function EditProduct() {
           <Toggle label="Discount" value={!!product.discount} onChange={(v) => setProduct((p) => ({ ...p, discount: v }))} />
           <Toggle label="New Arrival" value={!!product.new_arrival} onChange={(v) => setProduct((p) => ({ ...p, new_arrival: v }))} />
           <Toggle label="Featured" value={!!product.featured} onChange={(v) => setProduct((p) => ({ ...p, featured: v }))} />
+          <Toggle label="Free shipping on this product" value={!!product.free_shipping} onChange={(v) => setProduct((p) => ({ ...p, free_shipping: v }))} />
           <Toggle
             label={product.published ? "Published (visible to customers)" : "Draft (admin only)"}
             value={!!product.published}
@@ -140,14 +144,37 @@ export default function EditProduct() {
         </div>
 
         {product.discount && (
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Discount Text (English)">
-              <input value={product.discount_text?.en ?? ""} onChange={(e) => setDiscountText("en", e.target.value)} placeholder="22% OFF" className="adm-input" />
-            </Field>
-            <Field label="Discount Text (Spanish)">
-              <input value={product.discount_text?.es ?? ""} onChange={(e) => setDiscountText("es", e.target.value)} placeholder="22% DESC" className="adm-input" />
-            </Field>
-          </div>
+          <>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Discount Text (English)">
+                <input value={product.discount_text?.en ?? ""} onChange={(e) => setDiscountText("en", e.target.value)} placeholder="22% OFF" className="adm-input" />
+              </Field>
+              <Field label="Discount Text (Spanish)">
+                <input value={product.discount_text?.es ?? ""} onChange={(e) => setDiscountText("es", e.target.value)} placeholder="22% DESC" className="adm-input" />
+              </Field>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Discount starts (optional)">
+                <input
+                  type="datetime-local"
+                  value={toLocalInput(product.discount_starts_at)}
+                  onChange={(e) => setProduct((p) => ({ ...p, discount_starts_at: fromLocalInput(e.target.value) }))}
+                  className="adm-input"
+                />
+              </Field>
+              <Field label="Discount ends (optional)">
+                <input
+                  type="datetime-local"
+                  value={toLocalInput(product.discount_ends_at)}
+                  onChange={(e) => setProduct((p) => ({ ...p, discount_ends_at: fromLocalInput(e.target.value) }))}
+                  className="adm-input"
+                />
+              </Field>
+            </div>
+            <p className="text-xs text-neutral-500">
+              Leave dates empty for an open-ended sale. When set, the discount badge only shows during this window.
+            </p>
+          </>
         )}
 
         <button
@@ -201,4 +228,19 @@ function Toggle({
       <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} className="accent-barn-600" />
     </label>
   );
+}
+
+function toLocalInput(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function fromLocalInput(value: string): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString();
 }

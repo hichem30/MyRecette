@@ -1,5 +1,5 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Clock, Mail, MapPin, Phone, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { Clock, Mail, MapPin, Phone, Facebook } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { ContactForm } from "@/components/ContactForm";
 import { BulkQuoteForm } from "@/components/BulkQuoteForm";
@@ -37,21 +37,15 @@ export default async function ContactPage({
 
             <p className="mt-8 text-xs font-bold tracking-widest text-neutral-500">{t("followUs")}</p>
             <div className="mt-2 flex gap-2">
-              {[
-                { href: "https://facebook.com/redbarnwesternmarket", label: "Facebook", Icon: Facebook },
-                { href: "#", label: "Instagram", Icon: Instagram },
-                { href: "#", label: "Twitter", Icon: Twitter },
-                { href: "#", label: "YouTube", Icon: Youtube },
-              ].map(({ href, label, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 hover:border-barn-600 hover:text-barn-700"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
+              <a
+                href="https://facebook.com/redbarnwesternmarket"
+                aria-label="Facebook"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 hover:border-barn-600 hover:text-barn-700"
+              >
+                <Facebook className="h-4 w-4" />
+              </a>
             </div>
           </div>
 

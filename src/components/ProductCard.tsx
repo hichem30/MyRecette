@@ -6,13 +6,15 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
 import { useCart } from "@/lib/cart/CartProvider";
 import type { Product } from "@/lib/types";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, isDiscountWindowActive } from "@/lib/utils";
 
 export function ProductCard({ product, compact = false }: { product: Product; compact?: boolean }) {
   const locale = useLocale() as "en" | "es";
   const t = useTranslations("common");
   const { addItem, toggleWishlist, isInWishlist } = useCart();
   const fav = isInWishlist(product.id);
+  const discountActive =
+    product.discount && isDiscountWindowActive(product.discount_starts_at, product.discount_ends_at);
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-card transition hover:shadow-lg">
@@ -35,7 +37,7 @@ export function ProductCard({ product, compact = false }: { product: Product; co
                 {t("new")}
               </span>
             )}
-            {product.discount && product.discount_text && (
+            {discountActive && product.discount_text && (
               <span className="rounded-md bg-amber-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow">
                 {product.discount_text[locale]}
               </span>
@@ -73,7 +75,7 @@ export function ProductCard({ product, compact = false }: { product: Product; co
             </span>
           )}
         </div>
-        {product.discount && product.original_price && (
+        {discountActive && product.original_price && (
           <p className="text-xs font-medium text-emerald-700">
             {t("you_save")} {formatPrice(product.original_price - product.price)}
           </p>

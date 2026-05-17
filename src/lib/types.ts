@@ -9,6 +9,9 @@ export interface Category {
   image_url?: string;
   icon?: string;
   item_count?: number;
+  discount_percent?: number | null;
+  discount_starts_at?: string | null;
+  discount_ends_at?: string | null;
 }
 
 export interface Product {
@@ -28,8 +31,46 @@ export interface Product {
   best_seller?: boolean;
   free_shipping?: boolean;
   published?: boolean;
+  discount_starts_at?: string | null;
+  discount_ends_at?: string | null;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface Bundle {
+  id: string;
+  name: Translatable;
+  description: Translatable;
+  bundle_price: number;
+  image_url?: string | null;
+  product_ids: string[];
+  starts_at?: string | null;
+  ends_at?: string | null;
+  active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface PromoCode {
+  id: string;
+  code: string;
+  description?: string | null;
+  discount_type: "percent" | "amount";
+  discount_value: number;
+  max_uses?: number | null;
+  uses_count: number;
+  starts_at?: string | null;
+  ends_at?: string | null;
+  active: boolean;
+  created_at?: string;
+}
+
+export interface DeliveryZone {
+  id: string;
+  state_code: string;
+  city?: string | null;
+  notes?: string | null;
+  created_at?: string;
 }
 
 export interface Message {

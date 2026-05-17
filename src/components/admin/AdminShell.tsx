@@ -1,14 +1,18 @@
 "use client";
 
 import {
+  ExternalLink,
   LayoutDashboard,
   LogOut,
   Mail,
+  MapPin,
   Megaphone,
   MessageSquare,
   Package,
+  Package2,
   ShoppingBag,
   Tags,
+  Ticket,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -92,10 +96,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     { href: "/admin", label: "Dashboard", Icon: LayoutDashboard },
     { href: "/admin/products", label: "Products", Icon: Package },
     { href: "/admin/categories", label: "Categories", Icon: Tags },
+    { href: "/admin/bundles", label: "Bundles", Icon: Package2 },
+    { href: "/admin/promos", label: "Promo Codes", Icon: Ticket },
     { href: "/admin/orders", label: "Orders", Icon: ShoppingBag },
     { href: "/admin/messages", label: "Messages", Icon: Mail },
     { href: "/admin/quotes", label: "Quote Requests", Icon: MessageSquare },
     { href: "/admin/campaigns", label: "Campaigns", Icon: Megaphone },
+    { href: "/admin/delivery", label: "Delivery Zones", Icon: MapPin },
     { href: "/admin/staff", label: "Staff", Icon: Users },
   ];
 
@@ -127,6 +134,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </nav>
         <div className="border-t border-neutral-200 px-5 py-4">
           {email && <p className="mb-2 truncate text-xs text-neutral-500">{email}</p>}
+          <a
+            href="/"
+            target="_blank"
+            rel="noreferrer"
+            className="mb-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-100"
+          >
+            <ExternalLink className="h-3.5 w-3.5" /> View site
+          </a>
           <button
             onClick={signOut}
             className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-100"

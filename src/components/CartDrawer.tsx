@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Minus, Plus, ShoppingBag, Trash2, Truck, X } from "lucide-react";
+import { Heart, Minus, Plus, ShoppingBag, Tag, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
@@ -8,14 +8,15 @@ import { Link } from "@/lib/i18n/navigation";
 import { useCart } from "@/lib/cart/CartProvider";
 import { formatPrice } from "@/lib/utils";
 
-const FREE_SHIPPING_THRESHOLD = 50;
-
 export function CartDrawer() {
   const { items, isCartOpen, closeCart, removeItem, updateQuantity, subtotal, saveForLater } = useCart();
   const locale = useLocale() as "en" | "es";
   const t = useTranslations("cart");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [promo, setPromo] = useState("");
+  const [shipState, setShipState] = useState("");
+  const [shipCity, setShipCity] = useState("");
 
   async function checkout() {
     if (items.length === 0) return;
@@ -26,14 +27,14 @@ export function CartDrawer() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // Send only the product_id and quantity. The server looks up the
-          // real price/name/image from the database (or trusted mock data)
-          // so the client cannot tamper with prices.
           items: items.map((i) => ({
             product_id: i.product_id,
             quantity: i.quantity,
           })),
           locale,
+          promo_code: promo.trim() || undefined,
+          ship_state: shipState.trim() ? shipState.trim().toUpperCase() : undefined,
+          ship_city: shipCity.trim() || undefined,
         }),
       });
       const data = await res.json();
@@ -49,17 +50,6 @@ export function CartDrawer() {
       setLoading(false);
     }
   }
-
-  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
-  const pct = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
-  const freeShipMsg =
-    remaining === 0
-      ? locale === "en"
-        ? "You qualify for free shipping!"
-        : "¡Calificas para envío gratis!"
-      : locale === "en"
-      ? `Add ${formatPrice(remaining)} more for free shipping.`
-      : `Agrega ${formatPrice(remaining)} más para envío gratis.`;
 
   return (
     <>
@@ -99,26 +89,6 @@ export function CartDrawer() {
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto px-5 py-4">
-            <div
-              className={`mb-4 rounded-lg border px-3 py-2 text-xs ${
-                remaining === 0
-                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                  : "border-neutral-200 bg-neutral-50 text-neutral-700"
-              }`}
-            >
-              <div className="flex items-center gap-2 font-medium">
-                <Truck className="h-3.5 w-3.5" />
-                {freeShipMsg}
-              </div>
-              <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-neutral-200">
-                <div
-                  className={`h-full rounded-full transition-all ${
-                    remaining === 0 ? "bg-emerald-500" : "bg-barn-600"
-                  }`}
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-            </div>
             <ul className="space-y-4">
               {items.map((item) => (
                 <li key={item.product_id} className="flex gap-3">
@@ -199,6 +169,31 @@ export function CartDrawer() {
 
         {items.length > 0 && (
           <div className="border-t border-neutral-200 px-5 py-4">
+            <div className="mb-3 grid grid-cols-2 gap-2">
+              <input
+                value={shipState}
+                onChange={(e) => setShipState(e.target.value.slice(0, 2))}
+                placeholder={locale === "en" ? "Ship-to state (e.g. OK)" : "Estado (ej. OK)"}
+                aria-label="Shipping state"
+                className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm uppercase"
+              />
+              <input
+                value={shipCity}
+                onChange={(e) => setShipCity(e.target.value)}
+                placeholder={locale === "en" ? "City (optional)" : "Ciudad (opcional)"}
+                aria-label="Shipping city"
+                className="rounded-md border border-neutral-300 px-3 py-1.5 text-sm"
+              />
+            </div>
+            <label className="mb-3 flex items-center gap-2 rounded-md border border-neutral-300 px-3 py-1.5 text-sm">
+              <Tag className="h-4 w-4 text-neutral-400" />
+              <input
+                value={promo}
+                onChange={(e) => setPromo(e.target.value.toUpperCase())}
+                placeholder={locale === "en" ? "Promo code" : "Código promocional"}
+                className="w-full bg-transparent outline-none"
+              />
+            </label>
             <div className="mb-3 flex items-center justify-between text-sm">
               <span className="text-neutral-600">{t("subtotal")}</span>
               <span className="font-bold text-neutral-900">{formatPrice(subtotal)}</span>

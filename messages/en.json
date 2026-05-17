@@ -3,6 +3,7 @@
     "home": "Home",
     "products": "Products",
     "deals": "Deals",
+    "bundles": "Bundles",
     "categories": "Categories",
     "about": "About",
     "contact": "Contact",
@@ -267,13 +268,21 @@
     "ranchSupport": "Real Ranch Support",
     "securePrivate": "Secure & Private"
   },
+  "bundles": {
+    "title": "Bundle Deals",
+    "subtitle": "Save more when you buy these products together.",
+    "bundleDeal": "Bundle Deal",
+    "save": "Save",
+    "ifBoughtSeparately": "If bought separately:",
+    "empty": "No bundle deals available right now — check back soon."
+  },
   "footer": {
     "tagline": "Your trusted local market in Sand Springs, OK. Lumber, feed, hardware, and more for ranch, farm, and family.",
     "quickLinks": "QUICK LINKS",
     "categoriesHeading": "CATEGORIES",
     "contactUs": "CONTACT US",
     "stayInLoop": "STAY IN THE LOOP",
-    "stayInLoopBody": "Get deals, new arrivals, and ranch tips delivered to your inbox.",
+    "stayInLoopBody": "Get deals, new arrivals, and bundle deals delivered to your inbox.",
     "emailPlaceholder": "Your email address",
     "subscribe": "Subscribe",
     "thanks": "Thanks — you're on the list.",
