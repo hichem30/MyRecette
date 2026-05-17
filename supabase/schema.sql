@@ -21,9 +21,17 @@
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
--- 1. Extensions
+-- 1. Extensions + internal schema
 -- ---------------------------------------------------------------------
 create extension if not exists "pgcrypto";
+
+-- The `private` schema holds helper functions that should NEVER be
+-- callable via PostgREST (/rest/v1/rpc/...). RLS policies still call
+-- them directly because USAGE + EXECUTE is granted to anon /
+-- authenticated / service_role, but PostgREST is configured to only
+-- expose the `public` schema, so anonymous can't hit them as RPCs.
+create schema if not exists private;
+grant usage on schema private to anon, authenticated, service_role;
 
 -- ---------------------------------------------------------------------
 -- 2. Tables
@@ -214,9 +222,10 @@ create unique index if not exists delivery_zones_state_city_uniq
 -- 3. Functions
 -- ---------------------------------------------------------------------
 
--- Auto-create profile on signup. Auto-grants admin to the owner email
--- so the client can sign up and immediately get into /admin.
-create or replace function public.handle_new_user()
+-- handle_new_user: trigger fn that creates a profile row on signup and
+-- auto-grants admin to the owner email. Lives in `private` so it's not
+-- exposed via /rest/v1/rpc/handle_new_user.
+create or replace function private.handle_new_user()
 returns trigger
 language plpgsql
 security definer
@@ -241,18 +250,30 @@ begin
 end;
 $$;
 
+-- Triggers don't need EXECUTE grants — Postgres bypasses them for
+-- BEFORE/AFTER triggers. Revoke aggressively so the function is
+-- unreachable from any client role.
+revoke all on function private.handle_new_user() from public;
+revoke all on function private.handle_new_user() from anon, authenticated;
+
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
-  for each row execute procedure public.handle_new_user();
+  for each row execute procedure private.handle_new_user();
+
+-- Drop the old public.handle_new_user (was tied to the trigger above).
+drop function if exists public.handle_new_user();
 
 -- Promote the existing owner account (idempotent)
 update public.profiles
    set role = 'admin'
  where lower(email) = lower('redbarnmarket@protonmail.com');
 
--- is_admin: auth helper used in RLS policies
-create or replace function public.is_admin()
+-- is_admin: auth helper used in RLS policies. Lives in `private` so
+-- it's not exposed via /rest/v1/rpc/is_admin. RLS evaluation in
+-- Postgres runs with the calling user's role, so anon / authenticated
+-- still need EXECUTE permission for the policies to evaluate.
+create or replace function private.is_admin()
 returns boolean
 language sql
 stable
@@ -265,11 +286,20 @@ as $$
   );
 $$;
 
--- Atomic stock decrement at checkout
+revoke all on function private.is_admin() from public;
+grant execute on function private.is_admin() to anon, authenticated, service_role;
+
+-- Atomic stock decrement at checkout. SECURITY INVOKER (was DEFINER):
+-- the Stripe webhook calls this with the service-role key, which
+-- bypasses RLS, so the inner UPDATE is unrestricted. Admin users
+-- calling it would go through their RLS "admin write" policy on
+-- products. Regular users have no UPDATE policy so the function is
+-- effectively a no-op for them. Result: same behaviour without the
+-- privilege-escalation surface area.
 create or replace function public.decrement_product_stock(items jsonb)
 returns table (product_id uuid, new_stock int)
 language plpgsql
-security definer
+security invoker
 set search_path = public, pg_temp
 as $$
 declare
@@ -323,7 +353,10 @@ create trigger bundles_updated_at
   before update on public.bundles
   for each row execute procedure public.touch_updated_at();
 
--- admin_list_users (staff page): returns every profile when caller is admin
+-- admin_list_users (staff page): returns every profile when caller is
+-- admin. Stays SECURITY DEFINER because it intentionally reads other
+-- users' rows past RLS. The internal `private.is_admin()` check makes
+-- non-admins receive an empty result.
 create or replace function public.admin_list_users()
 returns table (
   id              uuid,
@@ -338,10 +371,13 @@ set search_path = public, pg_temp
 as $$
   select p.id, p.email, p.role, p.marketing_optin, p.created_at
   from public.profiles p
-  where public.is_admin()
+  where private.is_admin()
   order by p.created_at desc;
 $$;
 
+-- anon cannot call this even if they tried (returns empty due to the
+-- internal is_admin check, but better to revoke EXECUTE outright).
+revoke all on function public.admin_list_users() from public, anon;
 grant execute on function public.admin_list_users() to authenticated;
 
 -- admin_subscriber_emails (campaigns page)
@@ -353,12 +389,18 @@ set search_path = public, pg_temp
 as $$
   select p.email
   from public.profiles p
-  where public.is_admin()
+  where private.is_admin()
     and p.marketing_optin = true
     and p.email is not null;
 $$;
 
+revoke all on function public.admin_subscriber_emails() from public, anon;
 grant execute on function public.admin_subscriber_emails() to authenticated;
+
+-- Drop the old public.is_admin now that nothing references it. Done
+-- after admin_list_users/admin_subscriber_emails are recreated to use
+-- private.is_admin so the dependency chain is clean.
+drop function if exists public.is_admin();
 
 -- Promo code: validate + consume
 create or replace function public.validate_promo_code(p_code text)
@@ -445,8 +487,10 @@ grant select on public.product_sales to anon, authenticated;
 -- ---------------------------------------------------------------------
 -- 4. Row Level Security
 --    Every USING/WITH CHECK uses (select auth.uid()) /
---    (select public.is_admin()) so policies evaluate once per query,
+--    (select private.is_admin()) so policies evaluate once per query,
 --    not once per row (5-50x faster on protected reads).
+--    is_admin lives in the `private` schema so it can't be invoked via
+--    PostgREST /rest/v1/rpc/.
 -- ---------------------------------------------------------------------
 
 alter table public.profiles         enable row level security;
@@ -463,7 +507,7 @@ alter table public.delivery_zones   enable row level security;
 -- Profiles
 drop policy if exists "profiles read own" on public.profiles;
 create policy "profiles read own" on public.profiles for select
-  using ((select auth.uid()) = id or (select public.is_admin()));
+  using ((select auth.uid()) = id or (select private.is_admin()));
 
 drop policy if exists "profiles update own" on public.profiles;
 create policy "profiles update own" on public.profiles for update
@@ -478,61 +522,79 @@ create policy "categories public read" on public.categories
 drop policy if exists "categories admin write" on public.categories;
 create policy "categories admin write" on public.categories
   for all
-  using ((select public.is_admin()))
-  with check ((select public.is_admin()));
+  using ((select private.is_admin()))
+  with check ((select private.is_admin()));
 
 -- Products (customers see published only; admin sees all)
 drop policy if exists "products public read" on public.products;
 create policy "products public read" on public.products
-  for select using (published = true or (select public.is_admin()));
+  for select using (published = true or (select private.is_admin()));
 
 drop policy if exists "products admin write" on public.products;
 create policy "products admin write" on public.products
   for all
-  using ((select public.is_admin()))
-  with check ((select public.is_admin()));
+  using ((select private.is_admin()))
+  with check ((select private.is_admin()));
 
--- Messages
+-- Messages (contact form). Public INSERT — with realistic length
+-- guards so the policy is no longer "always true" and to reject
+-- trivial spam (empty fields, oversized blobs).
 drop policy if exists "messages anyone insert" on public.messages;
 create policy "messages anyone insert" on public.messages
-  for insert with check (true);
+  for insert with check (
+    length(coalesce(name, ''))    between 1 and 200
+    and length(coalesce(email, '')) between 3 and 320
+    and position('@' in email) > 1
+    and length(coalesce(message, '')) between 1 and 10000
+  );
 
 drop policy if exists "messages admin read" on public.messages;
 create policy "messages admin read" on public.messages
-  for select using ((select public.is_admin()));
+  for select using ((select private.is_admin()));
 
 drop policy if exists "messages admin write" on public.messages;
 create policy "messages admin write" on public.messages
   for all
-  using ((select public.is_admin()))
-  with check ((select public.is_admin()));
+  using ((select private.is_admin()))
+  with check ((select private.is_admin()));
 
--- Bulk quotes
+-- Bulk quotes (contractor inquiry form). Same realistic guards as
+-- messages so the policy is no longer "always true".
 drop policy if exists "bulk_quotes anyone insert" on public.bulk_quotes;
 create policy "bulk_quotes anyone insert" on public.bulk_quotes
-  for insert with check (true);
+  for insert with check (
+    length(coalesce(company,            '')) between 1 and 200
+    and length(coalesce(contact,        '')) between 1 and 200
+    and length(coalesce(email,          '')) between 3 and 320
+    and position('@' in email) > 1
+    and length(coalesce(phone,          '')) between 1 and 50
+    and length(coalesce(project_type,   '')) between 1 and 200
+    and length(coalesce(estimated_quantity, '')) between 1 and 200
+    and length(coalesce(timeline,       '')) between 1 and 200
+    and length(coalesce(notes,          '')) <= 5000
+  );
 
 drop policy if exists "bulk_quotes admin read" on public.bulk_quotes;
 create policy "bulk_quotes admin read" on public.bulk_quotes
-  for select using ((select public.is_admin()));
+  for select using ((select private.is_admin()));
 
 drop policy if exists "bulk_quotes admin write" on public.bulk_quotes;
 create policy "bulk_quotes admin write" on public.bulk_quotes
   for all
-  using ((select public.is_admin()))
-  with check ((select public.is_admin()));
+  using ((select private.is_admin()))
+  with check ((select private.is_admin()));
 
 -- Orders: admin full access, customer self-read by case-insensitive email,
 -- webhook inserts via service-role (bypasses RLS).
 drop policy if exists "orders admin read" on public.orders;
 create policy "orders admin read" on public.orders
-  for select using ((select public.is_admin()));
+  for select using ((select private.is_admin()));
 
 drop policy if exists "orders admin write" on public.orders;
 create policy "orders admin write" on public.orders
   for all
-  using ((select public.is_admin()))
-  with check ((select public.is_admin()));
+  using ((select private.is_admin()))
+  with check ((select private.is_admin()));
 
 drop policy if exists "orders user read own" on public.orders;
 create policy "orders user read own" on public.orders
@@ -564,15 +626,15 @@ create policy "bundles_public_read" on public.bundles
 drop policy if exists "bundles_admin_all" on public.bundles;
 create policy "bundles_admin_all" on public.bundles
   for all
-  using ((select public.is_admin()))
-  with check ((select public.is_admin()));
+  using ((select private.is_admin()))
+  with check ((select private.is_admin()));
 
 -- Promo codes (admin only; storefront uses RPC, never the table)
 drop policy if exists "promo_codes_admin_all" on public.promo_codes;
 create policy "promo_codes_admin_all" on public.promo_codes
   for all
-  using ((select public.is_admin()))
-  with check ((select public.is_admin()));
+  using ((select private.is_admin()))
+  with check ((select private.is_admin()));
 
 -- Delivery zones (public read, admin write)
 drop policy if exists "delivery_zones_public_read" on public.delivery_zones;
@@ -582,8 +644,8 @@ create policy "delivery_zones_public_read" on public.delivery_zones
 drop policy if exists "delivery_zones_admin_all" on public.delivery_zones;
 create policy "delivery_zones_admin_all" on public.delivery_zones
   for all
-  using ((select public.is_admin()))
-  with check ((select public.is_admin()));
+  using ((select private.is_admin()))
+  with check ((select private.is_admin()));
 
 
 -- ---------------------------------------------------------------------
@@ -617,29 +679,32 @@ on conflict (id) do update
       file_size_limit    = excluded.file_size_limit,
       allowed_mime_types = excluded.allowed_mime_types;
 
+-- NOTE: there is intentionally NO public SELECT policy on
+-- storage.objects for `product-images`. The bucket is configured as
+-- `public = true` above, which makes object URLs publicly readable.
+-- A broad SELECT policy would also let anonymous clients LIST every
+-- file (which we don't need or want).
 drop policy if exists "product_images_public_read" on storage.objects;
-create policy "product_images_public_read" on storage.objects
-  for select using (bucket_id = 'product-images');
 
 drop policy if exists "product_images_admin_insert" on storage.objects;
 create policy "product_images_admin_insert" on storage.objects
   for insert with check (
     bucket_id = 'product-images'
-    and (select public.is_admin())
+    and (select private.is_admin())
   );
 
 drop policy if exists "product_images_admin_update" on storage.objects;
 create policy "product_images_admin_update" on storage.objects
   for update using (
     bucket_id = 'product-images'
-    and (select public.is_admin())
+    and (select private.is_admin())
   );
 
 drop policy if exists "product_images_admin_delete" on storage.objects;
 create policy "product_images_admin_delete" on storage.objects
   for delete using (
     bucket_id = 'product-images'
-    and (select public.is_admin())
+    and (select private.is_admin())
   );
 
 -- =====================================================================

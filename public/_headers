@@ -1,0 +1,23 @@
+# Cloudflare Workers Assets honours this file when serving static
+# assets from .open-next/assets. Hashed files (Next.js outputs them
+# under /_next/static/...) never change once published, so they can
+# safely be cached for a year. Same for the icons folder \u2014 they
+# don't have content hashes but are tiny and rarely rev'd.
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/icons/*
+  Cache-Control: public, max-age=2592000
+
+/favicon.ico
+  Cache-Control: public, max-age=2592000
+
+/manifest.json
+  Cache-Control: public, max-age=2592000
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/offline.html
+  Cache-Control: public, max-age=86400
