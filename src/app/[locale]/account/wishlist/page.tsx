@@ -1,18 +1,40 @@
-import { setRequestLocale, getTranslations } from "next-intl/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { WishlistGrid } from "@/components/WishlistGrid";
-import { getAllProducts } from "@/lib/data";
+import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import type { Product } from "@/lib/types";
+import { mockProducts } from "@/lib/data/mock-data";
 
-export const revalidate = 60;
+export default function AccountWishlist() {
+  const t = useTranslations("wishlist");
+  const locale = useLocale() as "en" | "es";
+  const [products, setProducts] = useState<Product[] | null>(null);
 
-export default async function AccountWishlist({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations("wishlist");
-  const products = await getAllProducts();
+  useEffect(() => {
+    let cancelled = false;
+    if (!isSupabaseConfigured()) {
+      setProducts(mockProducts);
+      return;
+    }
+    const sb = getSupabaseBrowserClient();
+    sb.from("products")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error || !data || data.length === 0) {
+          setProducts(mockProducts);
+          return;
+        }
+        setProducts(data as Product[]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div>
       <h1 className="font-serif text-2xl font-bold">{t("title")}</h1>
@@ -22,7 +44,13 @@ export default async function AccountWishlist({
           : "Artículos guardados en todos tus dispositivos."}
       </p>
       <div className="mt-5">
-        <WishlistGrid products={products} />
+        {products === null ? (
+          <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 py-16 text-center text-sm text-neutral-400">
+            {locale === "en" ? "Loading…" : "Cargando…"}
+          </div>
+        ) : (
+          <WishlistGrid products={products} />
+        )}
       </div>
     </div>
   );

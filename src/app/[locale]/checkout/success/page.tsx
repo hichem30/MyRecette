@@ -103,9 +103,15 @@ export default async function SuccessPage({
   const sp = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("checkout");
+  let backfilledEmail: string | null = null;
+  try {
+    backfilledEmail = await ensureOrderRecorded(sp.session_id);
+  } catch (err) {
+    console.error("[checkout/success] ensureOrderRecorded threw:", err);
+  }
   const email =
     (sp.email && sp.email.includes("@") ? sp.email : null) ??
-    (await ensureOrderRecorded(sp.session_id)) ??
+    backfilledEmail ??
     (locale === "en" ? "your inbox" : "su correo");
   return (
     <section className="container-page flex flex-col items-center py-20 text-center">
