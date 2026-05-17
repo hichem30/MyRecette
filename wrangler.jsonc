@@ -1,15 +1,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "redbarnmarket",
+  "name": "red-barn-market",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-05-01",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
-  },
-  // Set production env vars in the Cloudflare Pages dashboard, not here.
-  "vars": {
-    "NEXT_PUBLIC_SITE_URL": "https://redbarnmarket.pages.dev"
   }
+  // All env vars (NEXT_PUBLIC_SITE_URL, Supabase, Stripe) are set in the
+  // Cloudflare dashboard under Settings → Variables and Secrets.
 }
