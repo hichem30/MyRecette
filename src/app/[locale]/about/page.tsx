@@ -42,7 +42,7 @@ export default async function AboutPage({
             {[
               { v: "25+", l: t("yearsStat") },
               { v: "5,000", l: t("productsStat") },
-              { v: "Mon-Sat", l: t("hoursStat") },
+              { v: "Mon–Sat", l: t("hoursStat") },
               { v: "Sand Springs", l: t("locationStat") },
             ].map((s) => (
               <div key={s.v} className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3">
