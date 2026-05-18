@@ -4,7 +4,7 @@ Bilingual (English / Spanish) e‑commerce storefront and admin dashboard for **
 
 - **Phone:** +1 (918) 245‑8112
 - **Email:** redbarnwesternmarket@gmail.com
-- **Hours:** Mon–Sat · 9am–6pm · Closed Sun
+- **Hours:** Mon–Sat · 9am–6pm · Closed On Sunday
 - **Facebook:** https://www.facebook.com/redbarnwesternmarket/
 
 The site is a fully static Next.js 14 / Tailwind project backed by Supabase and Stripe. It will run end‑to‑end with mock data out of the box — every external service is optional until you provide keys.

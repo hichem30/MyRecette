@@ -87,7 +87,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             {[
               { v: "25+", l: locale === "en" ? "Years in Business" : "Años en el Negocio" },
               { v: "5,000+", l: locale === "en" ? "Products in Store" : "Productos en Tienda" },
-              { v: "Mon–Sat", l: locale === "en" ? "9am–6pm · Closed Sun" : "9am–6pm · Cerrado Dom" },
+              { v: "Mon–Sat", l: "9am–6pm · Closed On Sunday" },
               { v: "Sand Springs", l: locale === "en" ? "Tulsa County, OK" : "Condado de Tulsa, OK" },
             ].map((s) => (
               <div key={s.v} className="text-center">
