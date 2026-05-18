@@ -895,16 +895,31 @@ export default function AdminCampaignsPage() {
                   Copy as plain text
                 </button>
               </div>
-              <p className="mt-2 text-[11px] leading-snug text-neutral-500">
-                <strong>Default mail app</strong> opens whatever you have set as your system mailer
-                — Mailspring, Thunderbird, Apple Mail, etc. The body is plain text only (mailto:
-                doesn&apos;t support images).{" "}
-                <strong>Copy with images (HTML)</strong> copies the full styled email with product
-                photos. Open Mailspring → New message → paste with Ctrl/Cmd + V → images render
-                inline. Then paste the BCC list from the header on top.{" "}
-                <strong>Copy as plain text</strong> for any other tool (Gmail web, Outlook, Apple
-                Mail).
-              </p>
+              <details className="mt-2 rounded-md border border-neutral-200 bg-neutral-50 p-2">
+                <summary className="cursor-pointer text-[11px] font-semibold text-neutral-700">
+                  Instructions
+                </summary>
+                <ul className="mt-2 space-y-2 text-[11px] leading-snug text-neutral-600">
+                  <li>
+                    <strong className="text-neutral-800">Default mail app</strong>
+                    <br />
+                    Opens whatever you have set as your system mailer (Mailspring, Thunderbird,
+                    Apple Mail, etc.). Body is plain text only — mailto: does not support images.
+                  </li>
+                  <li>
+                    <strong className="text-neutral-800">Copy with images (HTML)</strong>
+                    <br />
+                    Copies the full styled email with product photos. Open Mailspring → New message
+                    → paste with Ctrl/Cmd + V — images render inline. Then paste the BCC list from
+                    the header on top.
+                  </li>
+                  <li>
+                    <strong className="text-neutral-800">Copy as plain text</strong>
+                    <br />
+                    Best for any other tool (Gmail web, Outlook, Apple Mail).
+                  </li>
+                </ul>
+              </details>
               {copyStatus && (
                 <p className="mt-2 rounded-md bg-emerald-50 px-2 py-1.5 text-[11px] font-medium text-emerald-800">
                   {copyStatus}
