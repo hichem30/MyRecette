@@ -132,39 +132,6 @@ export default async function AboutPage({
         </ol>
       </section>
 
-      {/* Team */}
-      <section className="bg-neutral-50 py-16">
-        <div className="container-page">
-          <div className="text-center">
-            <p className="text-xs font-bold tracking-widest text-barn-600">{t("teamLabel")}</p>
-            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">{t("team")}</h2>
-          </div>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { name: t("team1Name"), role: t("team1Role"), body: t("team1Body"), img: "/about/team-1.jpg" },
-              { name: t("team2Name"), role: t("team2Role"), body: t("team2Body"), img: "/about/team-2.jpg" },
-              { name: t("team3Name"), role: t("team3Role"), body: t("team3Body"), img: "/about/team-3.jpg" },
-              { name: t("team4Name"), role: t("team4Role"), body: t("team4Body"), img: "/about/team-4.jpg" },
-            ].map((m) => (
-              <div key={m.name} className="rounded-xl bg-white p-5 text-center shadow-card">
-                <div className="relative mx-auto h-20 w-20 overflow-hidden rounded-full bg-neutral-200">
-                  <Image
-                    src={m.img}
-                    alt={m.name}
-                    fill
-                    sizes="80px"
-                    className="object-cover"
-                  />
-                </div>
-                <h3 className="mt-3 text-sm font-bold">{m.name}</h3>
-                <p className="text-xs text-barn-600">{m.role}</p>
-                <p className="mt-2 text-xs text-neutral-600">{m.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="relative isolate overflow-hidden bg-neutral-900 py-16 text-white">
         <div className="absolute inset-0 -z-10">
