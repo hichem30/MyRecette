@@ -22,7 +22,7 @@ These would all be re-tested in a follow-up session once the user provides keys.
 ### Test 1: Homepage loads with mock products, hero, Visit Us
 - Navigate to http://localhost:3000
 - **Expected:**
-  - Hero heading text `The Heart of Every Ranch` is visible
+  - Hero heading text `Sand Springs' Local Trading Post` is visible
   - Search bar with placeholder `Search products...` visible in hero
   - At least one product card is rendered under **New Arrivals** with a price like `$XX.XX`
   - At least one product card is rendered under **Hot Deals** with a strike-through original price
@@ -34,7 +34,7 @@ These would all be re-tested in a follow-up session once the user provides keys.
 - Click the language selector (globe icon, top right) — should currently show `EN`
 - **Expected:**
   - URL changes from `/` to `/es`
-  - Hero heading switches to the Spanish translation `El Corazón de Cada Rancho`
+  - Hero heading switches to the Spanish translation `El Mercado Local de Sand Springs`
   - Nav items: `Home`→`Inicio`, `Products`→`Productos`, `Deals`→`Ofertas`, etc.
   - Toggle now displays `ES`
 - **Why it's adversarial:** A broken i18n setup would leave English text or the page would crash.
