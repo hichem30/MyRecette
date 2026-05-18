@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     template: "%s · Red Barn Western Market",
   },
   description:
-    "Your trusted local market in Sand Springs, OK. Lumber, feed, hardware, building materials, and ranch supplies for working families across Tulsa County.",
+    "Your trusted local trading post in Sand Springs, OK. Lumber, hardware, plumbing, mattresses, clothing, groceries — all under one roof since 1999.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://redbarnwesternmarket.com"),
   applicationName: "Red Barn Western Market",
   manifest: "/manifest.json",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     title: "Red Barn Western Market — Sand Springs, OK",
-    description: "Lumber, feed, hardware, and ranch supplies since 1987.",
+    description: "Lumber, hardware, plumbing, mattresses, clothing, groceries — Sand Springs since 1999.",
     locale: "en_US",
     images: [
       {
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Red Barn Western Market — Sand Springs, OK",
-    description: "Lumber, feed, hardware, and ranch supplies since 1987.",
+    description: "Lumber, hardware, plumbing, mattresses, clothing, groceries — Sand Springs since 1999.",
     images: ["/icons/og-image.png?v=2"],
   },
 };

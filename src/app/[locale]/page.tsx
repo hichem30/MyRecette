@@ -85,7 +85,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="container-page -mb-12 pb-0">
           <div className="grid grid-cols-2 gap-3 rounded-2xl bg-white p-4 shadow-2xl sm:grid-cols-4 sm:p-6">
             {[
-              { v: "35+", l: locale === "en" ? "Years in Business" : "Años en el Negocio" },
+              { v: "25+", l: locale === "en" ? "Years in Business" : "Años en el Negocio" },
               { v: "5,000+", l: locale === "en" ? "Products in Store" : "Productos en Tienda" },
               { v: "Mon–Sat", l: locale === "en" ? "8am–6pm CT" : "8am–6pm CT" },
               { v: "Sand Springs", l: locale === "en" ? "Tulsa County, OK" : "Condado de Tulsa, OK" },
@@ -217,13 +217,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 },
                 {
                   author: "Paula L.",
-                  en: "Excellent customer service and best prices around. Highly recommend this place. Not only lumber, but feed, also.",
-                  es: "Excelente servicio al cliente y los mejores precios de la zona. Recomiendo mucho este lugar. No solo madera, también alimento.",
+                  en: "Excellent customer service and best prices around. Highly recommend this place. Not just lumber — plumbing, mattresses, and a little bit of everything.",
+                  es: "Excelente servicio al cliente y los mejores precios de la zona. Recomiendo mucho este lugar. No solo madera — plomería, colchones, y un poco de todo.",
                 },
                 {
                   author: "Matt M.",
-                  en: "We love this place. We go for feed and come home with furniture and flooring. You never know what treasure you'll find.",
-                  es: "Nos encanta este lugar. Vamos por alimento y nos vamos con muebles y pisos. Nunca sabes qué tesoro vas a encontrar.",
+                  en: "We love this place. We go in for one thing and come home with furniture and flooring. You never know what treasure you'll find.",
+                  es: "Nos encanta este lugar. Vamos por una cosa y nos vamos con muebles y pisos. Nunca sabes qué tesoro vas a encontrar.",
                 },
               ] as const
             ).map((review) => (

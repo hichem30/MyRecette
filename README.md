@@ -1,6 +1,6 @@
 # Red Barn Western Market
 
-Bilingual (English / Spanish) e‑commerce storefront and admin dashboard for **Red Barn Western Market** — a working family ranch‑supply, lumber, hardware, feed, and building materials store at **308 S. 209th W. Ave., Sand Springs, OK 74066**.
+Bilingual (English / Spanish) e‑commerce storefront and admin dashboard for **Red Barn Western Market** — a family‑owned local trading post in Sand Springs, OK selling lumber, hardware, plumbing, mattresses, clothing, groceries, and more since 1999. Visit at **308 S. 209th W. Ave., Sand Springs, OK 74066**.
 
 - **Phone:** +1 (918) 245‑8112
 - **Email:** redbarnwesternmarket@gmail.com

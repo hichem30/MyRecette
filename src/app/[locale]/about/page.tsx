@@ -40,7 +40,7 @@ export default async function AboutPage({
           <p className="mt-4 max-w-2xl text-white/80">{t("subtitle")}</p>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { v: "35+", l: t("yearsStat") },
+              { v: "25+", l: t("yearsStat") },
               { v: "5,000", l: t("productsStat") },
               { v: "Mon-Sat", l: t("hoursStat") },
               { v: "Sand Springs", l: t("locationStat") },
@@ -113,11 +113,11 @@ export default async function AboutPage({
         </div>
         <ol className="mx-auto mt-10 max-w-3xl space-y-6">
           {[
-            { year: "1987", body: t("milestone1987") },
-            { year: "1995", body: t("milestone1995") },
+            { year: "1999", body: t("milestone1999") },
             { year: "2005", body: t("milestone2005") },
-            { year: "2015", body: t("milestone2015") },
-            { year: "2020", body: t("milestone2020") },
+            { year: "2012", body: t("milestone2012") },
+            { year: "2018", body: t("milestone2018") },
+            { year: "2023", body: t("milestone2023") },
             { year: lang === "en" ? "Today" : "Hoy", body: t("milestoneToday") },
           ].map((m) => (
             <li key={m.year} className="flex flex-col gap-2 sm:flex-row sm:gap-5">
