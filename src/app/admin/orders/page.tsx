@@ -146,8 +146,8 @@ export default function AdminOrdersPage() {
         )}
       </div>
 
-      <div className="mt-5 overflow-hidden rounded-xl border border-neutral-200 bg-white">
-        <table className="w-full text-sm">
+      <div className="mt-5 overflow-x-auto rounded-xl border border-neutral-200 bg-white">
+        <table className="w-full min-w-[820px] text-sm">
           <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
             <tr>
               <th className="w-8 px-2 py-3" />
@@ -325,7 +325,8 @@ export default function AdminOrdersPage() {
                           {!o.line_items || o.line_items.length === 0 ? (
                             <p className="text-xs text-neutral-400">No line items recorded.</p>
                           ) : (
-                            <table className="w-full text-xs">
+                            <div className="overflow-x-auto">
+                            <table className="w-full min-w-[480px] text-xs">
                               <thead className="text-neutral-500">
                                 <tr>
                                   <th className="py-1 text-left">Product</th>
@@ -347,6 +348,7 @@ export default function AdminOrdersPage() {
                                 ))}
                               </tbody>
                             </table>
+                            </div>
                           )}
                           <p className="mt-3 text-xs text-neutral-500">
                             Stripe session: <span className="font-mono">{o.stripe_session_id}</span>

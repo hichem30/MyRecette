@@ -142,9 +142,6 @@ export default function AdminDashboard() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-serif text-2xl font-bold text-neutral-900">Dashboard</h1>
-          <p className="mt-0.5 text-sm text-neutral-500">
-            Live snapshot of the storefront. Last 30 days.
-          </p>
         </div>
         <Link
           href="/admin/products/new"

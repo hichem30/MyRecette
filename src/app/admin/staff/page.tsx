@@ -107,11 +107,6 @@ export default function AdminStaffPage() {
   return (
     <div>
       <h1 className="font-serif text-2xl font-bold">Staff & Users</h1>
-      <p className="mt-1 text-sm text-neutral-500">
-        Promote an existing user to admin, or demote them back to customer. New staff need to
-        sign up at <code className="font-mono text-xs">/admin/login</code> first, then you can
-        promote them here.
-      </p>
 
       <form
         onSubmit={onPromote}
@@ -263,7 +258,7 @@ function Table({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm">
+      <table className="w-full min-w-[720px] text-sm">
         <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
           <tr>
             <th className="px-4 py-3">Email</th>

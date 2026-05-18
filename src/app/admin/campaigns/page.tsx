@@ -615,8 +615,8 @@ export default function AdminCampaignsPage() {
                 className="w-full rounded-md border border-neutral-300 bg-white py-1.5 pl-8 pr-3 text-sm focus:border-barn-500 focus:outline-none"
               />
             </div>
-            <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
+              <table className="w-full min-w-[640px] text-sm">
                 <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
                   <tr>
                     <th className="w-10 px-3 py-2"></th>
@@ -699,8 +699,8 @@ export default function AdminCampaignsPage() {
                 Clear
               </button>
             </div>
-            <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
+              <table className="w-full min-w-[640px] text-sm">
                 <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
                   <tr>
                     <th className="w-10 px-3 py-2"></th>
@@ -761,8 +761,8 @@ export default function AdminCampaignsPage() {
                 Clear
               </button>
             </div>
-            <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
+              <table className="w-full min-w-[640px] text-sm">
                 <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
                   <tr>
                     <th className="w-10 px-3 py-2"></th>

@@ -14,9 +14,10 @@ export const runtime = "nodejs";
  *   { authenticated: bool, email: string | null, isAdmin: bool }
  *
  * It also self-heals one tricky case: the user whose email matches
- * ADMIN_BOOTSTRAP_EMAIL signed up before the bootstrap trigger existed
- * and ended up with `role = 'user'`. We auto-promote them to admin here
- * so the next login lands them in /admin instead of the storefront.
+ * any entry in ADMIN_BOOTSTRAP_EMAIL (comma-separated list of bootstrap
+ * owners) signed up before the bootstrap trigger existed and ended up
+ * with `role = 'user'`. We auto-promote them to admin here so the next
+ * login lands them in /admin instead of the storefront.
  */
 export async function GET() {
   const supabase = await getSupabaseRouteClient();
@@ -27,9 +28,14 @@ export async function GET() {
   }
 
   const email = user.email ?? null;
-  const bootstrapEmail = (process.env.ADMIN_BOOTSTRAP_EMAIL ?? "").trim().toLowerCase();
+  const bootstrapEmails = (process.env.ADMIN_BOOTSTRAP_EMAIL ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
   const matchesBootstrap =
-    Boolean(bootstrapEmail) && email !== null && email.toLowerCase() === bootstrapEmail;
+    bootstrapEmails.length > 0 &&
+    email !== null &&
+    bootstrapEmails.includes(email.toLowerCase());
 
   // Read the user's profile.role under their own RLS context first.
   let role: string | null = null;

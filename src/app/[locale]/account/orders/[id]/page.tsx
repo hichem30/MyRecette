@@ -225,8 +225,8 @@ export default function MyOrderDetail() {
       <h2 className="mt-8 mb-3 text-sm font-bold uppercase tracking-wider text-neutral-500">
         <Package className="mr-1 inline h-4 w-4" /> {labels.items}
       </h2>
-      <div className="overflow-hidden rounded-lg border border-neutral-200">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto rounded-lg border border-neutral-200">
+        <table className="w-full min-w-[520px] text-sm">
           <thead className="bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
             <tr>
               <th className="px-3 py-2">{labels.items}</th>

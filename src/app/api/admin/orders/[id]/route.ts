@@ -22,11 +22,14 @@ async function requireAdmin(): Promise<boolean> {
     .maybeSingle();
   if (profile?.role === "admin") return true;
 
-  const bootstrapEmail = (process.env.ADMIN_BOOTSTRAP_EMAIL ?? "").trim().toLowerCase();
+  const bootstrapEmails = (process.env.ADMIN_BOOTSTRAP_EMAIL ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
   if (
-    bootstrapEmail &&
+    bootstrapEmails.length > 0 &&
     user.email &&
-    user.email.trim().toLowerCase() === bootstrapEmail
+    bootstrapEmails.includes(user.email.trim().toLowerCase())
   ) {
     return true;
   }
