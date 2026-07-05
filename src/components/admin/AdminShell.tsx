@@ -45,6 +45,12 @@ const NAV_GROUPS: NavGroup[] = [
     items: [{ href: "/admin/orders", label: "Orders", Icon: ShoppingBag }],
   },
   {
+    label: "Ingredients",
+    items: [
+      { href: "/admin/ingredients/pending", label: "Pending Mappings", Icon: Search },
+    ],
+  },
+  {
     label: "Customers",
     items: [
       { href: "/admin/messages", label: "Messages", Icon: Mail },

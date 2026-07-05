@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, LogOut, ShoppingBag, User } from "lucide-react";
+import { Heart, LogOut, ShoppingBag, User, MapPin, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
@@ -72,10 +72,12 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
   }
   if (status === "anon") return null;
 
-  const nav: Array<{ href: "/account" | "/account/orders" | "/account/wishlist"; label: string; icon: React.ElementType }> = [
+  const nav: Array<{ href: string; label: string; icon: React.ElementType }> = [
     { href: "/account", label: locale === "en" ? "Profile" : "Perfil", icon: User },
     { href: "/account/orders", label: locale === "en" ? "Orders" : "Pedidos", icon: ShoppingBag },
     { href: "/account/wishlist", label: locale === "en" ? "Wishlist" : "Favoritos", icon: Heart },
+    { href: "/account/favorites", label: locale === "en" ? "Favorite Recipes" : "Recetas Favoritas", icon: Star },
+    { href: "/account/followed-supermarkets", label: locale === "en" ? "Followed Supermarkets" : "Supermercados Seguidos", icon: MapPin },
   ];
 
   return (

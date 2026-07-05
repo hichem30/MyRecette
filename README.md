@@ -1,11 +1,9 @@
-# Red Barn Western Market
+# My Recette
 
-Bilingual (English / Spanish) e‑commerce storefront and admin dashboard for **Red Barn Western Market** — a family‑owned local trading post in Sand Springs, OK selling lumber, hardware, plumbing, mattresses, clothing, groceries, and more since 1999. Visit at **308 S. 209th W. Ave., Sand Springs, OK 74066**.
+Bilingual (English / Spanish) recipes and products marketplace with social features and e‑commerce. **My Recette** is a platform where users can discover, create, and share recipes, check ingredient availability at nearby supermarkets, and purchase products. Supermarkets pay a monthly subscription to list their inventory and reach customers.
 
-- **Phone:** +1 (918) 245‑8112
-- **Email:** redbarnwesternmarket@gmail.com
-- **Hours:** Mon–Sat · 9am–6pm · Closed On Sunday
-- **Facebook:** https://www.facebook.com/redbarnwesternmarket/
+- **Website:** https://myrecette.com
+- **Concept:** Recipe discovery (Supercook-style) + Social Commerce + E-commerce
 
 The site is a fully static Next.js 14 / Tailwind project backed by Supabase and Stripe. It will run end‑to‑end with mock data out of the box — every external service is optional until you provide keys.
 

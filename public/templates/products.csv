@@ -1,0 +1,6 @@
+sku,barcode,name,category,price,stock,description,brand,unit,location_in_store
+PROD001,12345678,Organic Tomatoes,produce,2.99,50,Vine ripened organic tomatoes,Acme Farm,kg,
+PROD002,87654321,Free Range Eggs,produce,3.50,100,Large free range eggs,Happy Farms,dozen,
+PROD003,,Whole Wheat Bread,bakery,4.50,25,Artisan whole wheat bread,Local Bakery,loaf,Aisle 3
+PROD004,11223344,Organic Spinach,produce,1.99,30,Fresh organic spinach,Green Fields,bunch,
+PROD005,55667788,Extra Virgin Olive Oil,oils,8.99,15,Premium extra virgin olive oil,Olive Co,500ml,

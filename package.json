@@ -1,7 +1,8 @@
 {
-  "name": "red-barn-western-market",
+  "name": "my-recette",
   "version": "0.1.0",
   "private": true,
+  "description": "My Recette - Recipes and products marketplace with social features and e-commerce",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -23,6 +24,7 @@
     "lucide-react": "^0.469.0",
     "next": "^16.2.6",
     "next-intl": "^4.12.0",
+    "papaparse": "^5.4.1",
     "postcss": "^8",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

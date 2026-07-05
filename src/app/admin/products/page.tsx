@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpDown, Check, ExternalLink, Edit2, Eye, EyeOff, Plus, Trash2, X } from "lucide-react";
+import { ArrowUpDown, Check, ExternalLink, Edit2, Eye, EyeOff, Plus, Trash2, X, Upload } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
@@ -145,12 +145,20 @@ export default function AdminProductsPage() {
             {filter !== "all" ? " (filtered)" : ""}.
           </p>
         </div>
-        <Link
-          href="/admin/products/new"
-          className="inline-flex items-center gap-1.5 rounded-md bg-barn-600 px-4 py-2 text-sm font-bold text-white hover:bg-barn-700"
-        >
-          <Plus className="h-4 w-4" /> Add Product
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/admin/products/bulk-upload"
+            className="inline-flex items-center gap-1.5 rounded-md bg-recette-600 px-4 py-2 text-sm font-bold text-white hover:bg-recette-700"
+          >
+            <Upload className="h-4 w-4" /> Bulk Upload
+          </Link>
+          <Link
+            href="/admin/products/new"
+            className="inline-flex items-center gap-1.5 rounded-md bg-barn-600 px-4 py-2 text-sm font-bold text-white hover:bg-barn-700"
+          >
+            <Plus className="h-4 w-4" /> Add Product
+          </Link>
+        </div>
       </div>
 
       <div className="mb-4 flex flex-wrap gap-2 text-xs">

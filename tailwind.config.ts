@@ -22,6 +22,19 @@ const config: Config = {
           900: "#4A150B",
         },
         cream: "#FAF7F2",
+        // My Recette color palette
+        recette: {
+          50:  "#FFFBF5",
+          100: "#FEF3E8",
+          200: "#FDE4D6",
+          300: "#FCD3B8",
+          400: "#FBC195",
+          500: "#FA9A58",
+          600: "#F57A30",
+          700: "#E85A20",
+          800: "#D64518",
+          900: "#BF3815",
+        },
       },
       fontFamily: {
         serif: ['"Playfair Display"', 'Georgia', 'serif'],

@@ -37,6 +37,75 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: `Webhook Error: ${msg}` }, { status: 400 });
   }
 
+  // Handle supermarket subscription events
+  if (event.type === "customer.subscription.created" || 
+      event.type === "customer.subscription.updated" ||
+      event.type === "customer.subscription.deleted") {
+    const subscription = event.data.object as Stripe.Subscription;
+    const admin = getSupabaseAdminClient();
+    
+    if (!admin) {
+      console.error(
+        "[stripe-webhook] SUPABASE_SERVICE_ROLE_KEY not set — cannot update subscription",
+        { subscription_id: subscription.id }
+      );
+      return NextResponse.json(
+        { received: true, warning: "Supabase admin client unavailable; subscription not updated." },
+        { status: 200 }
+      );
+    }
+
+    // Get supermarket ID from metadata
+    const supermarketId = subscription.metadata.supermarket_id;
+    const userId = subscription.metadata.user_id;
+
+    if (!supermarketId) {
+      console.error(
+        "[stripe-webhook] No supermarket_id in subscription metadata",
+        { subscription_id: subscription.id }
+      );
+      return NextResponse.json({ received: true, warning: "No supermarket_id in metadata" }, { status: 200 });
+    }
+
+    const subscriptionData: Record<string, any> = {
+      stripe_subscription_id: subscription.id,
+      subscription_status: subscription.status,
+      subscription_start_date: new Date(subscription.current_period_start * 1000).toISOString(),
+    };
+
+    // Set end date if canceled or will cancel at period end
+    if (subscription.cancel_at_period_end || subscription.status === "canceled") {
+      subscriptionData.subscription_end_date = new Date(subscription.current_period_end * 1000).toISOString();
+    } else if (subscription.status === "active") {
+      subscriptionData.subscription_end_date = null;
+    }
+
+    // Update subscription status
+    const { error: updateErr } = await admin
+      .from("profiles")
+      .update(subscriptionData)
+      .eq("id", supermarketId)
+      .eq("is_supermarket", true);
+
+    if (updateErr) {
+      console.error(
+        "[stripe-webhook] failed to update supermarket subscription",
+        { supermarket_id: supermarketId, error: updateErr.message }
+      );
+      return NextResponse.json(
+        { received: true, error: `subscription update failed: ${updateErr.message}` },
+        { status: 200 }
+      );
+    }
+
+    console.log(
+      `[stripe-webhook] supermarket subscription updated: ${subscription.id} for ${supermarketId}`,
+      { status: subscription.status }
+    );
+
+    return NextResponse.json({ received: true });
+  }
+
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const admin = getSupabaseAdminClient();
