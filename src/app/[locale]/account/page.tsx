@@ -6,17 +6,18 @@ import { Link } from "@/lib/i18n/navigation";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export default function AccountHome() {
-  const locale = useLocale() as "en" | "es";
+  const locale = useLocale() as "en" | "es" | "fr" | "ar";
   const [profile, setProfile] = useState<{ email: string | null; name: string | null; joined: string | null }>({
     email: null,
     name: null,
     joined: null,
   });
-  const [stats, setStats] = useState<{ orders: number; wishlist: number }>({ orders: 0, wishlist: 0 });
+  const [stats, setStats] = useState<{ orders: number; wishlist: number; videos: number }>({ orders: 0, wishlist: 0, videos: 0 });
   const [userId, setUserId] = useState<string | null>(null);
   const [marketingOptin, setMarketingOptin] = useState(false);
   const [savingOptin, setSavingOptin] = useState(false);
   const [optinFeedback, setOptinFeedback] = useState<string | null>(null);
+  const [userVideos, setUserVideos] = useState<any[]>([]);
 
   useEffect(() => {
     if (!isSupabaseConfigured()) return;
@@ -42,11 +43,19 @@ export default function AccountHome() {
           null,
         joined: user.created_at ?? null,
       });
-      const [{ count: o }, { count: w }] = await Promise.all([
+      const [{ count: o }, { count: w }, { data: videos, count: v }] = await Promise.all([
         sb.from("orders").select("id", { count: "exact", head: true }).ilike("customer_email", user.email ?? ""),
         sb.from("wishlists").select("user_id", { count: "exact", head: true }).eq("user_id", user.id),
+        sb.from("recipe_videos").select("*, profiles:user_id(id, email, supermarket_name, profile_picture_url), recipes:recipe_id(id, slug, title)", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .eq("is_approved", true)
+          .eq("status", "approved")
+          .order("created_at", { ascending: false }),
       ]);
-      if (!cancelled) setStats({ orders: o ?? 0, wishlist: w ?? 0 });
+      if (!cancelled) {
+        setStats({ orders: o ?? 0, wishlist: w ?? 0, videos: v ?? 0 });
+        setUserVideos(videos || []);
+      }
     }
     load();
     return () => {
@@ -60,9 +69,11 @@ export default function AccountHome() {
       welcome: "Welcome back",
       orders: "Orders",
       wishlist: "Wishlist items",
+      videos: "My Videos",
       memberSince: "Member since",
       viewOrders: "View order history",
       viewWishlist: "Open wishlist",
+      viewVideos: "View my videos",
       preferences: "Email preferences",
       marketingLabel: "Send me promotions, discounts, and new arrival emails.",
       marketingHelp: "You can change this anytime. We will only email you about Red Barn sales — never share your address.",
@@ -73,13 +84,45 @@ export default function AccountHome() {
       welcome: "Bienvenido de nuevo",
       orders: "Pedidos",
       wishlist: "Artículos guardados",
+      videos: "Mis videos",
       memberSince: "Miembro desde",
       viewOrders: "Ver historial de pedidos",
       viewWishlist: "Abrir favoritos",
+      viewVideos: "Ver mis videos",
       preferences: "Preferencias de correo",
       marketingLabel: "Quiero recibir promociones, descuentos y novedades por correo.",
       marketingHelp: "Puede cambiarlo en cualquier momento. Solo le escribiremos sobre ofertas de Red Barn.",
       saved: "Preferencia guardada.",
+    },
+    fr: {
+      title: "Mon Compte",
+      welcome: "Bienvenue",
+      orders: "Commandes",
+      wishlist: "Articles en liste de souhaits",
+      videos: "Mes Vidéos",
+      memberSince: "Membre depuis",
+      viewOrders: "Voir l'historique des commandes",
+      viewWishlist: "Ouvrir la liste de souhaits",
+      viewVideos: "Voir mes vidéos",
+      preferences: "Préférences email",
+      marketingLabel: "Envoyez-moi des promotions, des réductions et des emails de nouveaux arrivages.",
+      marketingHelp: "Vous pouvez changer cela à tout moment. Nous ne vous enverrons des emails que sur les soldes de Red Barn.",
+      saved: "Préférence enregistrée.",
+    },
+    ar: {
+      title: "حسابي",
+      welcome: "مرحبًا بعودتك",
+      orders: "الطلبات",
+      wishlist: "عناصر قائمة الرغبات",
+      videos: "فيديوهاتي",
+      memberSince: "عضو منذ",
+      viewOrders: "عرض تاريخ الطلبات",
+      viewWishlist: "فتح قائمة الرغبات",
+      viewVideos: "عرض فيديوهاتي",
+      preferences: "تفضيلات البريد الإلكتروني",
+      marketingLabel: "أرسل لي العروض الترويجية والخصومات والبريد الإلكتروني للوافدين الجدد.",
+      marketingHelp: "يمكنك تغيير هذا في أي وقت. سنرسل لك رسائل بريد إلكتروني حول مبيعات Red Barn فقط.",
+      saved: "تم حفظ التفضيل.",
     },
   }[locale];
 
@@ -118,13 +161,13 @@ export default function AccountHome() {
         {labels.welcome}, <span className="font-semibold text-neutral-700">{profile.name ?? profile.email ?? "—"}</span>.
       </p>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+      <div className="mt-6 grid gap-3 sm:grid-cols-4">
         <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
           <p className="text-xs font-bold uppercase tracking-wider text-neutral-500">{labels.orders}</p>
           <p className="mt-1 text-3xl font-bold text-neutral-900">{stats.orders}</p>
           <Link
             href="/account/orders"
-            className="mt-2 inline-block text-xs font-semibold text-barn-700 hover:underline"
+            className="mt-2 inline-block text-xs font-semibold text-recette-700 hover:underline"
           >
             {labels.viewOrders} →
           </Link>
@@ -134,9 +177,19 @@ export default function AccountHome() {
           <p className="mt-1 text-3xl font-bold text-neutral-900">{stats.wishlist}</p>
           <Link
             href="/account/wishlist"
-            className="mt-2 inline-block text-xs font-semibold text-barn-700 hover:underline"
+            className="mt-2 inline-block text-xs font-semibold text-recette-700 hover:underline"
           >
             {labels.viewWishlist} →
+          </Link>
+        </div>
+        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-neutral-500">{labels.videos}</p>
+          <p className="mt-1 text-3xl font-bold text-neutral-900">{stats.videos}</p>
+          <Link
+            href="/account/videos"
+            className="mt-2 inline-block text-xs font-semibold text-recette-700 hover:underline"
+          >
+            {labels.viewVideos} →
           </Link>
         </div>
         <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
@@ -155,7 +208,7 @@ export default function AccountHome() {
             checked={marketingOptin}
             disabled={savingOptin || !userId}
             onChange={(e) => toggleMarketing(e.target.checked)}
-            className="mt-1 h-4 w-4 rounded border-neutral-300 accent-barn-600"
+            className="mt-1 h-4 w-4 rounded border-neutral-300 accent-recette-600"
           />
           <span>
             <span className="block text-sm font-semibold text-neutral-800">

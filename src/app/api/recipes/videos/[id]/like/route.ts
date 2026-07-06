@@ -45,15 +45,16 @@ export async function POST(
       );
     }
 
-    // Check if user already liked this video
+    // Check if user already liked this video (using video_reactions table)
     const { data: existingLike, error: likeError } = await sb
-      .from("recipe_video_likes")
-      .select("id")
+      .from("video_reactions")
+      .select("reaction_type")
       .eq("video_id", videoId)
       .eq("user_id", user.id)
+      .eq("reaction_type", "like")
       .single();
 
-    if (likeError) {
+    if (likeError && !likeError.message.includes("No rows found")) {
       console.error("Error checking like:", likeError);
       return NextResponse.json(
         { error: "Failed to check like status" },
@@ -68,12 +69,13 @@ export async function POST(
       );
     }
 
-    // Create like
+    // Create like reaction
     const { error: insertError } = await sb
-      .from("recipe_video_likes")
+      .from("video_reactions")
       .insert({
         video_id: videoId,
         user_id: user.id,
+        reaction_type: "like",
       });
 
     if (insertError) {
@@ -145,12 +147,13 @@ export async function DELETE(
       );
     }
 
-    // Delete like
+    // Delete like reaction
     const { error: deleteError } = await sb
-      .from("recipe_video_likes")
+      .from("video_reactions")
       .delete()
       .eq("video_id", videoId)
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .eq("reaction_type", "like");
 
     if (deleteError) {
       console.error("Error deleting like:", deleteError);

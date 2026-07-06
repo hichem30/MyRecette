@@ -43,13 +43,13 @@ export default async function SuccessPage({
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
         <Link
           href="/account/orders"
-          className="rounded-md border border-neutral-300 px-5 py-2.5 text-sm font-bold text-neutral-700 hover:border-barn-600 hover:text-barn-700"
+          className="rounded-md border border-neutral-300 px-5 py-2.5 text-sm font-bold text-neutral-700 hover:border-recette-600 hover:text-recette-700"
         >
           {locale === "en" ? "View my orders" : "Ver mis pedidos"}
         </Link>
         <Link
           href="/products"
-          className="rounded-md bg-barn-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-barn-700"
+          className="rounded-md bg-recette-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-recette-700"
         >
           {locale === "en" ? "Continue Shopping" : "Seguir Comprando"}
         </Link>

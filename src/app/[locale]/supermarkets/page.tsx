@@ -72,7 +72,7 @@ default function SupermarketCard({
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-barn-100 to-barn-200" />
+          <div className="w-full h-full bg-gradient-to-br from-recette-100 to-recette-200" />
         )}
         
         {/* Profile Picture */}
@@ -84,8 +84,8 @@ default function SupermarketCard({
               className="w-16 h-16 rounded-full border-4 border-white object-cover"
             />
           ) : (
-            <div className="w-16 h-16 rounded-full border-4 border-white bg-barn-100 flex items-center justify-center">
-              <ShoppingBag className="h-8 w-8 text-barn-600" />
+            <div className="w-16 h-16 rounded-full border-4 border-white bg-recette-100 flex items-center justify-center">
+              <ShoppingBag className="h-8 w-8 text-recette-600" />
             </div>
           )}
         </div>
@@ -120,7 +120,7 @@ default function SupermarketCard({
             {categoryTags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-barn-50 text-barn-700 text-xs font-medium"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-recette-50 text-recette-700 text-xs font-medium"
               >
                 {tag}
               </span>
@@ -164,7 +164,7 @@ default function CategoryFilter({
       <button
         className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
           selectedCategory === null
-            ? "bg-barn-600 text-white"
+            ? "bg-recette-600 text-white"
             : "bg-white text-neutral-600 hover:bg-neutral-100"
         }`}
       >
@@ -177,7 +177,7 @@ default function CategoryFilter({
             key={category}
             className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors capitalize ${
               selectedCategory === category
-                ? "bg-barn-600 text-white"
+                ? "bg-recette-600 text-white"
                 : "bg-white text-neutral-600 hover:bg-neutral-100"
             }`}
           >
@@ -197,7 +197,7 @@ default function SearchBar({ placeholder }: { placeholder: string }) {
       <input
         type="search"
         placeholder={placeholder}
-        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
       />
     </div>
   );

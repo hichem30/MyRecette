@@ -5,9 +5,11 @@
     "deals": "Deals",
     "bundles": "Bundles",
     "categories": "Categories",
+    "videos": "Videos",
     "about": "About",
     "contact": "Contact",
     "search": "Search products...",
+    "searchVideos": "Search videos...",
     "cart": "Cart",
     "wishlist": "Wishlist",
     "login": "Login",
@@ -15,6 +17,7 @@
     "admin": "Admin",
     "account": "My Account",
     "myOrders": "My Orders",
+    "myVideos": "My Videos",
     "language": "Language"
   },
   "common": {
@@ -277,6 +280,16 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
   },
+  "account": {
+    "title": "Mi Cuenta",
+    "welcome": "Bienvenido de nuevo",
+    "videos": "Mis Videos",
+    "videosSubtitle": "Administra tus videos de recetas subidos",
+    "noVideos": "No has subido ningún video todavía",
+    "uploadFirst": "Sube tu primer video",
+    "browseRecipes": "Explora recetas para añadir videos",
+    "viewVideos": "Ver mis videos"
+  },
   "admin": {
     "dashboard": "Dashboard",
     "products": "Products",
@@ -301,5 +314,33 @@
     "loginTitle": "Admin Login",
     "loginSubtitle": "Sign in to manage Red Barn Western Market.",
     "notAuthorized": "You are not authorized to access this page."
+  },
+  "videos": {
+    "title": "Recipe Videos",
+    "subtitle": "Discover cooking tutorials and variations from our community",
+    "description": "Browse user-submitted recipe videos from YouTube and Facebook. Watch, learn, and share your own cooking variations.",
+    "searchPlaceholder": "Search videos...",
+    "noResults": "No videos found",
+    "noVideosYet": "No videos yet. Be the first to share your cooking process!",
+    "platformFilter": "Filter by Platform",
+    "allPlatforms": "All Platforms",
+    "sortBy": "Sort By",
+    "videoDetails": "Video Details",
+    "by": "by",
+    "forRecipe": "for recipe",
+    "comments": "Comments",
+    "addComment": "Add a comment",
+    "postComment": "Post Comment",
+    "noCommentsYet": "No comments yet. Be the first to comment!",
+    "reactions": "Reactions",
+    "reactWith": "React with",
+    "share": "Share",
+    "copyLink": "Copy Link",
+    "videoRemoved": "Video has been removed",
+    "backToVideos": "Back to Videos",
+    "relatedVideos": "Related Videos",
+    "views": "Views",
+    "likes": "Likes",
+    "video": "Video"
   }
 }

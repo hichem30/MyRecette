@@ -23,13 +23,13 @@ export async function generateMetadata({
   const cat = await getCategoryBySlug(slug);
   if (!cat) return {};
   const lang = locale as "en" | "es";
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://shop.redbarnmarket.workers.dev";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://myrecette.com";
   const url = `${base}/${lang}/categories/${cat.slug}`;
-  const title = `${cat.name[lang]} — Red Barn Western Market`;
+  const title = `${cat.name[lang]} — My Recette`;
   const description =
     lang === "es"
-      ? `Explora todos los productos de ${cat.name.es} en Red Barn Western Market.`
-      : `Shop all ${cat.name.en} products at Red Barn Western Market.`;
+      ? `Explora todos los productos de ${cat.name.es} en My Recette.`
+      : `Shop all ${cat.name.en} products at My Recette.`;
   return {
     title,
     description,
@@ -38,7 +38,7 @@ export async function generateMetadata({
       title,
       description,
       url,
-      siteName: "Red Barn Western Market",
+      siteName: "My Recette",
       type: "website",
       images: cat.image_url ? [{ url: cat.image_url, alt: cat.name[lang] }] : undefined,
     },

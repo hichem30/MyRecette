@@ -5,12 +5,14 @@ export const runtime = "nodejs";
 
 interface CreateRecipeVideoRequest {
   video_url: string;
+  platform?: 'youtube' | 'facebook';
   title?: { en?: string; es?: string; fr?: string; ar?: string };
   description?: { en?: string; es?: string; fr?: string; ar?: string };
 }
 
 interface UpdateRecipeVideoRequest {
   video_url?: string;
+  platform?: 'youtube' | 'facebook';
   title?: { en?: string; es?: string; fr?: string; ar?: string };
   description?: { en?: string; es?: string; fr?: string; ar?: string };
   status?: 'pending' | 'approved' | 'rejected' | 'deleted';
@@ -35,12 +37,32 @@ function extractYouTubeVideoId(url: string): string | null {
   return null;
 }
 
+// Helper to extract Facebook video ID
+function extractFacebookVideoId(url: string): string | null {
+  const patterns = [
+    /facebook\.com\/watch\/\?v=([^&]+)/,
+    /facebook\.com\/[^\/]+\/videos\/([^\/?]+)/,
+    /fb\.watch\/([^\/]+)/,
+    /facebook\.com\/reel\/([^\/]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) {
+      for (let i = 1; i < match.length; i++) {
+        if (match[i]) return match[i];
+      }
+    }
+  }
+  return null;
+}
+
 // Helper to get YouTube thumbnail URL
 function getYouTubeThumbnail(videoId: string): string {
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 }
 
-// Helper to get embed URL
+// Helper to get YouTube embed URL
 function getYouTubeEmbedUrl(videoId: string): string {
   return `https://www.youtube.com/embed/${videoId}?rel=0`;
 }
@@ -151,11 +173,35 @@ export async function POST(
       );
     }
 
-    // Validate and extract YouTube video ID
-    const videoId = extractYouTubeVideoId(body.video_url);
-    if (!videoId) {
+    // Determine platform and extract video ID
+    const platform = body.platform || 
+      (body.video_url.includes('facebook') || body.video_url.includes('fb.watch') ? 'facebook' : 'youtube');
+
+    let videoId: string | null = null;
+    let thumbnailUrl: string | null = null;
+
+    if (platform === 'youtube') {
+      videoId = extractYouTubeVideoId(body.video_url);
+      if (!videoId) {
+        return NextResponse.json(
+          { error: "Invalid YouTube URL" },
+          { status: 400 }
+        );
+      }
+      thumbnailUrl = getYouTubeThumbnail(videoId);
+    } else if (platform === 'facebook') {
+      videoId = extractFacebookVideoId(body.video_url);
+      if (!videoId) {
+        return NextResponse.json(
+          { error: "Invalid Facebook URL" },
+          { status: 400 }
+        );
+      }
+      // Facebook thumbnails are harder to get, use a placeholder
+      thumbnailUrl = null;
+    } else {
       return NextResponse.json(
-        { error: "Invalid YouTube URL" },
+        { error: "Unsupported platform. Only YouTube and Facebook are allowed." },
         { status: 400 }
       );
     }
@@ -164,14 +210,18 @@ export async function POST(
     const videoData = {
       recipe_id: recipe.id,
       user_id: user.id,
+      platform,
       video_url: body.video_url,
-      youtube_video_id: videoId,
-      thumbnail_url: getYouTubeThumbnail(videoId),
+      youtube_video_id: platform === 'youtube' ? videoId : null,
+      facebook_video_id: platform === 'facebook' ? videoId : null,
+      thumbnail_url: thumbnailUrl,
       title: body.title || null,
       description: body.description || null,
       is_approved: true, // No content moderation per requirements
       status: "approved" as const,
       like_count: 0,
+      comment_count: 0,
+      share_count: 0,
       view_count: 0,
     };
 
@@ -272,13 +322,31 @@ export async function PATCH(
     // Build update object
     const updateData: Record<string, unknown> = {};
     if (body.video_url !== undefined) {
-      const newVideoId = extractYouTubeVideoId(body.video_url);
-      if (newVideoId) {
-        updateData.video_url = body.video_url;
-        updateData.youtube_video_id = newVideoId;
-        updateData.thumbnail_url = getYouTubeThumbnail(newVideoId);
+      // Determine platform from body or existing video
+      const newPlatform = body.platform || video.platform || 
+        (body.video_url.includes('facebook') || body.video_url.includes('fb.watch') ? 'facebook' : 'youtube');
+
+      if (newPlatform === 'youtube') {
+        const newVideoId = extractYouTubeVideoId(body.video_url);
+        if (newVideoId) {
+          updateData.video_url = body.video_url;
+          updateData.platform = newPlatform;
+          updateData.youtube_video_id = newVideoId;
+          updateData.facebook_video_id = null;
+          updateData.thumbnail_url = getYouTubeThumbnail(newVideoId);
+        }
+      } else if (newPlatform === 'facebook') {
+        const newVideoId = extractFacebookVideoId(body.video_url);
+        if (newVideoId) {
+          updateData.video_url = body.video_url;
+          updateData.platform = newPlatform;
+          updateData.facebook_video_id = newVideoId;
+          updateData.youtube_video_id = null;
+          updateData.thumbnail_url = null; // Facebook thumbnails use placeholder
+        }
       }
     }
+    if (body.platform !== undefined) updateData.platform = body.platform;
     if (body.title !== undefined) updateData.title = body.title;
     if (body.description !== undefined) updateData.description = body.description;
     if (body.status !== undefined) updateData.status = body.status;

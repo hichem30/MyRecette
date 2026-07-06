@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
 import { PWARegister } from "@/components/PWARegister";
 import { CartProvider } from "@/lib/cart/CartProvider";
-import { locales } from "@/lib/i18n/config";
+import { locales, isRtl } from "@/lib/i18n/config";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif", display: "swap" });
@@ -29,8 +29,8 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${playfair.variable}`}>
-      <body className="font-sans bg-white text-neutral-900 antialiased">
+    <html lang={locale} dir={isRtl(locale) ? 'rtl' : 'ltr'} className={`${inter.variable} ${playfair.variable}`}>
+      <body className="font-sans bg-white text-neutral-900 antialiased" dir={isRtl(locale) ? 'rtl' : 'ltr'}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <CartProvider>
             <Header />

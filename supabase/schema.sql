@@ -1736,6 +1736,24 @@ create table if not exists public.video_comments (
   updated_at timestamptz not null default now()
 );
 
+-- Video Comment Likes (users can like video comments)
+create table if not exists public.video_comment_likes (
+  comment_id uuid not null references public.video_comments(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (comment_id, user_id)
+);
+
+-- Video Views (track unique views per video)
+create table if not exists public.recipe_video_views (
+  id uuid primary key default gen_random_uuid(),
+  video_id uuid not null references public.recipe_videos(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete cascade,
+  ip_address text not null,
+  user_agent text not null,
+  created_at timestamptz not null default now()
+);
+
 -- Video Reactions (for like, love, laugh, etc. on videos)
 create table if not exists public.video_reactions (
   video_id uuid not null references public.recipe_videos(id) on delete cascade,
@@ -1757,6 +1775,18 @@ create index if not exists idx_video_comments_video on public.video_comments(vid
 create index if not exists idx_video_comments_user on public.video_comments(user_id);
 create index if not exists idx_video_comments_parent on public.video_comments(parent_id) where parent_id is not null;
 create index if not exists idx_video_comments_created on public.video_comments(created_at desc);
+
+-- Indexes for video_comment_likes
+create index if not exists idx_video_comment_likes_comment on public.video_comment_likes(comment_id);
+create index if not exists idx_video_comment_likes_user on public.video_comment_likes(user_id);
+create index if not exists idx_video_comment_likes_created on public.video_comment_likes(created_at desc);
+
+-- Indexes for recipe_video_views
+create index if not exists idx_recipe_video_views_video on public.recipe_video_views(video_id);
+create index if not exists idx_recipe_video_views_user on public.recipe_video_views(user_id);
+create index if not exists idx_recipe_video_views_ip on public.recipe_video_views(ip_address);
+create index if not exists idx_recipe_video_views_created on public.recipe_video_views(created_at desc);
+create index if not exists idx_recipe_video_views_unique on public.recipe_video_views(video_id, user_id, ip_address) where user_id is not null;
 
 -- Indexes for video_reactions
 create index if not exists idx_video_reactions_video on public.video_reactions(video_id);
@@ -1898,6 +1928,39 @@ create policy "video_comments_update_own" on public.video_comments for update
 create policy "video_comments_admin_all" on public.video_comments for all
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
+
+-- Video Comment Likes: RLS policies
+alter table public.video_comment_likes enable row level security;
+
+-- Public can read comment likes (aggregated)
+create policy "video_comment_likes_public_read" on public.video_comment_likes for select
+  using (true);
+
+-- Authenticated users can create their own comment likes
+create policy "video_comment_likes_create" on public.video_comment_likes for insert
+  with check ((select auth.uid()) = user_id);
+
+-- Users can delete their own comment likes
+create policy "video_comment_likes_delete_own" on public.video_comment_likes for delete
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+-- Admins can manage all comment likes
+create policy "video_comment_likes_admin_all" on public.video_comment_likes for all
+  using ((select private.is_admin()))
+  with check ((select private.is_admin()));
+
+-- Video Views: RLS policies
+alter table public.recipe_video_views enable row level security;
+
+-- Admins can read all views
+create policy "recipe_video_views_admin_all" on public.recipe_video_views for all
+  using ((select private.is_admin()))
+  with check ((select private.is_admin()));
+
+-- Public can insert views (for tracking)
+create policy "recipe_video_views_public_insert" on public.recipe_video_views for insert
+  with check (true);
 
 -- Video Reactions: RLS policies
 alter table public.video_reactions enable row level security;

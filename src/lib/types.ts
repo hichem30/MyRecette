@@ -393,19 +393,34 @@ export interface RecipeComment {
   replies?: RecipeComment[];
 }
 
-// User-submitted YouTube video for a recipe
+// Video platform types
+export type VideoPlatform = 'youtube' | 'facebook';
+
+// Video reaction types
+export type VideoReactionType = 'like' | 'love' | 'laugh' | 'surprised' | 'sad' | 'angry';
+
+// User-submitted video for a recipe (YouTube or Facebook only)
 export interface RecipeVideo {
   id: string;
   recipe_id: string;
   user_id: string;
+  // Video source
+  platform: VideoPlatform;
   video_url: string;
+  // Extracted IDs for embed
+  youtube_video_id?: string | null;
+  facebook_video_id?: string | null;
+  // Video metadata
+  thumbnail_url?: string | null;
+  // Content (multi-language)
   title?: Translatable | null;
   description?: Translatable | null;
-  youtube_video_id?: string | null;
-  thumbnail_url?: string | null;
-  duration_seconds?: number | null;
+  // Engagement
   like_count: number;
+  comment_count: number;
+  share_count: number;
   view_count: number;
+  // Status
   is_approved?: boolean;
   status: 'pending' | 'approved' | 'rejected' | 'deleted';
   created_at: string;
@@ -417,13 +432,60 @@ export interface RecipeVideo {
     supermarket_name?: Translatable | null;
     profile_picture_url?: string | null;
   } | null;
+  recipe?: {
+    id: string;
+    slug: string;
+    title: Translatable;
+  } | null;
 }
 
 // Video submission request for adding a video to a recipe
 export interface RecipeVideoSubmission {
   video_url: string;
+  platform?: VideoPlatform; // Optional - can be auto-detected
   title?: Translatable | null;
   description?: Translatable | null;
+}
+
+// Comment on a user-submitted video (separate from recipe comments)
+export interface VideoComment {
+  id: string;
+  video_id: string;
+  user_id: string;
+  parent_id?: string | null;
+  content: string;
+  like_count: number;
+  is_liked?: boolean;
+  is_approved?: boolean;
+  is_spam?: boolean;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  user?: {
+    id: string;
+    email: string;
+    supermarket_name?: Translatable | null;
+    profile_picture_url?: string | null;
+  } | null;
+  replies?: VideoComment[];
+}
+
+// Video reaction (like, love, laugh, etc.)
+export interface VideoReaction {
+  video_id: string;
+  user_id: string;
+  reaction_type: VideoReactionType;
+  created_at: string;
+}
+
+// Video statistics
+export interface VideoStats {
+  video_id: string;
+  like_count: number;
+  comment_count: number;
+  share_count: number;
+  view_count: number;
+  reaction_counts: Record<VideoReactionType, number>;
 }
 
 // Social sharing platform
@@ -665,5 +727,98 @@ export interface SupermarketFeedItem {
   action_url: string;
   created_at: string;
   supermarket?: Pick<SupermarketProfile, 'id' | 'supermarket_name' | 'profile_picture_url'> | null;
+}
+
+// =====================================================================
+// MY RECETTE: Shopping List Types
+// =====================================================================
+
+export interface ShoppingList {
+  id: string;
+  user_id: string;
+  name: string;
+  description?: string | null;
+  is_public: boolean;
+  share_token?: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  user?: {
+    id: string;
+    email: string;
+    profile_picture_url?: string | null;
+  } | null;
+  items_count?: number;
+}
+
+export interface ShoppingListItem {
+  id: string;
+  shopping_list_id: string;
+  product_id?: string | null;
+  ingredient_id?: string | null;
+  custom_name?: string | null;
+  quantity?: number | null;
+  unit?: string | null;
+  notes?: string | null;
+  is_checked: boolean;
+  position: number;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  product?: {
+    id: string;
+    name: Translatable;
+    price?: number | null;
+    image_url?: string | null;
+    slug: string;
+  } | null;
+  ingredient?: {
+    id: string;
+    canonical_name: string;
+    display_name: Translatable;
+    category: string;
+  } | null;
+}
+
+export interface ShoppingListWithItems extends ShoppingList {
+  items: ShoppingListItem[];
+}
+
+// Shopping list form data for creating/updating lists
+export interface ShoppingListFormData {
+  name: string;
+  description?: string | null;
+  is_public?: boolean;
+}
+
+// Shopping list item form data for creating/updating items
+export interface ShoppingListItemFormData {
+  product_id?: string | null;
+  ingredient_id?: string | null;
+  custom_name?: string | null;
+  quantity?: number | null;
+  unit?: string | null;
+  notes?: string | null;
+  is_checked?: boolean;
+  position?: number;
+}
+
+// API Response types for shopping lists
+export interface ShoppingListApiResponse {
+  shoppingList: ShoppingListWithItems;
+}
+
+export interface ShoppingListsApiResponse {
+  shoppingLists: ShoppingList[];
+  total: number;
+}
+
+export interface ShoppingListItemApiResponse {
+  item: ShoppingListItem;
+}
+
+export interface ShoppingListItemsApiResponse {
+  items: ShoppingListItem[];
+  total: number;
 }
 

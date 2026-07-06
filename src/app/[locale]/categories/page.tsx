@@ -28,7 +28,7 @@ export default async function CategoriesPage({
             { Icon: Truck, value: t("always"), label: t("freeShippingMany") },
           ].map(({ Icon, value, label }) => (
             <div key={label} className="flex flex-col items-center gap-2 text-center">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-barn-50 text-barn-700">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-recette-50 text-recette-700">
                 <Icon className="h-5 w-5" />
               </span>
               <p className="text-2xl font-bold text-neutral-900">{value}</p>

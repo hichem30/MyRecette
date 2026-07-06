@@ -66,7 +66,7 @@ export function VideoList({ recipeId, recipeSlug, videos: initialVideos, current
         {canSubmit && (
           <button
             onClick={() => setShowSubmitForm(!showSubmitForm)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-barn-600 text-white font-semibold hover:bg-barn-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
           >
             <Plus className="h-5 w-5" />
             Add Your Video
@@ -123,7 +123,7 @@ export function VideoList({ recipeId, recipeSlug, videos: initialVideos, current
       {/* Videos Grid */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-barn-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-recette-600" />
         </div>
       ) : displayVideos.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -157,7 +157,7 @@ export function VideoList({ recipeId, recipeSlug, videos: initialVideos, current
           {canSubmit && !showSubmitForm && (
             <button
               onClick={() => setShowSubmitForm(true)}
-              className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-barn-600 text-white font-semibold hover:bg-barn-700 transition-colors"
+              className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
             >
               <Plus className="h-5 w-5" />
               Add Your Video

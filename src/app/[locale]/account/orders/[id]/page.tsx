@@ -116,7 +116,7 @@ export default function MyOrderDetail() {
     <div>
       <Link
         href="/account/orders"
-        className="mb-3 inline-flex items-center gap-1 text-xs font-semibold text-neutral-500 hover:text-barn-700"
+        className="mb-3 inline-flex items-center gap-1 text-xs font-semibold text-neutral-500 hover:text-recette-700"
       >
         <ArrowLeft className="h-3.5 w-3.5" /> {labels.backToOrders}
       </Link>
@@ -155,7 +155,7 @@ export default function MyOrderDetail() {
             />
             <span
               aria-hidden
-              className="absolute left-[16%] top-5 -z-0 h-1 rounded bg-barn-600 transition-all"
+              className="absolute left-[16%] top-5 -z-0 h-1 rounded bg-recette-600 transition-all"
               style={{
                 width:
                   stage <= 0
@@ -176,15 +176,15 @@ export default function MyOrderDetail() {
                   <span
                     className={`mb-1 flex h-10 w-10 items-center justify-center rounded-full border-2 transition ${
                       done
-                        ? "border-barn-600 bg-barn-600 text-white"
+                        ? "border-recette-600 bg-recette-600 text-white"
                         : "border-neutral-200 bg-white text-neutral-300"
-                    } ${active ? "ring-4 ring-barn-200" : ""}`}
+                    } ${active ? "ring-4 ring-recette-200" : ""}`}
                   >
                     <Icon className="h-5 w-5" />
                   </span>
                   <span
                     className={`text-[11px] font-semibold uppercase tracking-wider ${
-                      done ? "text-barn-700" : "text-neutral-400"
+                      done ? "text-recette-700" : "text-neutral-400"
                     }`}
                   >
                     {s.label}

@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { PlayCircle, X, Loader2, Check } from "lucide-react";
-import type { RecipeVideo, RecipeVideoSubmission } from "@/lib/types";
+import type { RecipeVideo, RecipeVideoSubmission, VideoPlatform } from "@/lib/types";
 
 interface VideoSubmitProps {
   recipeId: string;
@@ -15,14 +15,36 @@ interface VideoSubmitProps {
 // YouTube URL validation patterns
 const YOUTUBE_PATTERNS = [
   /^https?:\/\/(www\.)?youtube\.com\/watch\?v=/,
-  /^https?:\/\/(www\.)?youtube\.com\/embed\/ /,
-  /^https?:\/\/(www\.)?youtu\.be\/ /,
-  /^https?:\/\/(www\.)?youtube\.com\/shorts\/ /,
-  /^https?:\/\/(www\.)?youtube\.com\/live\/ /,
+  /^https?:\/\/(www\.)?youtube\.com\/embed\//,
+  /^https?:\/\/(www\.)?youtu\.be\//,
+  /^https?:\/\/(www\.)?youtube\.com\/shorts\//,
+  /^https?:\/\/(www\.)?youtube\.com\/live\//,
+];
+
+// Facebook URL validation patterns
+const FACEBOOK_PATTERNS = [
+  /^https?:\/\/(www\.)?facebook\.com\/watch\//,
+  /^https?:\/\/(www\.)?facebook\.com\/[^\/]+\/videos\//,
+  /^https?:\/\/(www\.)?fb\.watch\//,
+  /^https?:\/\/(www\.)?facebook\.com\/reel\//,
 ];
 
 function isValidYouTubeUrl(url: string): boolean {
   return YOUTUBE_PATTERNS.some((pattern) => pattern.test(url));
+}
+
+function isValidFacebookUrl(url: string): boolean {
+  return FACEBOOK_PATTERNS.some((pattern) => pattern.test(url));
+}
+
+function isValidVideoUrl(url: string): boolean {
+  return isValidYouTubeUrl(url) || isValidFacebookUrl(url);
+}
+
+function getPlatformFromUrl(url: string): VideoPlatform | null {
+  if (isValidYouTubeUrl(url)) return 'youtube';
+  if (isValidFacebookUrl(url)) return 'facebook';
+  return null;
 }
 
 // Extract video ID from YouTube URL
@@ -44,6 +66,26 @@ function extractYouTubeVideoId(url: string): string | null {
   return null;
 }
 
+// Extract video ID from Facebook URL
+function extractFacebookVideoId(url: string): string | null {
+  const patterns = [
+    /facebook\.com\/watch\/\?v=([^&]+)/,
+    /facebook\.com\/[^\/]+\/videos\/([^\/?]+)/,
+    /fb\.watch\/([^\/]+)/,
+    /facebook\.com\/reel\/([^\/]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) {
+      for (let i = 1; i < match.length; i++) {
+        if (match[i]) return match[i];
+      }
+    }
+  }
+  return null;
+}
+
 // Get YouTube thumbnail URL
 function getYouTubeThumbnail(videoId: string): string {
   return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
@@ -54,15 +96,21 @@ function getYouTubeEmbedUrl(videoId: string): string {
   return `https://www.youtube.com/embed/${videoId}?rel=0`;
 }
 
+// Get Facebook embed URL
+function getFacebookEmbedUrl(videoId: string): string {
+  return `https://www.facebook.com/plugins/video.php?href=https://www.facebook.com/watch/?v=${videoId}&show_text=0`;
+}
+
 export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = "" }: VideoSubmitProps) {
   const router = useRouter();
   const [videoUrl, setVideoUrl] = useState("");
+  const [platform, setPlatform] = useState<VideoPlatform | null>(null);
   const [title, setTitle] = useState<Record<string, string>>({ en: "", fr: "", es: "", ar: "" });
   const [description, setDescription] = useState<Record<string, string>>({ en: "", fr: "", es: "", ar: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [preview, setPreview] = useState<{ thumbnail: string; videoId: string; embedUrl: string } | null>(null);
+  const [preview, setPreview] = useState<{ thumbnail: string; videoId: string; embedUrl: string; platform: VideoPlatform } | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,20 +118,37 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
     setVideoUrl(url);
     setError(null);
 
-    // Auto-extract preview if valid
-    if (isValidYouTubeUrl(url)) {
+    // Auto-detect platform and extract preview if valid
+    const detectedPlatform = getPlatformFromUrl(url);
+    setPlatform(detectedPlatform);
+
+    if (detectedPlatform === 'youtube' && isValidYouTubeUrl(url)) {
       const videoId = extractYouTubeVideoId(url);
       if (videoId) {
         setPreview({
           thumbnail: getYouTubeThumbnail(videoId),
           videoId,
           embedUrl: getYouTubeEmbedUrl(videoId),
+          platform: 'youtube',
+        });
+      } else {
+        setPreview(null);
+      }
+    } else if (detectedPlatform === 'facebook' && isValidFacebookUrl(url)) {
+      const videoId = extractFacebookVideoId(url);
+      if (videoId) {
+        setPreview({
+          thumbnail: '/images/facebook-placeholder.jpg',
+          videoId,
+          embedUrl: getFacebookEmbedUrl(videoId),
+          platform: 'facebook',
         });
       } else {
         setPreview(null);
       }
     } else {
       setPreview(null);
+      setPlatform(null);
     }
   };
 
@@ -102,13 +167,21 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
 
     // Validate
     if (!videoUrl.trim()) {
-      setError("Please enter a YouTube video URL");
+      setError("Please enter a video URL (YouTube or Facebook)");
       setIsSubmitting(false);
       return;
     }
 
-    if (!isValidYouTubeUrl(videoUrl)) {
-      setError("Please enter a valid YouTube URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)");
+    if (!isValidVideoUrl(videoUrl)) {
+      setError("Please enter a valid YouTube or Facebook video URL");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Determine platform
+    const detectedPlatform = getPlatformFromUrl(videoUrl);
+    if (!detectedPlatform) {
+      setError("Could not determine video platform. Please use YouTube or Facebook URLs.");
       setIsSubmitting(false);
       return;
     }
@@ -116,6 +189,7 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
     try {
       const submission: RecipeVideoSubmission = {
         video_url: videoUrl.trim(),
+        platform: detectedPlatform,
         title: Object.keys(title).some((k) => title[k].trim()) ? title : undefined,
         description: Object.keys(description).some((k) => description[k].trim()) ? description : undefined,
       };
@@ -165,21 +239,21 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
       </h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* YouTube URL */}
+        {/* Video URL (YouTube or Facebook) */}
         <div>
           <label className="block text-sm font-medium text-neutral-700 mb-1">
-            YouTube Video URL *
+            Video URL * (YouTube or Facebook)
           </label>
           <input
             type="url"
             value={videoUrl}
             onChange={handleUrlChange}
-            placeholder="https://www.youtube.com/watch?v=..."
+            placeholder={platform === 'youtube' ? "https://www.youtube.com/watch?v=..." : platform === 'facebook' ? "https://www.facebook.com/watch/..." : "https://www.youtube.com/watch?v=... or https://www.facebook.com/watch/..."}
             className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-barn-500 focus:border-barn-500 transition-colors"
             required
           />
           <p className="text-xs text-neutral-500 mt-1">
-            Paste a YouTube video URL. Supports standard links, shortened links (youtu.be), and embed URLs.
+            Paste a video URL from YouTube or Facebook. Supports standard links, shortened links, and embed URLs.
           </p>
         </div>
 
@@ -199,9 +273,10 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
               />
               <div className="flex-1">
                 <p className="text-sm font-medium text-neutral-900">
-                  YouTube Video Detected
+                  {preview.platform === 'facebook' ? 'Facebook Video Detected' : 'YouTube Video Detected'}
                 </p>
                 <p className="text-xs text-neutral-500">
+                  Platform: {preview.platform}<br />
                   Video ID: {preview.videoId}
                 </p>
               </div>
@@ -210,6 +285,7 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
                 onClick={() => {
                   setVideoUrl("");
                   setPreview(null);
+                  setPlatform(null);
                 }}
                 className="text-neutral-400 hover:text-neutral-600"
                 title="Remove"

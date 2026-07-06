@@ -1,8 +1,11 @@
 "use client";
 
 import {
+  BookOpen,
   ChevronRight,
+  CreditCard,
   ExternalLink,
+  Film,
   LayoutDashboard,
   LogOut,
   Mail,
@@ -17,6 +20,7 @@ import {
   Tags,
   Ticket,
   Users,
+  Video,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -32,12 +36,26 @@ const NAV_GROUPS: NavGroup[] = [
     items: [{ href: "/admin", label: "Dashboard", Icon: LayoutDashboard }],
   },
   {
+    label: "Supermarkets",
+    items: [
+      { href: "/admin/supermarkets", label: "All Supermarkets", Icon: ShoppingBag },
+      { href: "/admin/supermarkets/subscriptions", label: "Subscriptions", Icon: CreditCard },
+    ],
+  },
+  {
     label: "Catalog",
     items: [
       { href: "/admin/products", label: "Products", Icon: Package },
       { href: "/admin/categories", label: "Categories", Icon: Tags },
       { href: "/admin/bundles", label: "Bundles", Icon: Package2 },
       { href: "/admin/promos", label: "Promo Codes", Icon: Ticket },
+    ],
+  },
+  {
+    label: "Content",
+    items: [
+      { href: "/admin/recipes", label: "Recipes", Icon: BookOpen },
+      { href: "/admin/videos", label: "Videos", Icon: Video },
     ],
   },
   {
@@ -230,11 +248,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const sidebar = (
     <nav className="flex h-full flex-col">
       <div className="flex items-center gap-2 border-b border-neutral-200 px-5 py-4">
-        <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-barn-600 text-sm font-bold text-white">
-          RB
+        <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-recette-600 text-sm font-bold text-white">
+          MR
         </span>
         <div className="leading-tight">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-barn-600">Red Barn</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-recette-600">My Recette</p>
           <p className="text-sm font-semibold text-neutral-900">Admin Console</p>
         </div>
       </div>
@@ -255,15 +273,15 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                   href={href}
                   className={`mb-0.5 flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition ${
                     active
-                      ? "bg-barn-50 font-semibold text-barn-700"
+                      ? "bg-recette-50 font-semibold text-recette-700"
                       : "text-neutral-600 hover:bg-neutral-100"
                   }`}
                 >
-                  <Icon className={`h-4 w-4 flex-none ${active ? "text-barn-700" : "text-neutral-400"}`} />
+                  <Icon className={`h-4 w-4 flex-none ${active ? "text-recette-700" : "text-neutral-400"}`} />
                   <span className="truncate">{label}</span>
                   {badge > 0 && (
                     <span
-                      className="ml-auto inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-barn-600 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
+                      className="ml-auto inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-recette-600 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white"
                       aria-label={`${badge} unread`}
                     >
                       {badge > 99 ? "99+" : badge}
@@ -342,7 +360,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <Settings className="h-4 w-4" />
           </button>
           <div className="flex flex-1 items-center gap-1.5 text-sm text-neutral-500">
-            <Link href="/admin" className="hover:text-barn-700">Admin</Link>
+            <Link href="/admin" className="hover:text-recette-700">Admin</Link>
             {current.group && current.item && current.item.href !== "/admin" && (
               <>
                 <ChevronRight className="h-3.5 w-3.5 text-neutral-300" />

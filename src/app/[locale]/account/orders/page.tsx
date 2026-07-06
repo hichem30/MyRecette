@@ -84,7 +84,7 @@ export default function MyOrdersPage() {
             <p className="mt-3 text-neutral-500">{labels.empty}</p>
             <Link
               href="/products"
-              className="mt-4 inline-block rounded-md bg-barn-600 px-5 py-2 text-sm font-bold text-white hover:bg-barn-700"
+              className="mt-4 inline-block rounded-md bg-recette-600 px-5 py-2 text-sm font-bold text-white hover:bg-recette-700"
             >
               {labels.browse}
             </Link>
@@ -103,7 +103,7 @@ export default function MyOrdersPage() {
                 <li key={o.id}>
                   <Link
                     href={`/account/orders/${o.id}`}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-neutral-200 bg-white p-4 transition hover:border-barn-400 hover:bg-neutral-50"
+                    className="flex items-center justify-between gap-3 rounded-lg border border-neutral-200 bg-white p-4 transition hover:border-recette-400 hover:bg-neutral-50"
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">

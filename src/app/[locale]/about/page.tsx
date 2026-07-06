@@ -58,14 +58,14 @@ export default async function AboutPage({
       <section className="container-page py-16">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="text-xs font-bold tracking-widest text-barn-600">{t("story")}</p>
+            <p className="text-xs font-bold tracking-widest text-recette-600">{t("story")}</p>
             <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">{t("storyTitle")}</h2>
             <p className="mt-4 text-neutral-600 leading-relaxed">{t("storyBody")}</p>
           </div>
           <div className="relative aspect-[5/4] overflow-hidden rounded-2xl bg-neutral-100 shadow-card">
             <Image
               src="/about/storefront.jpg"
-              alt="Red Barn Western Market storefront, Sand Springs OK"
+              alt="My Recette marketplace storefront"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
@@ -81,7 +81,7 @@ export default async function AboutPage({
       <section className="bg-neutral-50 py-16">
         <div className="container-page">
           <div className="text-center">
-            <p className="text-xs font-bold tracking-widest text-barn-600">{t("coreValuesLabel")}</p>
+            <p className="text-xs font-bold tracking-widest text-recette-600">{t("coreValuesLabel")}</p>
             <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">{t("coreValues")}</h2>
           </div>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -94,7 +94,7 @@ export default async function AboutPage({
               { Icon: Users, title: t("value6"), body: t("value6Body") },
             ].map(({ Icon, title, body }) => (
               <div key={title} className="rounded-xl bg-white p-6 shadow-card">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-barn-50 text-barn-700">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-recette-50 text-recette-700">
                   <Icon className="h-5 w-5" />
                 </span>
                 <h3 className="mt-4 font-bold">{title}</h3>
@@ -108,7 +108,7 @@ export default async function AboutPage({
       {/* Milestones */}
       <section className="container-page py-16">
         <div className="text-center">
-          <p className="text-xs font-bold tracking-widest text-barn-600">{t("milestonesLabel")}</p>
+          <p className="text-xs font-bold tracking-widest text-recette-600">{t("milestonesLabel")}</p>
           <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">{t("milestones")}</h2>
         </div>
         <ol className="mx-auto mt-10 max-w-3xl space-y-6">
@@ -121,7 +121,7 @@ export default async function AboutPage({
             { year: lang === "en" ? "Today" : "Hoy", body: t("milestoneToday") },
           ].map((m) => (
             <li key={m.year} className="flex flex-col gap-2 sm:flex-row sm:gap-5">
-              <span className="inline-flex h-7 w-fit flex-none items-center rounded-full bg-barn-600 px-3 text-[11px] font-bold uppercase tracking-wide text-white sm:w-24 sm:justify-center">
+              <span className="inline-flex h-7 w-fit flex-none items-center rounded-full bg-recette-600 px-3 text-[11px] font-bold uppercase tracking-wide text-white sm:w-24 sm:justify-center">
                 {m.year}
               </span>
               <p className="flex-1 text-sm leading-relaxed text-neutral-700 sm:border-l sm:border-neutral-200 sm:pl-5">
@@ -148,7 +148,7 @@ export default async function AboutPage({
           <h2 className="font-serif text-3xl font-bold sm:text-4xl">{t("readyTitle")}</h2>
           <p className="mx-auto mt-3 max-w-xl text-white/80">{t("readyBody")}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link href="/products" className="rounded-full bg-barn-600 px-6 py-3 text-sm font-bold hover:bg-barn-700">
+            <Link href="/products" className="rounded-full bg-recette-600 px-6 py-3 text-sm font-bold hover:bg-recette-700">
               {t("readyCtaShop")}
             </Link>
             <Link href="/contact" className="rounded-full border border-white/40 bg-white/10 px-6 py-3 text-sm font-bold hover:bg-white/20">

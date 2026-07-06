@@ -119,12 +119,12 @@ function RecipeCard({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" }) {
             </div>
           </div>
         ) : (
-          <div className="aspect-video bg-gradient-to-br from-barn-100 to-barn-200 flex items-center justify-center">
-            <Flame className="h-8 w-8 text-barn-400" />
+          <div className="aspect-video bg-gradient-to-br from-recette-100 to-recette-200 flex items-center justify-center">
+            <Flame className="h-8 w-8 text-recette-400" />
           </div>
         )}
         <div className="p-4">
-          <h3 className="font-semibold text-neutral-900 group-hover:text-barn-700 line-clamp-1">
+          <h3 className="font-semibold text-neutral-900 group-hover:text-recette-700 line-clamp-1">
             {recipe.title[lang] || recipe.title.en}
           </h3>
           <p className="text-sm text-neutral-600 line-clamp-2 mt-1">
@@ -274,7 +274,7 @@ export default function AccountFavorites() {
               </p>
               <Link
                 href={`/${locale}/recipes`}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-barn-600 text-white hover:bg-barn-700 text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white hover:bg-recette-700 text-sm font-medium transition-colors"
               >
                 {locale === "en" ? "Browse Recipes" : "Explorar Recetas"}
               </Link>

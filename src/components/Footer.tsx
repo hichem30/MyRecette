@@ -19,11 +19,11 @@ export async function Footer() {
           <p className="mt-4 text-sm leading-relaxed text-neutral-400">{tF("tagline")}</p>
           <div className="mt-5 flex gap-2">
             <a
-              href="https://facebook.com/redbarnwesternmarket"
+              href="https://facebook.com/myrecetteapp"
               aria-label="Facebook"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-neutral-800 text-neutral-300 hover:bg-barn-600 hover:text-white transition"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-neutral-800 text-neutral-300 hover:bg-recette-600 hover:text-white transition"
             >
               <Facebook className="h-4 w-4" />
             </a>
@@ -34,7 +34,10 @@ export async function Footer() {
           <h3 className="mb-4 text-xs font-bold tracking-widest text-white">{tF("quickLinks")}</h3>
           <ul className="space-y-2 text-sm">
             <li><Link href="/" className="hover:text-white">{tN("home")}</Link></li>
+            <li><Link href="/recipes" className="hover:text-white">{tN("recipes")}</Link></li>
             <li><Link href="/products" className="hover:text-white">{tN("products")}</Link></li>
+            <li><Link href="/supermarkets" className="hover:text-white">{tN("supermarkets")}</Link></li>
+            <li><Link href="/videos" className="hover:text-white">{tN("videos")}</Link></li>
             <li><Link href="/deals" className="hover:text-white">{tN("deals")}</Link></li>
             <li><Link href="/about" className="hover:text-white">{tN("about")}</Link></li>
             <li><Link href="/contact" className="hover:text-white">{tN("contact")}</Link></li>
@@ -58,18 +61,18 @@ export async function Footer() {
           <h3 className="mb-4 text-xs font-bold tracking-widest text-white">{tF("contactUs")}</h3>
           <ul className="space-y-3 text-sm">
             <li className="flex items-start gap-2">
-              <Phone className="mt-0.5 h-4 w-4 flex-none text-barn-400" />
+              <Phone className="mt-0.5 h-4 w-4 flex-none text-recette-400" />
               <a href="tel:+19182458112" className="hover:text-white">+1 (918) 245‑8112</a>
             </li>
             <li className="flex items-start gap-2">
-              <Mail className="mt-0.5 h-4 w-4 flex-none text-barn-400" />
-              <a href="mailto:redbarnwesternmarket@gmail.com" className="hover:text-white break-all">
-                redbarnwesternmarket@gmail.com
+              <Mail className="mt-0.5 h-4 w-4 flex-none text-recette-400" />
+              <a href="mailto:hello@myrecette.com" className="hover:text-white break-all">
+                hello@myrecette.com
               </a>
             </li>
             <li className="flex items-start gap-2">
-              <MapPin className="mt-0.5 h-4 w-4 flex-none text-barn-400" />
-              <span>308 S. 209th W. Ave., Sand Springs, OK</span>
+              <MapPin className="mt-0.5 h-4 w-4 flex-none text-recette-400" />
+              <span>Global Community Platform</span>
             </li>
           </ul>
 
@@ -81,7 +84,7 @@ export async function Footer() {
 
       <div className="border-t border-neutral-800">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-neutral-500 sm:flex-row sm:px-6 lg:px-8">
-          <span>© {new Date().getFullYear()} Red Barn Western Market · Sand Springs, OK · {tF("rights")}</span>
+          <span>© {new Date().getFullYear()} My Recette · {tF("rights")}</span>
           <div className="flex gap-5">
             <Link href="/privacy" className="hover:text-white">{tF("privacy")}</Link>
             <Link href="/terms" className="hover:text-white">{tF("terms")}</Link>

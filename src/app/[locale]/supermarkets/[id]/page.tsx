@@ -38,46 +38,45 @@ type TabType = "about" | "products" | "coupons" | "bundles" | "sales" | "jobs";
 
 const tabConfig: Array<{
   id: TabType;
-  label: { en: string; es: string };
+  label: { en: string; es: string; fr: string; ar: string };
   icon: React.ReactNode;
 }> = [
   {
     id: "about",
-    label: { en: "About", es: "Acerca de" },
+    label: { en: "About", es: "Acerca de", fr: "À propos", ar: "من نحن" },
     icon: <Home className="h-4 w-4" />,
   },
   {
     id: "products",
-    label: { en: "Products", es: "Productos" },
+    label: { en: "Products", es: "Productos", fr: "Produits", ar: "المنتجات" },
     icon: <ShoppingBag className="h-4 w-4" />,
   },
   {
     id: "coupons",
-    label: { en: "Coupons", es: "Cupones" },
+    label: { en: "Coupons", es: "Cupones", fr: "Coupons", ar: "الكوبونات" },
     icon: <Ticket className="h-4 w-4" />,
   },
   {
     id: "bundles",
-    label: { en: "Bundles", es: "Paquetes" },
+    label: { en: "Bundles", es: "Paquetes", fr: "Lots", ar: "الباقات" },
     icon: <Package className="h-4 w-4" />,
   },
   {
     id: "sales",
-    label: { en: "Sales", es: "Ofertas" },
+    label: { en: "Sales", es: "Ofertas", fr: "Promotions", ar: "العروض" },
     icon: <TrendingUp className="h-4 w-4" />,
   },
   {
     id: "jobs",
-    label: { en: "Jobs", es: "Empleos" },
+    label: { en: "Jobs", es: "Empleos", fr: "Emplois", ar: "الوظائف" },
     icon: <Briefcase className="h-4 w-4" />,
   },
 ];
 
-function getTabLabel(t: any, tabId: TabType): string {
+function getTabLabel(lang: string, tabId: TabType): string {
   const tab = tabConfig.find((t) => t.id === tabId);
   if (!tab) return tabId;
-  const locale = t("locale");
-  return locale === "es" ? tab.label.es : tab.label.en;
+  return tab.label[lang as keyof typeof tab.label] || tab.label.en;
 }
 
 export async function generateStaticParams() {
@@ -204,7 +203,7 @@ function FollowButtonClient({
       className={`inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
         isFollowed
           ? "bg-neutral-100 text-neutral-700 hover:bg-neutral-200 disabled:opacity-50"
-          : "bg-barn-600 text-white hover:bg-barn-700 disabled:opacity-50"
+          : "bg-recette-600 text-white hover:bg-recette-700 disabled:opacity-50"
       }`}
     >
       <Icon className="h-4 w-4" />
@@ -256,7 +255,7 @@ default function SocialLinks({ supermarket }: { supermarket: SupermarketProfile 
           href={platform.url!}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-neutral-600 hover:text-barn-600 transition-colors"
+          className="text-neutral-600 hover:text-recette-600 transition-colors"
           title={platform.key}
         >
           <span className="text-xl">{platform.icon}</span>
@@ -297,7 +296,7 @@ default function AboutSection({ supermarket }: { supermarket: SupermarketProfile
               {supermarket.location_geometry && (
                 <a
                   href={`geo:${supermarket.address?.line1},${supermarket.address?.city}`}
-                  className="inline-flex items-center gap-1 text-sm text-barn-600 hover:text-barn-700 mt-1"
+                  className="inline-flex items-center gap-1 text-sm text-recette-600 hover:text-recette-700 mt-1"
                 >
                   <MapPin className="h-4 w-4" />
                   Open in Maps
@@ -329,7 +328,7 @@ default function AboutSection({ supermarket }: { supermarket: SupermarketProfile
                   href={supermarket.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-barn-600 hover:text-barn-700 break-all"
+                  className="text-sm text-recette-600 hover:text-recette-700 break-all"
                 >
                   {supermarket.website.replace(/^https?:\/\//, "")}
                 </a>
@@ -424,7 +423,7 @@ default async function ProductsSection({ supermarketId, lang }: { supermarketId:
         {products.length > 0 && (
           <Link
             href={`/${lang}/supermarkets/${supermarketId}/products`}
-            className="text-sm text-barn-600 hover:text-barn-700 font-medium"
+            className="text-sm text-recette-600 hover:text-recette-700 font-medium"
           >
             View All
           </Link>
@@ -499,7 +498,7 @@ default async function CouponsSection({ supermarketId, lang }: { supermarketId: 
         {coupons.length > 0 && (
           <Link
             href={`/${lang}/supermarkets/${supermarketId}/coupons`}
-            className="text-sm text-barn-600 hover:text-barn-700 font-medium"
+            className="text-sm text-recette-600 hover:text-recette-700 font-medium"
           >
             View All
           </Link>
@@ -519,7 +518,7 @@ default async function CouponsSection({ supermarketId, lang }: { supermarketId: 
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <Ticket className="h-6 w-6 text-barn-600" />
+                      <Ticket className="h-6 w-6 text-recette-600" />
                       <h3 className="font-semibold text-neutral-900">{coupon.code}</h3>
                     </div>
                     <p className="text-sm text-neutral-600 mt-1">
@@ -577,7 +576,7 @@ default async function BundlesSection({ supermarketId, lang }: { supermarketId: 
         {bundles.length > 0 && (
           <Link
             href={`/${lang}/supermarkets/${supermarketId}/bundles`}
-            className="text-sm text-barn-600 hover:text-barn-700 font-medium"
+            className="text-sm text-recette-600 hover:text-recette-700 font-medium"
           >
             View All
           </Link>
@@ -650,7 +649,7 @@ default async function SalesSection({ supermarketId, lang }: { supermarketId: st
         {sales.length > 0 && (
           <Link
             href={`/${lang}/supermarkets/${supermarketId}/sales`}
-            className="text-sm text-barn-600 hover:text-barn-700 font-medium"
+            className="text-sm text-recette-600 hover:text-recette-700 font-medium"
           >
             View All
           </Link>
@@ -689,7 +688,7 @@ default async function SalesSection({ supermarketId, lang }: { supermarketId: st
                       {sale.description?.[lang] || sale.description?.en || `Get ${sale.discount_percent}% off on selected items`}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-2xl font-bold text-barn-600">
+                      <span className="text-2xl font-bold text-recette-600">
                         {sale.discount_percent}%
                       </span>
                       <span className="text-sm text-neutral-600">OFF</span>
@@ -732,7 +731,7 @@ default async function JobsSection({ supermarketId, lang }: { supermarketId: str
         {jobs.length > 0 && (
           <Link
             href={`/${lang}/supermarkets/${supermarketId}/jobs`}
-            className="text-sm text-barn-600 hover:text-barn-700 font-medium"
+            className="text-sm text-recette-600 hover:text-recette-700 font-medium"
           >
             View All
           </Link>
@@ -749,7 +748,7 @@ default async function JobsSection({ supermarketId, lang }: { supermarketId: str
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <Briefcase className="h-6 w-6 text-barn-600" />
+                      <Briefcase className="h-6 w-6 text-recette-600" />
                       <h3 className="font-semibold text-neutral-900">{job.title[lang] || job.title.en}</h3>
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 text-xs">
                         {positionLabel}
@@ -770,7 +769,7 @@ default async function JobsSection({ supermarketId, lang }: { supermarketId: str
                     )}
                     <div className="flex flex-wrap gap-2 mt-3">
                       {job.requirements?.map((req, idx) => (
-                        <span key={idx} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-barn-50 text-barn-700 text-xs">
+                        <span key={idx} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-recette-50 text-recette-700 text-xs">
                           {req}
                         </span>
                       ))}
@@ -794,14 +793,14 @@ default async function JobsSection({ supermarketId, lang }: { supermarketId: str
                         href={job.application_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-barn-600 text-white hover:bg-barn-700 text-sm font-semibold transition-colors"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-recette-600 text-white hover:bg-recette-700 text-sm font-semibold transition-colors"
                       >
                         Apply Now
                       </a>
                     ) : job.application_email ? (
                       <a
                         href={`mailto:${job.application_email}`}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-barn-600 text-white hover:bg-barn-700 text-sm font-semibold transition-colors"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-recette-600 text-white hover:bg-recette-700 text-sm font-semibold transition-colors"
                       >
                         Apply via Email
                       </a>
@@ -875,7 +874,7 @@ export default async function SupermarketProfilePage({
   if (!supermarket) notFound();
   
   const t = await getTranslations("common");
-  const lang = locale as "en" | "es";
+  const lang = locale as "en" | "es" | "fr" | "ar";
   
   // Determine active tab
   const activeTab: TabType = searchTab && tabConfig.some((t) => t.id === searchTab) ? searchTab : "about";
@@ -922,7 +921,7 @@ export default async function SupermarketProfilePage({
               priority
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-barn-100 to-barn-200" />
+            <div className="absolute inset-0 bg-gradient-to-br from-recette-100 to-recette-200" />
           )}
         </div>
         
@@ -942,8 +941,8 @@ export default async function SupermarketProfilePage({
                     priority
                   />
                 ) : (
-                  <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-lg bg-barn-100 flex items-center justify-center">
-                    <ShoppingBag className="h-12 w-12 text-barn-600" />
+                  <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-lg bg-recette-100 flex items-center justify-center">
+                    <ShoppingBag className="h-12 w-12 text-recette-600" />
                   </div>
                 )}
               </div>
@@ -993,7 +992,7 @@ export default async function SupermarketProfilePage({
                     {supermarket.category_tags.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-barn-50 text-barn-700 text-sm font-medium"
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-recette-50 text-recette-700 text-sm font-medium"
                       >
                         <Tag className="h-3.5 w-3.5" />
                         {tag}
@@ -1020,12 +1019,12 @@ export default async function SupermarketProfilePage({
                   scroll={false}
                   className={`flex-shrink-0 flex items-center gap-2 px-4 py-4 border-b-2 transition-colors ${
                     isActive
-                      ? "border-barn-600 text-barn-600 font-semibold"
+                      ? "border-recette-600 text-recette-600 font-semibold"
                       : "border-transparent text-neutral-500 hover:text-neutral-700"
                   }`}
                 >
                   {tab.icon}
-                  <span>{lang === "es" ? tab.label.es : tab.label.en}</span>
+                  <span>{tab.label[lang] || tab.label.en}</span>
                 </Link>
               );
             })}

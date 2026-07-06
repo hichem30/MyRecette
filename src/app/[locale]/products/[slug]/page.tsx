@@ -143,12 +143,12 @@ function RecipeCardForProduct({ recipe, lang }: { recipe: Recipe; lang: "en" | "
         {recipe.image_url ? (
           <Image src={recipe.image_url} alt={recipe.title[lang] || recipe.title.en || "Recipe"} width={400} height={250} className="w-full h-40 object-cover" />
         ) : (
-          <div className="w-full h-40 bg-gradient-to-br from-barn-100 to-barn-200 flex items-center justify-center">
-            <Users className="h-8 w-8 text-barn-400" />
+          <div className="w-full h-40 bg-gradient-to-br from-recette-100 to-recette-200 flex items-center justify-center">
+            <Users className="h-8 w-8 text-recette-400" />
           </div>
         )}
         <div className="p-4">
-          <h3 className="font-semibold text-neutral-900 group-hover:text-barn-700 line-clamp-1">{recipe.title[lang] || recipe.title.en}</h3>
+          <h3 className="font-semibold text-neutral-900 group-hover:text-recette-700 line-clamp-1">{recipe.title[lang] || recipe.title.en}</h3>
           <p className="text-sm text-neutral-600 line-clamp-2 mt-1">{recipe.description?.[lang] || recipe.description?.en}</p>
           <div className="flex items-center gap-3 mt-3 text-xs text-neutral-500">
             <span><Clock className="h-3.5 w-3.5 inline" /> {formatTime(recipe.prep_time_minutes)} prep, {formatTime(recipe.cook_time_minutes)} cook</span>
@@ -178,7 +178,7 @@ function IngredientMatchingInfo({ product, ingredients, lang }: { product: Produ
   return (
     <div className="space-y-4">
       <h3 className="font-semibold text-neutral-900">
-        <FlaskConical className="h-5 w-5 inline-block mr-2 text-barn-600" />
+        <FlaskConical className="h-5 w-5 inline-block mr-2 text-recette-600" />
         Ingredient Information
       </h3>
       <div className="flex flex-wrap gap-2">
@@ -201,7 +201,7 @@ function SupermarketAvailabilityPanel({ availability, lang }: { availability: Su
   return (
     <div className="space-y-4">
       <h3 className="font-semibold text-neutral-900">
-        <MapPin className="h-5 w-5 inline-block mr-2 text-barn-600" />
+        <MapPin className="h-5 w-5 inline-block mr-2 text-recette-600" />
         Available at Nearby Supermarkets
       </h3>
       <div className="space-y-4">
@@ -214,7 +214,7 @@ function SupermarketAvailabilityPanel({ availability, lang }: { availability: Su
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-barn-600" />
+                    <MapPin className="h-5 w-5 text-recette-600" />
                     <h4 className="font-semibold text-neutral-900">{supermarket.supermarket_name[lang] || supermarket.supermarket_name.en}</h4>
                   </div>
                   <div className="mt-3">
@@ -227,7 +227,7 @@ function SupermarketAvailabilityPanel({ availability, lang }: { availability: Su
                     </div>
                   </div>
                   <p className="text-sm text-neutral-600 mt-2">
-                    Total: <span className="font-semibold text-barn-600">{supermarket.total_price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    Total: <span className="font-semibold text-recette-600">{supermarket.total_price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                   </p>
                   <div className="mt-3 space-y-1">
                     {supermarket.available_ingredients.map((item) => (
@@ -248,7 +248,7 @@ function SupermarketAvailabilityPanel({ availability, lang }: { availability: Su
                   </div>
                 </div>
                 <div className="flex-shrink-0">
-                  <Link href={`/${lang}/supermarkets/${supermarket.supermarket_id}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-barn-50 text-barn-700 hover:bg-barn-100 text-sm font-medium transition-colors">
+                  <Link href={`/${lang}/supermarkets/${supermarket.supermarket_id}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-recette-50 text-recette-700 hover:bg-recette-100 text-sm font-medium transition-colors">
                     <ShoppingCart className="h-4 w-4" /> View Store
                   </Link>
                 </div>
@@ -359,11 +359,11 @@ export default async function ProductDetail({
       />
       <div className="container-page pt-6">
         <nav className="flex items-center gap-1 text-xs text-neutral-500">
-          <Link href={`/${lang}/`} className="hover:text-barn-700">
+          <Link href={`/${lang}/`} className="hover:text-recette-700">
             {lang === "en" ? "Home" : "Inicio"}
           </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link href={`/${lang}/products`} className="hover:text-barn-700">
+          <Link href={`/${lang}/products`} className="hover:text-recette-700">
             {lang === "en" ? "Products" : "Productos"}
           </Link>
           <ChevronRight className="h-3 w-3" />
@@ -385,7 +385,7 @@ export default async function ProductDetail({
             />
             <div className="absolute left-4 top-4 flex flex-col gap-1">
               {product.new_arrival && (
-                <span className="rounded-md bg-barn-600 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                <span className="rounded-md bg-recette-600 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
                   {t("new")}
                 </span>
               )}
@@ -401,7 +401,7 @@ export default async function ProductDetail({
 
           {/* Product Info */}
           <div className="flex flex-col">
-            <p className="text-xs font-bold uppercase tracking-widest text-barn-600">
+            <p className="text-xs font-bold uppercase tracking-widest text-recette-600">
               {product.category_slug.replace(/-/g, " ")}
             </p>
             <h1 className="mt-2 font-serif text-3xl font-bold text-neutral-900 sm:text-4xl">
@@ -469,7 +469,7 @@ export default async function ProductDetail({
             {recipesUsingProduct.length > 0 && (
               <div className="bg-white rounded-2xl border border-neutral-200 p-6 md:p-8 mb-8">
                 <h3 className="font-semibold text-neutral-900 mb-6">
-                  <Users className="h-5 w-5 inline-block mr-2 text-barn-600" />
+                  <Users className="h-5 w-5 inline-block mr-2 text-recette-600" />
                   Recipes Using This Product
                 </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -481,7 +481,7 @@ export default async function ProductDetail({
                   <div className="mt-6 text-center">
                     <Link
                       href={`/${lang}/recipes?ingredient=${encodeURIComponent(product.name[lang] || product.name.en || "")}`}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-barn-50 text-barn-700 hover:bg-barn-100 font-medium transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-50 text-recette-700 hover:bg-recette-100 font-medium transition-colors"
                     >
                       View All {recipesUsingProduct.length} Recipes
                       <ChevronRight className="h-4 w-4" />

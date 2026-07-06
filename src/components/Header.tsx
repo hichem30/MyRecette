@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Heart, LayoutDashboard, LogOut, Menu, Package, Search, ShoppingCart, User, X } from "lucide-react";
+import { ChevronDown, Heart, LayoutDashboard, LogOut, Menu, Package, PlayCircle, Plus, Rss, Search, ShoppingCart, Store, User, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "./Logo";
@@ -17,6 +17,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchType, setSearchType] = useState<"recipes" | "videos">("recipes");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [authed, setAuthed] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -88,9 +89,12 @@ export function Header() {
 
   const navItems = [
     { href: "/", key: "home" },
+    { href: "/recipes", key: "recipes" },
     { href: "/products", key: "products" },
+    { href: "/supermarkets", key: "supermarkets" },
     { href: "/deals", key: "deals" },
     { href: "/categories", key: "categories" },
+    { href: "/videos", key: "videos" },
     { href: "/about", key: "about" },
     { href: "/contact", key: "contact" },
   ] as const;
@@ -119,10 +123,10 @@ export function Header() {
                   active
                     ? isHome
                       ? "bg-white/10 text-white"
-                      : "bg-barn-50 text-barn-700"
+                      : "bg-recette-50 text-recette-700"
                     : isHome
                       ? "text-white/80 hover:text-white"
-                      : "text-neutral-700 hover:text-barn-700",
+                      : "text-neutral-700 hover:text-recette-700",
                 )}
               >
                 {t(item.key)}
@@ -137,7 +141,7 @@ export function Header() {
             aria-label={t("search")}
             className={cn(
               "inline-flex h-9 w-9 items-center justify-center rounded-full transition",
-              isHome ? "text-white/80 hover:text-white" : "text-neutral-600 hover:text-barn-700",
+              isHome ? "text-white/80 hover:text-white" : "text-neutral-600 hover:text-recette-700",
             )}
           >
             <Search className="h-4 w-4" />
@@ -147,12 +151,12 @@ export function Header() {
             aria-label={t("wishlist")}
             className={cn(
               "relative inline-flex h-9 w-9 items-center justify-center rounded-full transition",
-              isHome ? "text-white/80 hover:text-white" : "text-neutral-600 hover:text-barn-700",
+              isHome ? "text-white/80 hover:text-white" : "text-neutral-600 hover:text-recette-700",
             )}
           >
             <Heart className="h-4 w-4" />
             {wishlist.length > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-barn-600 text-[10px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-recette-600 text-[10px] font-bold text-white">
                 {wishlist.length}
               </span>
             )}
@@ -162,12 +166,12 @@ export function Header() {
             aria-label={t("cart")}
             className={cn(
               "relative inline-flex h-9 w-9 items-center justify-center rounded-full transition",
-              isHome ? "text-white/80 hover:text-white" : "text-neutral-600 hover:text-barn-700",
+              isHome ? "text-white/80 hover:text-white" : "text-neutral-600 hover:text-recette-700",
             )}
           >
             <ShoppingCart className="h-4 w-4" />
             {itemCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-barn-600 text-[10px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-recette-600 text-[10px] font-bold text-white">
                 {itemCount}
               </span>
             )}
@@ -182,7 +186,7 @@ export function Header() {
                   "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition",
                   isHome
                     ? "border-white/30 text-white hover:bg-white/10"
-                    : "border-neutral-300 text-neutral-700 hover:border-barn-600 hover:text-barn-700",
+                    : "border-neutral-300 text-neutral-700 hover:border-recette-600 hover:text-recette-700",
                 )}
               >
                 <User className="h-3.5 w-3.5" />
@@ -217,6 +221,34 @@ export function Header() {
                   >
                     <Heart className="h-4 w-4" /> {t("wishlist")}
                   </Link>
+                  <Link
+                    href="/account/videos"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-50"
+                  >
+                    <PlayCircle className="h-4 w-4" /> {t("myVideos")}
+                  </Link>
+                  <Link
+                    href="/feed"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-50"
+                  >
+                    <Rss className="h-4 w-4" /> {t("myFeed")}
+                  </Link>
+                  <Link
+                    href="/recipes/add"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-50"
+                  >
+                    <Plus className="h-4 w-4" /> {t("addRecipe")}
+                  </Link>
+                  <Link
+                    href="/account/followed-supermarkets"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-50"
+                  >
+                    <Store className="h-4 w-4" /> {t("followedSupermarkets")}
+                  </Link>
                   {isAdmin && (
                     <>
                       <div className="my-1 border-t border-neutral-100" />
@@ -226,7 +258,7 @@ export function Header() {
                       <a
                         href="/admin"
                         onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 rounded-md bg-barn-50 px-3 py-2 text-sm font-bold text-barn-700 hover:bg-barn-100"
+                        className="flex items-center gap-2 rounded-md bg-recette-50 px-3 py-2 text-sm font-bold text-recette-700 hover:bg-recette-100"
                       >
                         <LayoutDashboard className="h-4 w-4" /> Admin Dashboard
                       </a>
@@ -252,7 +284,7 @@ export function Header() {
                 "hidden sm:inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition",
                 isHome
                   ? "border-white/30 text-white hover:bg-white/10"
-                  : "border-neutral-300 text-neutral-700 hover:border-barn-600 hover:text-barn-700",
+                  : "border-neutral-300 text-neutral-700 hover:border-recette-600 hover:text-recette-700",
               )}
             >
               <User className="h-3.5 w-3.5" />
@@ -279,7 +311,15 @@ export function Header() {
             onSubmit={(e) => {
               e.preventDefault();
               const q = searchQuery.trim();
-              router.push(q ? `/products?q=${encodeURIComponent(q)}` : "/products");
+              if (q) {
+                if (searchType === "videos") {
+                  router.push(`/videos?q=${encodeURIComponent(q)}`);
+                } else {
+                  router.push(`/recipes/search?q=${encodeURIComponent(q)}`);
+                }
+              } else {
+                router.push(searchType === "videos" ? "/videos" : "/recipes");
+              }
               setSearchOpen(false);
             }}
           >
@@ -289,14 +329,38 @@ export function Header() {
                 name="q"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t("search")}
+                placeholder={searchType === "videos" ? t("searchVideos") : t("search")}
                 className="flex-1 min-w-0 bg-transparent text-sm outline-none text-neutral-800"
                 autoFocus
               />
             </div>
+            <div className="flex items-center gap-1 rounded-full bg-neutral-100 p-0.5">
+              <button
+                type="button"
+                onClick={() => setSearchType("recipes")}
+                className={`px-2 py-1 text-xs font-medium rounded-full transition-colors ${
+                  searchType === "recipes"
+                    ? "bg-recette-600 text-white"
+                    : "text-neutral-600 hover:text-recette-700"
+                }`}
+              >
+                Recipes
+              </button>
+              <button
+                type="button"
+                onClick={() => setSearchType("videos")}
+                className={`px-2 py-1 text-xs font-medium rounded-full transition-colors ${
+                  searchType === "videos"
+                    ? "bg-recette-600 text-white"
+                    : "text-neutral-600 hover:text-recette-700"
+                }`}
+              >
+                Videos
+              </button>
+            </div>
             <button
               type="submit"
-              className="flex-none rounded-full bg-barn-600 px-4 text-sm font-bold text-white hover:bg-barn-700"
+              className="flex-none rounded-full bg-recette-600 px-4 text-sm font-bold text-white hover:bg-recette-700"
               aria-label={t("search")}
             >
               <Search className="h-4 w-4" />
@@ -334,6 +398,34 @@ export function Header() {
                   className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
                 >
                   <Package className="h-4 w-4" /> {t("myOrders")}
+                </Link>
+                <Link
+                  href="/account/videos"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                >
+                  <PlayCircle className="h-4 w-4" /> {t("myVideos")}
+                </Link>
+                <Link
+                  href="/feed"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                >
+                  <Rss className="h-4 w-4" /> {t("myFeed")}
+                </Link>
+                <Link
+                  href="/recipes/add"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                >
+                  <Plus className="h-4 w-4" /> {t("addRecipe")}
+                </Link>
+                <Link
+                  href="/account/followed-supermarkets"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
+                >
+                  <Store className="h-4 w-4" /> {t("followedSupermarkets")}
                 </Link>
                 <button
                   onClick={() => {

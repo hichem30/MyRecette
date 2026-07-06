@@ -101,8 +101,8 @@ function SupermarketCard({ supermarket, lang }: { supermarket: SupermarketProfil
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           </div>
         ) : (
-          <div className="aspect-video bg-gradient-to-br from-barn-100 to-barn-200 flex items-center justify-center">
-            <MapPin className="h-8 w-8 text-barn-400" />
+          <div className="aspect-video bg-gradient-to-br from-recette-100 to-recette-200 flex items-center justify-center">
+            <MapPin className="h-8 w-8 text-recette-400" />
           </div>
         )}
         
@@ -115,13 +115,13 @@ function SupermarketCard({ supermarket, lang }: { supermarket: SupermarketProfil
                 className="h-12 w-12 rounded-full object-cover"
               />
             ) : (
-              <div className="h-12 w-12 rounded-full bg-barn-100 flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-barn-600" />
+              <div className="h-12 w-12 rounded-full bg-recette-100 flex items-center justify-center">
+                <MapPin className="h-6 w-6 text-recette-600" />
               </div>
             )}
             
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-neutral-900 group-hover:text-barn-700 truncate">
+              <h3 className="font-semibold text-neutral-900 group-hover:text-recette-700 truncate">
                 {supermarket.supermarket_name[lang] || supermarket.supermarket_name.en}
               </h3>
               <p className="text-sm text-neutral-600 line-clamp-1">
@@ -146,7 +146,7 @@ function SupermarketCard({ supermarket, lang }: { supermarket: SupermarketProfil
           </div>
           
           <div className="mt-4 flex items-center justify-between">
-            <span className="text-sm font-medium text-barn-600">
+            <span className="text-sm font-medium text-recette-600">
               {supermarket.subscription_status === "active" && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
                   ✓ Verified
@@ -155,7 +155,7 @@ function SupermarketCard({ supermarket, lang }: { supermarket: SupermarketProfil
             </span>
             <Link
               href={`/${lang}/supermarkets/${supermarket.id}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-barn-50 text-barn-700 hover:bg-barn-100 text-sm font-medium transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-recette-50 text-recette-700 hover:bg-recette-100 text-sm font-medium transition-colors"
             >
               <ShoppingCart className="h-4 w-4" />
               {lang === "en" ? "Shop Now" : "Comprar"}
@@ -285,7 +285,7 @@ export default function AccountFollowedSupermarkets() {
               </p>
               <Link
                 href={`/${locale}/supermarkets`}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-barn-600 text-white hover:bg-barn-700 text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white hover:bg-recette-700 text-sm font-medium transition-colors"
               >
                 {locale === "en" ? "Discover Supermarkets" : "Descubrir Supermercados"}
               </Link>

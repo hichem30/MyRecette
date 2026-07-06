@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Play, Pause, Volume2, VolumeX, Fullscreen, Heart, Eye, Share2 } from "lucide-react";
-import type { RecipeVideo } from "@/lib/types";
+import type { RecipeVideo, VideoPlatform } from "@/lib/types";
 
 interface VideoPlayerProps {
   video: RecipeVideo;
@@ -30,6 +30,27 @@ function extractYouTubeVideoId(url: string): string | null {
   return null;
 }
 
+// Extract Facebook video ID from URL
+function extractFacebookVideoId(url: string): string | null {
+  const patterns = [
+    /facebook\.com\/watch\/\?v=([^&]+)/,
+    /facebook\.com\/([^\/]+)\/videos\/([^\/]+)/,
+    /fb\.watch\/([^\/]+)/,
+    /facebook\.com\/reel\/([^\/]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) {
+      // Return the first non-empty capture group
+      for (let i = 1; i < match.length; i++) {
+        if (match[i]) return match[i];
+      }
+    }
+  }
+  return null;
+}
+
 // Get YouTube embed URL
 function getYouTubeEmbedUrl(videoId: string): string {
   return `https://www.youtube.com/embed/${videoId}?rel=0&enablejsapi=1`;
@@ -38,6 +59,17 @@ function getYouTubeEmbedUrl(videoId: string): string {
 // Get YouTube thumbnail URL (higher quality)
 function getYouTubeThumbnail(videoId: string): string {
   return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
+
+// Get Facebook embed URL
+function getFacebookEmbedUrl(videoId: string): string {
+  return `https://www.facebook.com/plugins/video.php?href=https://www.facebook.com/watch/?v=${videoId}&show_text=0`;
+}
+
+// Get Facebook thumbnail URL (using oEmbed API as fallback)
+function getFacebookThumbnail(videoId: string): string {
+  // Facebook thumbnails are harder to get directly, use a placeholder or oEmbed
+  return `/images/facebook-placeholder.jpg`;
 }
 
 export function VideoPlayer({ video, showControls = true, autoPlay = false, className = "" }: VideoPlayerProps) {
@@ -51,8 +83,21 @@ export function VideoPlayer({ video, showControls = true, autoPlay = false, clas
   const [viewCount, setViewCount] = useState(video.view_count || 0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const videoId = video.youtube_video_id || extractYouTubeVideoId(video.video_url);
-  const embedUrl = videoId ? getYouTubeEmbedUrl(videoId) : null;
+  const platform: VideoPlatform = video.platform || 
+    (video.youtube_video_id ? 'youtube' : 
+    (video.facebook_video_id || video.video_url.includes('facebook') || video.video_url.includes('fb.watch') ? 'facebook' : 'youtube'));
+
+  // Extract appropriate video ID based on platform
+  let videoId: string | null = null;
+  let embedUrl: string | null = null;
+  
+  if (platform === 'youtube') {
+    videoId = video.youtube_video_id || extractYouTubeVideoId(video.video_url);
+    embedUrl = videoId ? getYouTubeEmbedUrl(videoId) : null;
+  } else if (platform === 'facebook') {
+    videoId = video.facebook_video_id || extractFacebookVideoId(video.video_url);
+    embedUrl = videoId ? getFacebookEmbedUrl(videoId) : null;
+  }
 
   // Handle like
   const handleLike = async () => {
@@ -96,15 +141,20 @@ export function VideoPlayer({ video, showControls = true, autoPlay = false, clas
     );
   }
 
+  // Facebook iframes need different allow attributes
+  const iframeAllow = platform === 'facebook' 
+    ? "fullscreen; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+    : "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+
   return (
     <div className={`bg-neutral-900 rounded-xl overflow-hidden relative ${className}`}>
-      {/* YouTube Embed */}
+      {/* Video Embed (YouTube or Facebook) */}
       <iframe
         ref={iframeRef}
         src={embedUrl}
         className="w-full aspect-video"
         frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allow={iframeAllow}
         allowFullScreen
         title={video.title?.en || "Recipe Video"}
       />

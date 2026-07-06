@@ -160,6 +160,59 @@ const mockRecipe: Recipe = {
   ],
   comments: [],
   is_favorited: false,
+  video_count: 2,
+  videos: [
+    {
+      id: "v-1",
+      recipe_id: "r-1",
+      user_id: "user-2",
+      platform: "youtube",
+      video_url: "https://www.youtube.com/watch?v=3a0v8W1Tn9k",
+      youtube_video_id: "3a0v8W1Tn9k",
+      thumbnail_url: "https://img.youtube.com/vi/3a0v8W1Tn9k/mqdefault.jpg",
+      title: { en: "Spaghetti Bolognese - My Home Version", es: "Espaguetis a la boloñesa - Mi versión casera" },
+      description: { en: "Here's how I make this classic dish at home", es: "Así es como preparo este plato clásico en casa" },
+      like_count: 45,
+      comment_count: 8,
+      share_count: 5,
+      view_count: 234,
+      is_approved: true,
+      status: "approved",
+      created_at: "2024-06-20T10:00:00Z",
+      updated_at: "2024-06-20T10:00:00Z",
+      user: {
+        id: "user-2",
+        email: "homecook@myrecette.com",
+        supermarket_name: null,
+        profile_picture_url: "https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=100&q=80",
+      },
+    },
+    {
+      id: "v-2",
+      recipe_id: "r-1",
+      user_id: "user-3",
+      platform: "facebook",
+      video_url: "https://www.facebook.com/watch/?v=123456789",
+      facebook_video_id: "123456789",
+      thumbnail_url: null,
+      title: { en: "Quick Bolognese Method", es: "Método rápido de Boloñesa" },
+      description: { en: "A faster way to make this dish", es: "Una forma más rápida de preparar este plato" },
+      like_count: 32,
+      comment_count: 5,
+      share_count: 3,
+      view_count: 189,
+      is_approved: true,
+      status: "approved",
+      created_at: "2024-06-19T14:30:00Z",
+      updated_at: "2024-06-19T14:30:00Z",
+      user: {
+        id: "user-3",
+        email: "quickcook@myrecette.com",
+        supermarket_name: null,
+        profile_picture_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80",
+      },
+    },
+  ],
 };
 
 const mockComments: RecipeComment[] = [
@@ -415,7 +468,7 @@ function RecipeBadges({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" }) {
   return (
     <div className="flex flex-wrap gap-2">
       {recipe.cuisine && (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-barn-50 text-barn-700 text-sm font-medium">
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-recette-50 text-recette-700 text-sm font-medium">
           <ChefHat className="h-3.5 w-3.5" />
           {recipe.cuisine}
         </span>
@@ -485,7 +538,7 @@ function Instructions({ instructions, lang }: { instructions: Recipe["instructio
       <div className="space-y-3">
         {instructions.map((step, index) => (
           <div key={step.step} className="flex gap-3 p-3 rounded-lg border border-neutral-200">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-barn-600 text-white flex items-center justify-center font-semibold">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-recette-600 text-white flex items-center justify-center font-semibold">
               {step.step}
             </div>
             <p className="text-neutral-700">{step.text[lang] || step.text.en}</p>
@@ -611,7 +664,7 @@ function CommentFormClient({
         onChange={(e) => setContent(e.target.value)}
         placeholder={lang === "es" ? "Escribe tu comentario..." : "Write your comment..."}
         rows={4}
-        className="w-full p-3 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors resize-none"
+        className="w-full p-3 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors resize-none"
         disabled={submitting}
       />
       
@@ -620,7 +673,7 @@ function CommentFormClient({
       <button
         type="submit"
         disabled={submitting}
-        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-barn-600 text-white hover:bg-barn-700 disabled:opacity-50 font-semibold transition-colors"
+        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-recette-600 text-white hover:bg-recette-700 disabled:opacity-50 font-semibold transition-colors"
       >
         <MessageSquare className="h-4 w-4" />
         {submitting ? "Posting..." : lang === "es" ? "Publicar" : "Post Comment"}
@@ -721,8 +774,8 @@ function CommentItem({
       <div className="flex gap-3">
         {/* Avatar */}
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 rounded-full bg-barn-100 flex items-center justify-center">
-            <Users className="h-5 w-5 text-barn-600" />
+          <div className="w-10 h-10 rounded-full bg-recette-100 flex items-center justify-center">
+            <Users className="h-5 w-5 text-recette-600" />
           </div>
         </div>
         
@@ -757,7 +810,7 @@ function CommentItem({
           <div className="flex items-center gap-3 mt-2">
             <button
               onClick={handleReply}
-              className="text-sm text-barn-600 hover:text-barn-700 font-medium flex items-center gap-1"
+              className="text-sm text-recette-600 hover:text-recette-700 font-medium flex items-center gap-1"
             >
               <MessageSquare className="h-4 w-4" />
               Reply
@@ -926,7 +979,7 @@ function AvailabilityPanel({
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-barn-600" />
+                    <MapPin className="h-5 w-5 text-recette-600" />
                     <h4 className="font-semibold text-neutral-900">
                       {supermarket.supermarket_name[lang] || supermarket.supermarket_name.en}
                     </h4>
@@ -997,7 +1050,7 @@ function AvailabilityPanel({
                 <div className="flex-shrink-0">
                   <Link
                     href={`/${lang}/supermarkets/${supermarket.supermarket_id}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-barn-50 text-barn-700 hover:bg-barn-100 text-sm font-medium transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-recette-50 text-recette-700 hover:bg-recette-100 text-sm font-medium transition-colors"
                   >
                     <ShoppingCart className="h-4 w-4" />
                     Shop
@@ -1099,11 +1152,11 @@ export default async function RecipeDetailPage({
       {/* Header */}
       <div className="max-w-6xl mx-auto px-4 py-4">
         <nav className="flex items-center gap-2 text-sm text-neutral-500">
-          <Link href={`/${lang}/`} className="hover:text-barn-600">
+          <Link href={`/${lang}/`} className="hover:text-recette-600">
             Home
           </Link>
           <span>/</span>
-          <Link href={`/${lang}/recipes`} className="hover:text-barn-600">
+          <Link href={`/${lang}/recipes`} className="hover:text-recette-600">
             Recipes
           </Link>
           <span>/</span>
@@ -1129,8 +1182,8 @@ export default async function RecipeDetailPage({
                 priority
               />
             ) : (
-              <div className="w-full h-64 md:h-96 bg-gradient-to-br from-barn-100 to-barn-200 flex items-center justify-center">
-                <ChefHat className="h-16 w-16 text-barn-400" />
+              <div className="w-full h-64 md:h-96 bg-gradient-to-br from-recette-100 to-recette-200 flex items-center justify-center">
+                <ChefHat className="h-16 w-16 text-recette-400" />
               </div>
             )}
             
@@ -1153,7 +1206,7 @@ export default async function RecipeDetailPage({
             <div className="max-w-4xl">
               {/* Category */}
               {recipe.cuisine && (
-                <p className="text-sm text-barn-600 font-medium mb-2 capitalize">
+                <p className="text-sm text-recette-600 font-medium mb-2 capitalize">
                   {recipe.cuisine}
                 </p>
               )}
@@ -1260,8 +1313,8 @@ export default async function RecipeDetailPage({
               <h3 className="font-semibold text-neutral-900 mb-4">Recipe Info</h3>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-barn-50 flex items-center justify-center">
-                    <Clock className="h-5 w-5 text-barn-600" />
+                  <div className="w-10 h-10 rounded-lg bg-recette-50 flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-recette-600" />
                   </div>
                   <div>
                     <p className="text-xs text-neutral-500">Total Time</p>

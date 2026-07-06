@@ -19,7 +19,7 @@ export default async function CancelPage({
       <p className="mt-2 max-w-md text-sm text-neutral-600">{t("cancelBody")}</p>
       <Link
         href="/products"
-        className="mt-6 rounded-md bg-barn-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-barn-700"
+        className="mt-6 rounded-md bg-recette-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-recette-700"
       >
         {locale === "en" ? "Continue Shopping" : "Seguir Comprando"}
       </Link>

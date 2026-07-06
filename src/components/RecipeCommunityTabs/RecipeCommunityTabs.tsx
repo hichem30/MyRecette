@@ -44,8 +44,8 @@ function SimpleCommentItem({ comment, lang }: { comment: RecipeComment; lang: Lo
       <div className="flex gap-3">
         {/* Avatar */}
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 rounded-full bg-barn-100 flex items-center justify-center">
-            <Users className="h-5 w-5 text-barn-600" />
+          <div className="w-10 h-10 rounded-full bg-recette-100 flex items-center justify-center">
+            <Users className="h-5 w-5 text-recette-600" />
           </div>
         </div>
         

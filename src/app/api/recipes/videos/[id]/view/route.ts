@@ -43,6 +43,7 @@ export async function POST(
     }
 
     // Check if this view already exists (same video + user + IP)
+    // For simplicity, we'll just track unique IP + user combinations per video
     const userId = user?.id;
     const { data: existingView, error: viewError } = await sb
       .from("recipe_video_views")
@@ -69,13 +70,13 @@ export async function POST(
 
       if (insertError) {
         console.error("Error creating view:", insertError);
+      } else {
+        // Increment view count
+        await sb
+          .from("recipe_videos")
+          .update({ view_count: video.view_count + 1 })
+          .eq("id", videoId);
       }
-
-      // Increment view count
-      await sb
-        .from("recipe_videos")
-        .update({ view_count: video.view_count + 1 })
-        .eq("id", videoId);
     }
 
     return NextResponse.json({
