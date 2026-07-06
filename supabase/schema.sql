@@ -878,7 +878,8 @@ alter table public.profiles
   add column if not exists social_links jsonb,
   add column if not exists opening_hours jsonb,
   add column if not exists category_tags text[],
-  add column if not exists subscription_status text not null default 'inactive' 
+  add column if not exists subscription_status text not null 
+    default 'inactive'
     check (subscription_status in ('inactive', 'active', 'trialing', 'past_due', 'canceled')),
   add column if not exists subscription_start_date timestamptz,
   add column if not exists subscription_end_date timestamptz;
@@ -897,9 +898,7 @@ create table if not exists public.supermarket_products (
   location_in_store text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  unique (supermarket_id, product_id),
-  unique (supermarket_id, supermarket_sku) where supermarket_sku is not null,
-  unique (supermarket_id, supermarket_barcode) where supermarket_barcode is not null
+  unique (supermarket_id, product_id)
 );
 
 -- Indexes for supermarket_products
@@ -909,10 +908,11 @@ create index if not exists idx_supermarket_products_supermarket
 create index if not exists idx_supermarket_products_availability 
   on public.supermarket_products(supermarket_id, is_available) where is_available = true;
 
-create index if not exists idx_supermarket_products_sku 
+-- Partial unique indexes for SKU and barcode
+create unique index if not exists idx_supermarket_products_sku_unique 
   on public.supermarket_products(supermarket_id, supermarket_sku) where supermarket_sku is not null;
 
-create index if not exists idx_supermarket_products_barcode 
+create unique index if not exists idx_supermarket_products_barcode_unique 
   on public.supermarket_products(supermarket_id, supermarket_barcode) where supermarket_barcode is not null;
 
 -- Index for supermarket location queries (geospatial)
@@ -1441,8 +1441,8 @@ alter table public.products
   add column if not exists is_ingredient boolean default false,
   add column if not exists ingredient_confidence numeric(3,2),
   add column if not exists ingredient_mapping_status text
-    check (ingredient_mapping_status in ('auto', 'manual', 'pending', 'ignored'))
-    default 'pending';
+    default 'pending'
+    check (ingredient_mapping_status in ('auto', 'manual', 'pending', 'ignored'));
 
 -- Ingredients Master List
 create table if not exists public.ingredients (
