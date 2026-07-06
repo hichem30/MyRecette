@@ -1633,7 +1633,7 @@ create table if not exists public.recipes_ingredients (
   -- Notes (e.g., "optional", "for garnish")
   notes text,
   -- Position in recipe (for ordered lists)
-  position integer default 0,
+  "position" integer default 0,
   created_at timestamptz not null default now(),
   unique (recipe_id, ingredient_id)
 );
@@ -1641,7 +1641,7 @@ create table if not exists public.recipes_ingredients (
 -- Indexes for recipes_ingredients
 create index if not exists idx_recipes_ingredients_recipe on public.recipes_ingredients(recipe_id);
 create index if not exists idx_recipes_ingredients_ingredient on public.recipes_ingredients(ingredient_id);
-create index if not exists idx_recipes_ingredients_position on public.recipes_ingredients(recipe_id, position);
+create index if not exists idx_recipes_ingredients_position on public.recipes_ingredients(recipe_id, "position");
 
 -- Recipe Instructions (steps for recipes)
 create table if not exists public.recipe_instructions (
@@ -2107,7 +2107,7 @@ returns table (
   quantity numeric(10,2),
   unit text,
   notes text,
-  position integer
+  "position" integer
 )
 language sql
 security invoker
@@ -2121,11 +2121,11 @@ as $$
     ri.quantity,
     ri.unit,
     ri.notes,
-    ri.position
+    ri."position"
   from public.recipes_ingredients ri
   join public.ingredients i on ri.ingredient_id = i.id
   where ri.recipe_id = p_recipe_id
-  order by ri.position, i.canonical_name
+  order by ri."position", i.canonical_name
 $$;
 
 -- Function to check ingredient availability at supermarkets
@@ -2528,8 +2528,19 @@ declare
   candidate record;
   existing_mapping_count integer;
   total_created integer := 0;
-  needs_review_flag boolean := false;
 begin
+  -- Create a temporary table to collect results
+  create temp table if not exists temp_mapping_results (
+    ingredient_id uuid,
+    ingredient_name text,
+    confidence numeric(3,2),
+    action text,
+    needs_review boolean
+  );
+  
+  -- Clear any previous results
+  truncate temp_mapping_results;
+  
   -- Extract ingredient candidates
   for candidate in 
     select * from public.extract_ingredients_from_product_name(p_product_name, 0.5)
@@ -2549,11 +2560,13 @@ begin
           product_id, ingredient_id, mapping_method, confidence, is_primary
         ) values (
           p_product_id, candidate.ingredient_id, 'auto_name', candidate.confidence,
-          (total_created = 0)
+          total_created = 0
         );
         
-        return next;
         total_created := total_created + 1;
+        insert into temp_mapping_results values (
+          candidate.ingredient_id, candidate.canonical_name, candidate.confidence, 'created', false
+        );
         
       elsif candidate.confidence >= 0.7 then
         -- Medium confidence - auto-link primary, flag for review
@@ -2564,7 +2577,9 @@ begin
             p_product_id, candidate.ingredient_id, 'auto_name', candidate.confidence, true
           );
           total_created := total_created + 1;
-          return next;
+          insert into temp_mapping_results values (
+            candidate.ingredient_id, candidate.canonical_name, candidate.confidence, 'created', false
+          );
         else
           -- Flag for review
           insert into public.pending_ingredient_mappings (
@@ -2574,7 +2589,9 @@ begin
             p_product_id, p_supermarket_id, candidate.ingredient_id, 
             candidate.canonical_name, candidate.confidence
           );
-          needs_review_flag := true;
+          insert into temp_mapping_results values (
+            candidate.ingredient_id, candidate.canonical_name, candidate.confidence, 'pending', true
+          );
         end if;
         
       else
@@ -2586,22 +2603,15 @@ begin
           p_product_id, p_supermarket_id, candidate.ingredient_id, 
           candidate.canonical_name, candidate.confidence
         );
-        needs_review_flag := true;
+        insert into temp_mapping_results values (
+          candidate.ingredient_id, candidate.canonical_name, candidate.confidence, 'pending', true
+        );
       end if;
     end if;
   end loop;
   
-  -- If no mappings were created and we have candidates, check if we need review
-  if total_created = 0 then
-    perform 1 from public.pending_ingredient_mappings 
-    where product_id = p_product_id limit 1;
-    if found then
-      needs_review_flag := true;
-    end if;
-  end if;
-  
-  -- Return results (simplified for now)
-  return;
+  -- Return all results
+  return query select * from temp_mapping_results;
 end;
 $$;
 
@@ -2933,7 +2943,7 @@ create table if not exists public.shopping_list_items (
   unit text,
   notes text,
   is_checked boolean default false,
-  position integer default 0,
+  "position" integer default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
