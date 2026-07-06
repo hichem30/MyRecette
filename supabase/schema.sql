@@ -2880,6 +2880,200 @@ grant execute on function public.get_youtube_thumbnail(text) to authenticated, s
 
 
 -- =====================================================================
+-- MY RECETTE: Additional Missing Tables
+-- =====================================================================
+
+-- Recipe Ratings (1-5 star ratings for recipes)
+create table if not exists public.recipe_ratings (
+  id uuid primary key default gen_random_uuid(),
+  recipe_id uuid not null references public.recipes(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  value integer not null check (value >= 1 and value <= 5),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.recipe_ratings
+  add constraint unique_recipe_user_rating unique (recipe_id, user_id);
+
+-- Indexes for recipe_ratings
+create index if not exists idx_recipe_ratings_recipe 
+  on public.recipe_ratings(recipe_id);
+create index if not exists idx_recipe_ratings_user 
+  on public.recipe_ratings(user_id);
+create index if not exists idx_recipe_ratings_value 
+  on public.recipe_ratings(value);
+
+-- Shopping Lists
+create table if not exists public.shopping_lists (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text not null,
+  description text,
+  is_public boolean default false,
+  share_token text unique,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- Indexes for shopping_lists
+create index if not exists idx_shopping_lists_user 
+  on public.shopping_lists(user_id);
+create index if not exists idx_shopping_lists_created 
+  on public.shopping_lists(created_at desc);
+
+-- Shopping List Items
+create table if not exists public.shopping_list_items (
+  id uuid primary key default gen_random_uuid(),
+  shopping_list_id uuid not null references public.shopping_lists(id) on delete cascade,
+  product_id uuid references public.products(id) on delete set null,
+  ingredient_id uuid references public.ingredients(id) on delete set null,
+  custom_name text,
+  quantity numeric(10,2),
+  unit text,
+  notes text,
+  is_checked boolean default false,
+  position integer default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- Indexes for shopping_list_items
+create index if not exists idx_shopping_list_items_list 
+  on public.shopping_list_items(shopping_list_id);
+create index if not exists idx_shopping_list_items_product 
+  on public.shopping_list_items(product_id);
+create index if not exists idx_shopping_list_items_ingredient 
+  on public.shopping_list_items(ingredient_id);
+
+-- Subscriptions (for supermarket monetization - 50 EUR/month)
+create table if not exists public.subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  supermarket_id uuid not null references public.profiles(id) on delete cascade,
+  stripe_subscription_id text unique,
+  stripe_customer_id text unique,
+  status text not null check (status in ('inactive', 'active', 'trialing', 'past_due', 'canceled')),
+  current_period_start timestamptz,
+  current_period_end timestamptz,
+  monthly_fee numeric(10,2) not null default 50.00,
+  currency text not null default 'EUR',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- Indexes for subscriptions
+create index if not exists idx_subscriptions_supermarket 
+  on public.subscriptions(supermarket_id);
+create index if not exists idx_subscriptions_status 
+  on public.subscriptions(status);
+create index if not exists idx_subscriptions_stripe_id 
+  on public.subscriptions(stripe_subscription_id) where stripe_subscription_id is not null;
+
+-- Subscription History
+create table if not exists public.subscription_history (
+  id uuid primary key default gen_random_uuid(),
+  subscription_id uuid not null references public.subscriptions(id) on delete cascade,
+  stripe_event_id text unique,
+  event_type text not null,
+  old_status text,
+  new_status text,
+  data jsonb,
+  created_at timestamptz not null default now()
+);
+
+-- Indexes for subscription_history
+create index if not exists idx_subscription_history_subscription 
+  on public.subscription_history(subscription_id);
+create index if not exists idx_subscription_history_event_type 
+  on public.subscription_history(event_type);
+create index if not exists idx_subscription_history_created 
+  on public.subscription_history(created_at desc);
+
+
+-- =====================================================================
+-- MY RECETTE: RLS Policies for New Tables
+-- =====================================================================
+
+-- Recipe Ratings RLS
+alter table public.recipe_ratings enable row level security;
+
+create policy "recipe_ratings_public_read" on public.recipe_ratings
+  for select using (true);
+
+create policy "recipe_ratings_create" on public.recipe_ratings
+  for insert with check ((select auth.uid()) = user_id);
+
+create policy "recipe_ratings_update_own" on public.recipe_ratings
+  for update using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+-- Shopping Lists RLS
+alter table public.shopping_lists enable row level security;
+
+create policy "shopping_lists_user_read" on public.shopping_lists
+  for select using ((select auth.uid()) = user_id);
+
+create policy "shopping_lists_user_create" on public.shopping_lists
+  for insert with check ((select auth.uid()) = user_id);
+
+create policy "shopping_lists_user_update_own" on public.shopping_lists
+  for update using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+create policy "shopping_lists_user_delete_own" on public.shopping_lists
+  for delete using ((select auth.uid()) = user_id);
+
+-- Shopping List Items RLS
+alter table public.shopping_list_items enable row level security;
+
+create policy "shopping_list_items_user_read" on public.shopping_list_items
+  for select using (
+    (select auth.uid()) = (select user_id from public.shopping_lists where id = shopping_list_id)
+  );
+
+create policy "shopping_list_items_user_create" on public.shopping_list_items
+  for insert with check (
+    (select auth.uid()) = (select user_id from public.shopping_lists where id = shopping_list_id)
+  );
+
+create policy "shopping_list_items_user_update_own" on public.shopping_list_items
+  for update using (
+    (select auth.uid()) = (select user_id from public.shopping_lists where id = shopping_list_id)
+  )
+  with check (
+    (select auth.uid()) = (select user_id from public.shopping_lists where id = shopping_list_id)
+  );
+
+create policy "shopping_list_items_user_delete_own" on public.shopping_list_items
+  for delete using (
+    (select auth.uid()) = (select user_id from public.shopping_lists where id = shopping_list_id)
+  );
+
+-- Subscriptions RLS
+alter table public.subscriptions enable row level security;
+
+create policy "subscriptions_admin_all" on public.subscriptions
+  for all using ((select private.is_admin()));
+
+create policy "subscriptions_supermarket_own" on public.subscriptions
+  for select using (
+    (select auth.uid()) = supermarket_id or (select private.is_admin())
+  );
+
+-- Subscription History RLS
+alter table public.subscription_history enable row level security;
+
+create policy "subscription_history_admin_all" on public.subscription_history
+  for all using ((select private.is_admin()));
+
+create policy "subscription_history_supermarket_own" on public.subscription_history
+  for select using (
+    (select auth.uid()) = (select supermarket_id from public.subscriptions where id = subscription_id) or
+    (select private.is_admin())
+  );
+
+
+-- =====================================================================
 -- Done. Future schema changes should edit THIS file and re-run it
 -- rather than adding new incremental migration files.
 -- =====================================================================

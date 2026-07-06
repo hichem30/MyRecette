@@ -12,7 +12,7 @@ export default function AccountHome() {
     name: null,
     joined: null,
   });
-  const [stats, setStats] = useState<{ orders: number; wishlist: number; videos: number }>({ orders: 0, wishlist: 0, videos: 0 });
+  const [stats, setStats] = useState<{ orders: number; wishlist: number; shoppingLists: number; videos: number }>({ orders: 0, wishlist: 0, shoppingLists: 0, videos: 0 });
   const [userId, setUserId] = useState<string | null>(null);
   const [marketingOptin, setMarketingOptin] = useState(false);
   const [savingOptin, setSavingOptin] = useState(false);
@@ -43,9 +43,10 @@ export default function AccountHome() {
           null,
         joined: user.created_at ?? null,
       });
-      const [{ count: o }, { count: w }, { data: videos, count: v }] = await Promise.all([
+      const [{ count: o }, { count: w }, { count: sl }, { data: videos, count: v }] = await Promise.all([
         sb.from("orders").select("id", { count: "exact", head: true }).ilike("customer_email", user.email ?? ""),
         sb.from("wishlists").select("user_id", { count: "exact", head: true }).eq("user_id", user.id),
+        sb.from("shopping_lists").select("user_id", { count: "exact", head: true }).eq("user_id", user.id),
         sb.from("recipe_videos").select("*, profiles:user_id(id, email, supermarket_name, profile_picture_url), recipes:recipe_id(id, slug, title)", { count: "exact", head: true })
           .eq("user_id", user.id)
           .eq("is_approved", true)
@@ -53,7 +54,7 @@ export default function AccountHome() {
           .order("created_at", { ascending: false }),
       ]);
       if (!cancelled) {
-        setStats({ orders: o ?? 0, wishlist: w ?? 0, videos: v ?? 0 });
+        setStats({ orders: o ?? 0, wishlist: w ?? 0, shoppingLists: sl ?? 0, videos: v ?? 0 });
         setUserVideos(videos || []);
       }
     }
@@ -69,10 +70,12 @@ export default function AccountHome() {
       welcome: "Welcome back",
       orders: "Orders",
       wishlist: "Wishlist items",
+      shoppingLists: "Shopping Lists",
       videos: "My Videos",
       memberSince: "Member since",
       viewOrders: "View order history",
       viewWishlist: "Open wishlist",
+      viewShoppingLists: "Manage shopping lists",
       viewVideos: "View my videos",
       preferences: "Email preferences",
       marketingLabel: "Send me promotions, discounts, and new arrival emails.",
@@ -84,10 +87,12 @@ export default function AccountHome() {
       welcome: "Bienvenido de nuevo",
       orders: "Pedidos",
       wishlist: "Artículos guardados",
+      shoppingLists: "Listas de compras",
       videos: "Mis videos",
       memberSince: "Miembro desde",
       viewOrders: "Ver historial de pedidos",
       viewWishlist: "Abrir favoritos",
+      viewShoppingLists: "Gestionar listas de compras",
       viewVideos: "Ver mis videos",
       preferences: "Preferencias de correo",
       marketingLabel: "Quiero recibir promociones, descuentos y novedades por correo.",
@@ -99,10 +104,12 @@ export default function AccountHome() {
       welcome: "Bienvenue",
       orders: "Commandes",
       wishlist: "Articles en liste de souhaits",
+      shoppingLists: "Listes de courses",
       videos: "Mes Vidéos",
       memberSince: "Membre depuis",
       viewOrders: "Voir l'historique des commandes",
       viewWishlist: "Ouvrir la liste de souhaits",
+      viewShoppingLists: "Gérer les listes de courses",
       viewVideos: "Voir mes vidéos",
       preferences: "Préférences email",
       marketingLabel: "Envoyez-moi des promotions, des réductions et des emails de nouveaux arrivages.",
@@ -114,10 +121,12 @@ export default function AccountHome() {
       welcome: "مرحبًا بعودتك",
       orders: "الطلبات",
       wishlist: "عناصر قائمة الرغبات",
+      shoppingLists: "قوائم المشتريات",
       videos: "فيديوهاتي",
       memberSince: "عضو منذ",
       viewOrders: "عرض تاريخ الطلبات",
       viewWishlist: "فتح قائمة الرغبات",
+      viewShoppingLists: "إدارة قوائم المشتريات",
       viewVideos: "عرض فيديوهاتي",
       preferences: "تفضيلات البريد الإلكتروني",
       marketingLabel: "أرسل لي العروض الترويجية والخصومات والبريد الإلكتروني للوافدين الجدد.",
@@ -180,6 +189,16 @@ export default function AccountHome() {
             className="mt-2 inline-block text-xs font-semibold text-recette-700 hover:underline"
           >
             {labels.viewWishlist} →
+          </Link>
+        </div>
+        <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-neutral-500">{labels.shoppingLists}</p>
+          <p className="mt-1 text-3xl font-bold text-neutral-900">{stats.shoppingLists}</p>
+          <Link
+            href="/account/shopping-lists"
+            className="mt-2 inline-block text-xs font-semibold text-recette-700 hover:underline"
+          >
+            {labels.viewShoppingLists} →
           </Link>
         </div>
         <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
