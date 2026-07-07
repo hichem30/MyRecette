@@ -1084,6 +1084,7 @@ create index if not exists idx_supermarket_feed_pinned
 alter table public.supermarket_products enable row level security;
 
 -- supermarket_products: supermarket can manage their own products, admin can manage all
+drop policy if exists "supermarket_products: supermarket can manage own" on public.supermarket_products;
 create policy "supermarket_products: supermarket can manage own" on public.supermarket_products
   for all
   using (
@@ -1096,6 +1097,7 @@ create policy "supermarket_products: supermarket can manage own" on public.super
   );
 
 -- supermarket_products: read for all if available
+drop policy if exists "supermarket_products: public can read available" on public.supermarket_products;
 create policy "supermarket_products: public can read available" on public.supermarket_products
   for select
   using ((is_available = true) or (select private.is_admin()));
@@ -1104,6 +1106,7 @@ create policy "supermarket_products: public can read available" on public.superm
 alter table public.supermarket_follows enable row level security;
 
 -- supermarket_follows: users can follow/unfollow their own follows, admin can manage all
+drop policy if exists "supermarket_follows: users can manage own" on public.supermarket_follows;
 create policy "supermarket_follows: users can manage own" on public.supermarket_follows
   for all
   using (
@@ -1116,11 +1119,13 @@ create policy "supermarket_follows: users can manage own" on public.supermarket_
   );
 
 -- supermarket_follows: anyone can read follows for a supermarket (to show follower count)
+drop policy if exists "supermarket_follows: public can read" on public.supermarket_follows;
 create policy "supermarket_follows: public can read" on public.supermarket_follows
   for select
   using (true);
 
 -- supermarket_follows: users can see who they follow
+drop policy if exists "supermarket_follows: users can read own follows" on public.supermarket_follows;
 create policy "supermarket_follows: users can read own follows" on public.supermarket_follows
   for select
   using (
@@ -1132,6 +1137,7 @@ create policy "supermarket_follows: users can read own follows" on public.superm
 alter table public.supermarket_coupons enable row level security;
 
 -- supermarket_coupons: supermarket can manage their own coupons, admin can manage all
+drop policy if exists "supermarket_coupons: supermarket can manage own" on public.supermarket_coupons;
 create policy "supermarket_coupons: supermarket can manage own" on public.supermarket_coupons
   for all
   using (
@@ -1144,6 +1150,7 @@ create policy "supermarket_coupons: supermarket can manage own" on public.superm
   );
 
 -- supermarket_coupons: public can read active coupons
+drop policy if exists "supermarket_coupons: public can read active" on public.supermarket_coupons;
 create policy "supermarket_coupons: public can read active" on public.supermarket_coupons
   for select
   using (active = true and ends_at > now());
@@ -1152,6 +1159,7 @@ create policy "supermarket_coupons: public can read active" on public.supermarke
 alter table public.supermarket_bundles enable row level security;
 
 -- supermarket_bundles: supermarket can manage their own bundles, admin can manage all
+drop policy if exists "supermarket_bundles: supermarket can manage own" on public.supermarket_bundles;
 create policy "supermarket_bundles: supermarket can manage own" on public.supermarket_bundles
   for all
   using (
@@ -1164,6 +1172,7 @@ create policy "supermarket_bundles: supermarket can manage own" on public.superm
   );
 
 -- supermarket_bundles: public can read active bundles
+drop policy if exists "supermarket_bundles: public can read active" on public.supermarket_bundles;
 create policy "supermarket_bundles: public can read active" on public.supermarket_bundles
   for select
   using (active = true);
@@ -1172,6 +1181,7 @@ create policy "supermarket_bundles: public can read active" on public.supermarke
 alter table public.supermarket_sales enable row level security;
 
 -- supermarket_sales: supermarket can manage their own sales, admin can manage all
+drop policy if exists "supermarket_sales: supermarket can manage own" on public.supermarket_sales;
 create policy "supermarket_sales: supermarket can manage own" on public.supermarket_sales
   for all
   using (
@@ -1184,6 +1194,7 @@ create policy "supermarket_sales: supermarket can manage own" on public.supermar
   );
 
 -- supermarket_sales: public can read active sales
+drop policy if exists "supermarket_sales: public can read active" on public.supermarket_sales;
 create policy "supermarket_sales: public can read active" on public.supermarket_sales
   for select
   using (active = true and ends_at > now());
@@ -1192,6 +1203,7 @@ create policy "supermarket_sales: public can read active" on public.supermarket_
 alter table public.supermarket_jobs enable row level security;
 
 -- supermarket_jobs: supermarket can manage their own jobs, admin can manage all
+drop policy if exists "supermarket_jobs: supermarket can manage own" on public.supermarket_jobs;
 create policy "supermarket_jobs: supermarket can manage own" on public.supermarket_jobs
   for all
   using (
@@ -1204,6 +1216,7 @@ create policy "supermarket_jobs: supermarket can manage own" on public.supermark
   );
 
 -- supermarket_jobs: public can read active jobs
+drop policy if exists "supermarket_jobs: public can read active" on public.supermarket_jobs;
 create policy "supermarket_jobs: public can read active" on public.supermarket_jobs
   for select
   using (active = true);
@@ -1212,6 +1225,7 @@ create policy "supermarket_jobs: public can read active" on public.supermarket_j
 alter table public.supermarket_feed enable row level security;
 
 -- supermarket_feed: supermarket can manage their own feed posts, admin can manage all
+drop policy if exists "supermarket_feed: supermarket can manage own" on public.supermarket_feed;
 create policy "supermarket_feed: supermarket can manage own" on public.supermarket_feed
   for all
   using (
@@ -1224,11 +1238,13 @@ create policy "supermarket_feed: supermarket can manage own" on public.supermark
   );
 
 -- supermarket_feed: public can read active public posts
+drop policy if exists "supermarket_feed: public can read public posts" on public.supermarket_feed;
 create policy "supermarket_feed: public can read public posts" on public.supermarket_feed
   for select
   using (active = true and visibility = 'public');
 
 -- supermarket_feed: followers can read followers_only posts from supermarkets they follow
+drop policy if exists "supermarket_feed: followers can read followers_only posts" on public.supermarket_feed;
 create policy "supermarket_feed: followers can read followers_only posts" on public.supermarket_feed
   for select
   using (
@@ -1814,58 +1830,74 @@ alter table public.recipe_favorites enable row level security;
 
 -- RLS Policies for Recipes
 -- Recipes: public read, admin/supermarket write, users can create their own
+drop policy if exists "recipes_public_read" on public.recipes;
 create policy "recipes_public_read" on public.recipes for select using ((published = true) or (select private.is_admin()));
 
+drop policy if exists "recipes_admin_write" on public.recipes;
 create policy "recipes_admin_write" on public.recipes for all
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
 
+drop policy if exists "recipes_user_create" on public.recipes;
 create policy "recipes_user_create" on public.recipes for insert
   with check (auth.uid() = author_id);
 
+drop policy if exists "recipes_user_update_own" on public.recipes;
 create policy "recipes_user_update_own" on public.recipes for update
   using (auth.uid() = author_id)
   with check (auth.uid() = author_id);
 
+drop policy if exists "recipes_user_delete_own" on public.recipes;
 create policy "recipes_user_delete_own" on public.recipes for delete
   using (auth.uid() = author_id);
 
 -- Recipe-Ingredient Mapping: public read, admin write, recipe authors can manage their own
+drop policy if exists "recipes_ingredients_public_read" on public.recipes_ingredients;
 create policy "recipes_ingredients_public_read" on public.recipes_ingredients for select using (true);
 
+drop policy if exists "recipes_ingredients_admin_write" on public.recipes_ingredients;
 create policy "recipes_ingredients_admin_write" on public.recipes_ingredients for all
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
 
+drop policy if exists "recipes_ingredients_author_write" on public.recipes_ingredients;
 create policy "recipes_ingredients_author_write" on public.recipes_ingredients for all
   using ((select private.is_admin()) or exists (select 1 from public.recipes where id = recipe_id and author_id = auth.uid()))
   with check ((select private.is_admin()) or exists (select 1 from public.recipes where id = recipe_id and author_id = auth.uid()));
 
 -- Recipe Instructions: public read, admin write, recipe authors can manage their own
+drop policy if exists "recipe_instructions_public_read" on public.recipe_instructions;
 create policy "recipe_instructions_public_read" on public.recipe_instructions for select using (true);
 
+drop policy if exists "recipe_instructions_admin_write" on public.recipe_instructions;
 create policy "recipe_instructions_admin_write" on public.recipe_instructions for all
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
 
+drop policy if exists "recipe_instructions_author_write" on public.recipe_instructions;
 create policy "recipe_instructions_author_write" on public.recipe_instructions for all
   using ((select private.is_admin()) or exists (select 1 from public.recipes where id = recipe_id and author_id = auth.uid()))
   with check ((select private.is_admin()) or exists (select 1 from public.recipes where id = recipe_id and author_id = auth.uid()));
 
 -- Recipe Comments: public read, authenticated users can create, authors can delete their own
+drop policy if exists "recipe_comments_public_read" on public.recipe_comments;
 create policy "recipe_comments_public_read" on public.recipe_comments for select using (is_approved = true);
 
+drop policy if exists "recipe_comments_create" on public.recipe_comments;
 create policy "recipe_comments_create" on public.recipe_comments for insert
   with check (auth.uid() = author_id);
 
+drop policy if exists "recipe_comments_delete_own" on public.recipe_comments;
 create policy "recipe_comments_delete_own" on public.recipe_comments for delete
   using (auth.uid() = author_id);
 
+drop policy if exists "recipe_comments_admin_all" on public.recipe_comments;
 create policy "recipe_comments_admin_all" on public.recipe_comments for all
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
 
 -- Recipe Favorites: users can manage their own
+drop policy if exists "recipe_favorites_user_manage" on public.recipe_favorites;
 create policy "recipe_favorites_user_manage" on public.recipe_favorites for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
@@ -1874,23 +1906,28 @@ create policy "recipe_favorites_user_manage" on public.recipe_favorites for all
 alter table public.recipe_videos enable row level security;
 
 -- Public can read approved videos
+drop policy if exists "recipe_videos_public_read" on public.recipe_videos;
 create policy "recipe_videos_public_read" on public.recipe_videos for select
   using (is_approved = true and status = 'approved');
 
 -- Authenticated users can create videos
+drop policy if exists "recipe_videos_create" on public.recipe_videos;
 create policy "recipe_videos_create" on public.recipe_videos for insert
   with check (auth.uid() = user_id);
 
 -- Users can delete their own videos
+drop policy if exists "recipe_videos_delete_own" on public.recipe_videos;
 create policy "recipe_videos_delete_own" on public.recipe_videos for delete
   using (auth.uid() = user_id);
 
 -- Users can update their own videos
+drop policy if exists "recipe_videos_update_own" on public.recipe_videos;
 create policy "recipe_videos_update_own" on public.recipe_videos for update
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
 -- Admins can manage all videos
+drop policy if exists "recipe_videos_admin_all" on public.recipe_videos;
 create policy "recipe_videos_admin_all" on public.recipe_videos for all
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
@@ -1899,23 +1936,28 @@ create policy "recipe_videos_admin_all" on public.recipe_videos for all
 alter table public.video_comments enable row level security;
 
 -- Public can read approved video comments
+drop policy if exists "video_comments_public_read" on public.video_comments;
 create policy "video_comments_public_read" on public.video_comments for select
   using (is_approved = true);
 
 -- Authenticated users can create video comments
+drop policy if exists "video_comments_create" on public.video_comments;
 create policy "video_comments_create" on public.video_comments for insert
   with check (auth.uid() = user_id);
 
 -- Users can delete their own video comments
+drop policy if exists "video_comments_delete_own" on public.video_comments;
 create policy "video_comments_delete_own" on public.video_comments for delete
   using (auth.uid() = user_id);
 
 -- Users can update their own video comments
+drop policy if exists "video_comments_update_own" on public.video_comments;
 create policy "video_comments_update_own" on public.video_comments for update
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
 -- Admins can manage all video comments
+drop policy if exists "video_comments_admin_all" on public.video_comments;
 create policy "video_comments_admin_all" on public.video_comments for all
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
@@ -1924,18 +1966,22 @@ create policy "video_comments_admin_all" on public.video_comments for all
 alter table public.video_comment_likes enable row level security;
 
 -- Public can read comment likes (aggregated)
+drop policy if exists "video_comment_likes_public_read" on public.video_comment_likes;
 create policy "video_comment_likes_public_read" on public.video_comment_likes for select
   using (true);
 
 -- Authenticated users can create their own comment likes
+drop policy if exists "video_comment_likes_create" on public.video_comment_likes;
 create policy "video_comment_likes_create" on public.video_comment_likes for insert
   with check (auth.uid() = user_id);
 
 -- Users can delete their own comment likes
+drop policy if exists "video_comment_likes_delete_own" on public.video_comment_likes;
 create policy "video_comment_likes_delete_own" on public.video_comment_likes for delete
   using (auth.uid() = user_id);
 
 -- Admins can manage all comment likes
+drop policy if exists "video_comment_likes_admin_all" on public.video_comment_likes;
 create policy "video_comment_likes_admin_all" on public.video_comment_likes for all
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
@@ -1944,11 +1990,13 @@ create policy "video_comment_likes_admin_all" on public.video_comment_likes for 
 alter table public.recipe_video_views enable row level security;
 
 -- Admins can read all views
+drop policy if exists "recipe_video_views_admin_all" on public.recipe_video_views;
 create policy "recipe_video_views_admin_all" on public.recipe_video_views for all
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
 
 -- Public can insert views (for tracking)
+drop policy if exists "recipe_video_views_public_insert" on public.recipe_video_views;
 create policy "recipe_video_views_public_insert" on public.recipe_video_views for insert
   with check (true);
 
@@ -1956,23 +2004,28 @@ create policy "recipe_video_views_public_insert" on public.recipe_video_views fo
 alter table public.video_reactions enable row level security;
 
 -- Public can read reactions (aggregated)
+drop policy if exists "video_reactions_public_read" on public.video_reactions;
 create policy "video_reactions_public_read" on public.video_reactions for select
   using (true);
 
 -- Authenticated users can create their own reactions
+drop policy if exists "video_reactions_create" on public.video_reactions;
 create policy "video_reactions_create" on public.video_reactions for insert
   with check (auth.uid() = user_id);
 
 -- Users can update their own reactions (change reaction type)
+drop policy if exists "video_reactions_update_own" on public.video_reactions;
 create policy "video_reactions_update_own" on public.video_reactions for update
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
 -- Users can delete their own reactions
+drop policy if exists "video_reactions_delete_own" on public.video_reactions;
 create policy "video_reactions_delete_own" on public.video_reactions for delete
   using (auth.uid() = user_id);
 
 -- Admins can manage all reactions
+drop policy if exists "video_reactions_admin_all" on public.video_reactions;
 create policy "video_reactions_admin_all" on public.video_reactions for all
   using ((select private.is_admin()))
   with check ((select private.is_admin()));
@@ -2318,45 +2371,60 @@ alter table public.products_ingredients_denormalized enable row level security;
 alter table public.supermarket_products_ingredients_denormalized enable row level security;
 
 -- Ingredients: public read, admin write
+drop policy if exists "ingredients_public_read" on public.ingredients;
 create policy "ingredients_public_read" on public.ingredients for select using (true);
+drop policy if exists "ingredients_admin_write" on public.ingredients;
 create policy "ingredients_admin_write" on public.ingredients 
   for all using ((select private.is_admin())) 
   with check ((select private.is_admin()));
 
 -- Ingredient synonyms: public read, admin write
+drop policy if exists "ingredient_synonyms_public_read" on public.ingredient_synonyms;
 create policy "ingredient_synonyms_public_read" on public.ingredient_synonyms for select using (true);
+drop policy if exists "ingredient_synonyms_admin_write" on public.ingredient_synonyms;
 create policy "ingredient_synonyms_admin_write" on public.ingredient_synonyms 
   for all using ((select private.is_admin())) 
   with check ((select private.is_admin()));
 
 -- Ingredient patterns: public read, admin write
+drop policy if exists "ingredient_patterns_public_read" on public.ingredient_patterns;
 create policy "ingredient_patterns_public_read" on public.ingredient_patterns for select using (true);
+drop policy if exists "ingredient_patterns_admin_write" on public.ingredient_patterns;
 create policy "ingredient_patterns_admin_write" on public.ingredient_patterns 
   for all using ((select private.is_admin())) 
   with check ((select private.is_admin()));
 
 -- Ingredient relationships: public read, admin write
+drop policy if exists "ingredient_relationships_public_read" on public.ingredient_relationships;
 create policy "ingredient_relationships_public_read" on public.ingredient_relationships for select using (true);
+drop policy if exists "ingredient_relationships_admin_write" on public.ingredient_relationships;
 create policy "ingredient_relationships_admin_write" on public.ingredient_relationships 
   for all using ((select private.is_admin())) 
   with check ((select private.is_admin()));
 
 -- Product ingredients: public read, supermarket/admin write
+drop policy if exists "product_ingredients_public_read" on public.product_ingredients;
 create policy "product_ingredients_public_read" on public.product_ingredients for select using (true);
+drop policy if exists "product_ingredients_admin_write" on public.product_ingredients;
 create policy "product_ingredients_admin_write" on public.product_ingredients 
   for all using ((select private.is_admin())) 
   with check ((select private.is_admin()));
 
 -- Pending ingredient mappings: admin/supermarket read own, admin write
+drop policy if exists "pending_mappings_admin_read" on public.pending_ingredient_mappings;
 create policy "pending_mappings_admin_read" on public.pending_ingredient_mappings 
   for select using ((select private.is_admin()) or (auth.uid() = supermarket_id));
+drop policy if exists "pending_mappings_admin_write" on public.pending_ingredient_mappings;
 create policy "pending_mappings_admin_write" on public.pending_ingredient_mappings 
   for all using ((select private.is_admin())) 
   with check ((select private.is_admin()));
 
 -- Denormalized tables: public read
+drop policy if exists "recipes_ingredients_denormalized_public_read" on public.recipes_ingredients_denormalized;
 create policy "recipes_ingredients_denormalized_public_read" on public.recipes_ingredients_denormalized for select using (true);
+drop policy if exists "products_ingredients_denormalized_public_read" on public.products_ingredients_denormalized;
 create policy "products_ingredients_denormalized_public_read" on public.products_ingredients_denormalized for select using (true);
+drop policy if exists "supermarket_products_ingredients_denormalized_public_read" on public.supermarket_products_ingredients_denormalized;
 create policy "supermarket_products_ingredients_denormalized_public_read" on public.supermarket_products_ingredients_denormalized for select using (true);
 
 
@@ -2964,12 +3032,15 @@ create index if not exists idx_subscription_history_created
 -- Recipe Ratings RLS
 alter table public.recipe_ratings enable row level security;
 
+drop policy if exists "recipe_ratings_public_read" on public.recipe_ratings;
 create policy "recipe_ratings_public_read" on public.recipe_ratings
   for select using (true);
 
+drop policy if exists "recipe_ratings_create" on public.recipe_ratings;
 create policy "recipe_ratings_create" on public.recipe_ratings
   for insert with check (auth.uid() = user_id);
 
+drop policy if exists "recipe_ratings_update_own" on public.recipe_ratings;
 create policy "recipe_ratings_update_own" on public.recipe_ratings
   for update using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
@@ -2977,32 +3048,39 @@ create policy "recipe_ratings_update_own" on public.recipe_ratings
 -- Shopping Lists RLS
 alter table public.shopping_lists enable row level security;
 
+drop policy if exists "shopping_lists_user_read" on public.shopping_lists;
 create policy "shopping_lists_user_read" on public.shopping_lists
   for select using (auth.uid() = user_id);
 
+drop policy if exists "shopping_lists_user_create" on public.shopping_lists;
 create policy "shopping_lists_user_create" on public.shopping_lists
   for insert with check (auth.uid() = user_id);
 
+drop policy if exists "shopping_lists_user_update_own" on public.shopping_lists;
 create policy "shopping_lists_user_update_own" on public.shopping_lists
   for update using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+drop policy if exists "shopping_lists_user_delete_own" on public.shopping_lists;
 create policy "shopping_lists_user_delete_own" on public.shopping_lists
   for delete using (auth.uid() = user_id);
 
 -- Shopping List Items RLS
 alter table public.shopping_list_items enable row level security;
 
+drop policy if exists "shopping_list_items_user_read" on public.shopping_list_items;
 create policy "shopping_list_items_user_read" on public.shopping_list_items
   for select using (
     auth.uid() = (select user_id from public.shopping_lists where id = shopping_list_id)
   );
 
+drop policy if exists "shopping_list_items_user_create" on public.shopping_list_items;
 create policy "shopping_list_items_user_create" on public.shopping_list_items
   for insert with check (
     auth.uid() = (select user_id from public.shopping_lists where id = shopping_list_id)
   );
 
+drop policy if exists "shopping_list_items_user_update_own" on public.shopping_list_items;
 create policy "shopping_list_items_user_update_own" on public.shopping_list_items
   for update using (
     auth.uid() = (select user_id from public.shopping_lists where id = shopping_list_id)
@@ -3011,6 +3089,7 @@ create policy "shopping_list_items_user_update_own" on public.shopping_list_item
     auth.uid() = (select user_id from public.shopping_lists where id = shopping_list_id)
   );
 
+drop policy if exists "shopping_list_items_user_delete_own" on public.shopping_list_items;
 create policy "shopping_list_items_user_delete_own" on public.shopping_list_items
   for delete using (
     auth.uid() = (select user_id from public.shopping_lists where id = shopping_list_id)
@@ -3019,9 +3098,11 @@ create policy "shopping_list_items_user_delete_own" on public.shopping_list_item
 -- Subscriptions RLS
 alter table public.subscriptions enable row level security;
 
+drop policy if exists "subscriptions_admin_all" on public.subscriptions;
 create policy "subscriptions_admin_all" on public.subscriptions
   for all using ((select private.is_admin()));
 
+drop policy if exists "subscriptions_supermarket_own" on public.subscriptions;
 create policy "subscriptions_supermarket_own" on public.subscriptions
   for select using (
     (auth.uid() = supermarket_id) or (select private.is_admin())
@@ -3030,9 +3111,11 @@ create policy "subscriptions_supermarket_own" on public.subscriptions
 -- Subscription History RLS
 alter table public.subscription_history enable row level security;
 
+drop policy if exists "subscription_history_admin_all" on public.subscription_history;
 create policy "subscription_history_admin_all" on public.subscription_history
   for all using ((select private.is_admin()));
 
+drop policy if exists "subscription_history_supermarket_own" on public.subscription_history;
 create policy "subscription_history_supermarket_own" on public.subscription_history
   for select using (
     (auth.uid() = (select supermarket_id from public.subscriptions where id = subscription_id)) or
