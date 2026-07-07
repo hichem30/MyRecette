@@ -1478,7 +1478,7 @@ create table if not exists public.ingredients (
 );
 
 -- Indexes for ingredients
-create index if not exists idx_ingredients_canonical on public.ingredients(canonical_name);
+create unique index if not exists idx_ingredients_canonical on public.ingredients(canonical_name);
 create index if not exists idx_ingredients_category on public.ingredients(category);
 create index if not exists idx_ingredients_common on public.ingredients(is_common) where is_common = true;
 
@@ -1494,6 +1494,7 @@ create table if not exists public.ingredient_synonyms (
   created_at timestamptz not null default now()
 );
 
+create unique index if not exists idx_ingredient_synonyms_unique on public.ingredient_synonyms(ingredient_id, synonym);
 create index if not exists idx_ingredient_synonyms_synonym on public.ingredient_synonyms(synonym);
 create index if not exists idx_ingredient_synonyms_ingredient on public.ingredient_synonyms(ingredient_id);
 
@@ -1511,6 +1512,7 @@ create table if not exists public.ingredient_patterns (
   created_at timestamptz not null default now()
 );
 
+create unique index if not exists idx_ingredient_patterns_unique on public.ingredient_patterns(ingredient_id, pattern_type, pattern);
 create index if not exists idx_ingredient_patterns_ingredient on public.ingredient_patterns(ingredient_id);
 
 -- Ingredient Relationships (Hierarchy & Equivalents)
@@ -1560,6 +1562,7 @@ create table if not exists public.product_ingredients (
 );
 
 -- Indexes for product_ingredients
+create unique index if not exists idx_product_ingredients_unique on public.product_ingredients(product_id, ingredient_id);
 create index if not exists idx_product_ingredients_product on public.product_ingredients(product_id);
 create index if not exists idx_product_ingredients_ingredient on public.product_ingredients(ingredient_id);
 create index if not exists idx_product_ingredients_confidence on public.product_ingredients(confidence desc);
@@ -1592,25 +1595,25 @@ create index if not exists idx_pending_mappings_product on public.pending_ingred
 -- Note: Using try-catch to handle cases where constraints already exist
 DO $$ BEGIN
   EXECUTE 'ALTER TABLE public.ingredients ADD CONSTRAINT myrecette_ingredients_canonical_unq UNIQUE (canonical_name)';
-EXCEPTION WHEN duplicate_object THEN
+EXCEPTION WHEN duplicate_table OR duplicate_object THEN
   -- Constraint already exists
 END $$;
 
 DO $$ BEGIN
   EXECUTE 'ALTER TABLE public.ingredient_synonyms ADD CONSTRAINT myrecette_ing_sym_uniq UNIQUE (ingredient_id, synonym)';
-EXCEPTION WHEN duplicate_object THEN
+EXCEPTION WHEN duplicate_table OR duplicate_object THEN
   -- Constraint already exists
 END $$;
 
 DO $$ BEGIN
   EXECUTE 'ALTER TABLE public.ingredient_patterns ADD CONSTRAINT myrecette_ing_patt_uniq UNIQUE (ingredient_id, pattern_type, pattern)';
-EXCEPTION WHEN duplicate_object THEN
+EXCEPTION WHEN duplicate_table OR duplicate_object THEN
   -- Constraint already exists
 END $$;
 
 DO $$ BEGIN
   EXECUTE 'ALTER TABLE public.product_ingredients ADD CONSTRAINT myrecette_prod_ing_uniq UNIQUE (product_id, ingredient_id)';
-EXCEPTION WHEN duplicate_object THEN
+EXCEPTION WHEN duplicate_table OR duplicate_object THEN
   -- Constraint already exists
 END $$;
 
@@ -2953,7 +2956,7 @@ create table if not exists public.recipe_ratings (
 -- Add unique constraint for recipe_ratings
 DO $$ BEGIN
   EXECUTE 'ALTER TABLE public.recipe_ratings ADD CONSTRAINT myrecette_recipe_ratings_unq UNIQUE (recipe_id, user_id)';
-EXCEPTION WHEN duplicate_object THEN
+EXCEPTION WHEN duplicate_table OR duplicate_object THEN
   -- Constraint already exists
 END $$;
 
