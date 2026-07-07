@@ -2396,104 +2396,70 @@ set search_path = public, pg_temp
 as $$
 declare
   normalized_name text;
-  ingredient_record record;
-  synonym_record record;
-  pattern_record record;
 begin
   -- Normalize the product name
   normalized_name := public.normalize_ingredient_name(p_product_name);
   
   -- 1. Try exact match on canonical name
-  for ingredient_record in 
-    select id, canonical_name, 1.0 as confidence, 'exact' as match_type
-    from public.ingredients
-    where canonical_name = normalized_name
-    order by is_common desc, canonical_name
-  loop
-    if ingredient_record.confidence >= p_min_confidence then
-      return next ingredient_record;
-    end if;
-  end loop;
+  return query
+  select id, canonical_name, 1.0 as confidence, 'exact' as match_type
+  from public.ingredients
+  where canonical_name = normalized_name
+    and 1.0 >= p_min_confidence
+  order by is_common desc, canonical_name;
   
   -- 2. Try exact match on plural name
-  for ingredient_record in 
-    select i.id, i.canonical_name, 1.0 as confidence, 'exact_plural' as match_type
-    from public.ingredients i
-    where i.plural_name = normalized_name
-    order by i.is_common desc, i.canonical_name
-  loop
-    if ingredient_record.confidence >= p_min_confidence then
-      return next ingredient_record;
-    end if;
-  end loop;
+  return query
+  select i.id, i.canonical_name, 1.0 as confidence, 'exact_plural' as match_type
+  from public.ingredients i
+  where i.plural_name = normalized_name
+    and 1.0 >= p_min_confidence
+  order by i.is_common desc, i.canonical_name;
   
   -- 3. Try synonyms
-  for synonym_record in 
-    select i.id, i.canonical_name, 0.95 as confidence, 'synonym' as match_type
-    from public.ingredient_synonyms s
-    join public.ingredients i on s.ingredient_id = i.id
-    where s.synonym = normalized_name
-    order by s.priority desc, i.is_common desc, i.canonical_name
-  loop
-    if synonym_record.confidence >= p_min_confidence then
-      return next synonym_record;
-    end if;
-  end loop;
+  return query
+  select i.id, i.canonical_name, 0.95 as confidence, 'synonym' as match_type
+  from public.ingredient_synonyms s
+  join public.ingredients i on s.ingredient_id = i.id
+  where s.synonym = normalized_name
+    and 0.95 >= p_min_confidence
+  order by s.priority desc, i.is_common desc, i.canonical_name;
   
   -- 4. Try pattern matching (contains)
-  for pattern_record in 
-    select i.id, i.canonical_name, p.confidence * 0.9 as confidence, 'pattern_contains' as match_type
-    from public.ingredient_patterns p
-    join public.ingredients i on p.ingredient_id = i.id
-    where p.pattern_type = 'contains'
-      and (not p.case_sensitive or normalized_name ~ p.pattern)
-      and normalized_name ~ ('(?i)' || p.pattern)
-    order by p.confidence desc, i.is_common desc, i.canonical_name
-  loop
-    if pattern_record.confidence >= p_min_confidence then
-      return next pattern_record;
-    end if;
-  end loop;
+  return query
+  select i.id, i.canonical_name, p.confidence * 0.9 as confidence, 'pattern_contains' as match_type
+  from public.ingredient_patterns p
+  join public.ingredients i on p.ingredient_id = i.id
+  where p.pattern_type = 'contains'
+    and (not p.case_sensitive or normalized_name ~ p.pattern)
+    and normalized_name ~ ('(?i)' || p.pattern)
+    and p.confidence * 0.9 >= p_min_confidence
+  order by p.confidence desc, i.is_common desc, i.canonical_name;
   
   -- 5. Try partial matching on words in product name
-  -- Split normalized name into words and match against ingredient names
-  perform from regexp_split_to_table(normalized_name, '\s+') as word
-  where length(word) >= 3
+  return query
+  select i.id, i.canonical_name, 
+    0.7 * (length(word.value)::float / greatest(length(word.value), length(i.canonical_name))) as confidence,
+    'partial' as match_type
+  from regexp_split_to_table(normalized_name, '\s+') as word
+  join public.ingredients i on i.canonical_name ~ ('(?i)' || word.value)
+  where length(word.value) >= 3
+    and length(i.canonical_name) >= 3
+    and 0.7 * (length(word.value)::float / greatest(length(word.value), length(i.canonical_name))) >= p_min_confidence
+  order by confidence desc, i.is_common desc, i.canonical_name
+  limit 20;
+  
+  -- 6. Try fuzzy matching
+  return query
+  select i.id, i.canonical_name, 
+    0.6 * similarity(normalized_name, i.canonical_name) as confidence,
+    'fuzzy' as match_type
+  from public.ingredients i
+  where not contains(i.canonical_name, ' ')
+    and similarity(normalized_name, i.canonical_name) > 0.6
+    and 0.6 * similarity(normalized_name, i.canonical_name) >= p_min_confidence
+  order by confidence desc, i.is_common desc, i.canonical_name
   limit 10;
-  
-  -- For each word, find ingredients that contain it
-  for ingredient_record in 
-    select i.id, i.canonical_name, 
-      0.7 * (length(word.value)::float / greatest(length(word.value), length(i.canonical_name))) as confidence,
-      'partial' as match_type
-    from regexp_split_to_table(normalized_name, '\s+') as word
-    join public.ingredients i on i.canonical_name ~ ('(?i)' || word.value)
-    where length(word.value) >= 3
-      and length(i.canonical_name) >= 3
-    order by confidence desc, i.is_common desc, i.canonical_name
-    limit 20
-  loop
-    if ingredient_record.confidence >= p_min_confidence then
-      return next ingredient_record;
-    end if;
-  end loop;
-  
-  -- 6. Try fuzzy matching using Levenshtein (for PostgreSQL with pg_trgm or similar)
-  -- For now, use similarity on single-word ingredients
-  for ingredient_record in 
-    select i.id, i.canonical_name, 
-      0.6 * similarity(normalized_name, i.canonical_name) as confidence,
-      'fuzzy' as match_type
-    from public.ingredients i
-    where not contains(i.canonical_name, ' ')
-      and similarity(normalized_name, i.canonical_name) > 0.6
-    order by confidence desc, i.is_common desc, i.canonical_name
-    limit 10
-  loop
-    if ingredient_record.confidence >= p_min_confidence then
-      return next ingredient_record;
-    end if;
-  end loop;
 end;
 $$;
 
