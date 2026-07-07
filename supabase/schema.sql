@@ -1907,8 +1907,7 @@ create policy "video_comments_create" on public.video_comments for insert
 
 -- Users can delete their own video comments
 create policy "video_comments_delete_own" on public.video_comments for delete
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+  using (auth.uid() = user_id);
 
 -- Users can update their own video comments
 create policy "video_comments_update_own" on public.video_comments for update
@@ -1933,8 +1932,7 @@ create policy "video_comment_likes_create" on public.video_comment_likes for ins
 
 -- Users can delete their own comment likes
 create policy "video_comment_likes_delete_own" on public.video_comment_likes for delete
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+  using (auth.uid() = user_id);
 
 -- Admins can manage all comment likes
 create policy "video_comment_likes_admin_all" on public.video_comment_likes for all
@@ -1971,8 +1969,7 @@ create policy "video_reactions_update_own" on public.video_reactions for update
 
 -- Users can delete their own reactions
 create policy "video_reactions_delete_own" on public.video_reactions for delete
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+  using (auth.uid() = user_id);
 
 -- Admins can manage all reactions
 create policy "video_reactions_admin_all" on public.video_reactions for all
