@@ -33,7 +33,7 @@ VALUES
 ON CONFLICT (ingredient_id, pattern_type, pattern) DO NOTHING;
 
 -- Potato
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common) 
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic) 
 VALUES 
   ('potato', '{"en": "Potato", "fr": "Pomme de terre", "es": "Patata"}', 'potatoes', 'vegetable', 'root', true, false)
 ON CONFLICT (canonical_name) DO NOTHING;

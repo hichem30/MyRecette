@@ -899,8 +899,7 @@ create table if not exists public.supermarket_products (
   supermarket_barcode text,
   location_in_store text,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (supermarket_id, product_id)
+  updated_at timestamptz not null default now()
 );
 
 -- Indexes for supermarket_products
@@ -926,8 +925,7 @@ create table if not exists public.supermarket_follows (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
   supermarket_id uuid not null references public.profiles(id) on delete cascade,
-  created_at timestamptz not null default now(),
-  unique (user_id, supermarket_id)
+  created_at timestamptz not null default now()
 );
 
 -- Indexes for supermarket_follows
@@ -944,7 +942,7 @@ create index if not exists idx_supermarket_follows_created
 create table if not exists public.supermarket_coupons (
   id uuid primary key default gen_random_uuid(),
   supermarket_id uuid not null references public.profiles(id) on delete cascade,
-  code text not null unique,
+  code text not null,
   description jsonb not null,
   discount_type text not null check (discount_type in ('percent', 'amount')),
   discount_value numeric(10,2) not null,
@@ -1461,7 +1459,7 @@ alter table public.products
 create table if not exists public.ingredients (
   id uuid primary key default gen_random_uuid(),
   -- Canonical form (singular, lowercase)
-  canonical_name text not null unique,
+  canonical_name text not null,
   -- Display forms
   display_name jsonb not null default '{}'::jsonb,
   plural_name text,
@@ -1493,8 +1491,7 @@ create table if not exists public.ingredient_synonyms (
   priority integer default 1,
   -- Context: where this synonym is used (e.g., 'UK', 'US', 'supermarket')
   context text,
-  created_at timestamptz not null default now(),
-  unique (ingredient_id, synonym)
+  created_at timestamptz not null default now()
 );
 
 create index if not exists idx_ingredient_synonyms_synonym on public.ingredient_synonyms(synonym);
@@ -1511,8 +1508,7 @@ create table if not exists public.ingredient_patterns (
   confidence numeric(3,2) default 1.0,
   -- Is this pattern case-sensitive?
   case_sensitive boolean default false,
-  created_at timestamptz not null default now(),
-  unique (ingredient_id, pattern_type, pattern)
+  created_at timestamptz not null default now()
 );
 
 create index if not exists idx_ingredient_patterns_ingredient on public.ingredient_patterns(ingredient_id);
@@ -1560,8 +1556,7 @@ create table if not exists public.product_ingredients (
   -- Notes
   notes text,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (product_id, ingredient_id)
+  updated_at timestamptz not null default now()
 );
 
 -- Indexes for product_ingredients
@@ -1675,11 +1670,11 @@ create table if not exists public.recipes_ingredients (
   notes text,
   -- Position in recipe (for ordered lists)
   "position" integer default 0,
-  created_at timestamptz not null default now(),
-  unique (recipe_id, ingredient_id)
+  created_at timestamptz not null default now()
 );
 
 -- Indexes for recipes_ingredients
+create unique index if not exists idx_recipes_ingredients_recipe_ingredient on public.recipes_ingredients(recipe_id, ingredient_id);
 create index if not exists idx_recipes_ingredients_recipe on public.recipes_ingredients(recipe_id);
 create index if not exists idx_recipes_ingredients_ingredient on public.recipes_ingredients(ingredient_id);
 create index if not exists idx_recipes_ingredients_position on public.recipes_ingredients(recipe_id, "position");
@@ -1691,11 +1686,11 @@ create table if not exists public.recipe_instructions (
   step integer not null,
   text jsonb not null,  -- Translatable text: { en: "...", es: "..." }
   image_url text,
-  created_at timestamptz not null default now(),
-  unique (recipe_id, step)
+  created_at timestamptz not null default now()
 );
 
 -- Indexes for recipe_instructions
+create unique index if not exists idx_recipe_instructions_recipe_step on public.recipe_instructions(recipe_id, step);
 create index if not exists idx_recipe_instructions_recipe on public.recipe_instructions(recipe_id);
 create index if not exists idx_recipe_instructions_step on public.recipe_instructions(recipe_id, step);
 
@@ -2977,12 +2972,13 @@ create table if not exists public.shopping_lists (
   name text not null,
   description text,
   is_public boolean default false,
-  share_token text unique,
+  share_token text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 -- Indexes for shopping_lists
+create unique index if not exists idx_shopping_lists_share_token on public.shopping_lists(share_token) where share_token is not null;
 create index if not exists idx_shopping_lists_user 
   on public.shopping_lists(user_id);
 create index if not exists idx_shopping_lists_created 
@@ -3016,8 +3012,8 @@ create index if not exists idx_shopping_list_items_ingredient
 create table if not exists public.subscriptions (
   id uuid primary key default gen_random_uuid(),
   supermarket_id uuid not null references public.profiles(id) on delete cascade,
-  stripe_subscription_id text unique,
-  stripe_customer_id text unique,
+  stripe_subscription_id text,
+  stripe_customer_id text,
   status text not null check (status in ('inactive', 'active', 'trialing', 'past_due', 'canceled')),
   current_period_start timestamptz,
   current_period_end timestamptz,
@@ -3028,18 +3024,18 @@ create table if not exists public.subscriptions (
 );
 
 -- Indexes for subscriptions
+create unique index if not exists idx_subscriptions_stripe_sub_id on public.subscriptions(stripe_subscription_id) where stripe_subscription_id is not null;
+create unique index if not exists idx_subscriptions_stripe_cust_id on public.subscriptions(stripe_customer_id) where stripe_customer_id is not null;
 create index if not exists idx_subscriptions_supermarket 
   on public.subscriptions(supermarket_id);
 create index if not exists idx_subscriptions_status 
   on public.subscriptions(status);
-create index if not exists idx_subscriptions_stripe_id 
-  on public.subscriptions(stripe_subscription_id) where stripe_subscription_id is not null;
 
 -- Subscription History
 create table if not exists public.subscription_history (
   id uuid primary key default gen_random_uuid(),
   subscription_id uuid not null references public.subscriptions(id) on delete cascade,
-  stripe_event_id text unique,
+  stripe_event_id text,
   event_type text not null,
   old_status text,
   new_status text,
@@ -3048,6 +3044,7 @@ create table if not exists public.subscription_history (
 );
 
 -- Indexes for subscription_history
+create unique index if not exists idx_subscription_history_stripe_event on public.subscription_history(stripe_event_id) where stripe_event_id is not null;
 create index if not exists idx_subscription_history_subscription 
   on public.subscription_history(subscription_id);
 create index if not exists idx_subscription_history_event_type 
