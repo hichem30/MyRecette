@@ -4,7 +4,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Clock,
-  Fire,
+  Flame,
   Heart,
   Search,
   Sparkles,
@@ -655,7 +655,7 @@ export default function RecipesSearchPage() {
                                   className="flex items-center gap-1 rounded-md border border-neutral-200 px-2 py-1 text-xs text-neutral-600 hover:border-recette-300 hover:bg-recette-50 hover:text-recette-700"
                                 >
                                   {ingredient.is_common && (
-                                    <Fire className="h-3 w-3 text-amber-500" />
+                                    <Flame className="h-3 w-3 text-amber-500" />
                                   )}
                                   <span>{ingredient.display_name?.en ?? ingredient.canonical_name}</span>
                                 </button>
