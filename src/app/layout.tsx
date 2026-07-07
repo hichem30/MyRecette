@@ -3,13 +3,13 @@ import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
   title: {
-    default: "My Recette — Recipes & Groceries",
-    template: "%s · My Recette",
+    default: "sucre et sel — Recettes & Courses",
+    template: "%s · sucre et sel",
   },
   description:
-    "Discover recipes based on ingredients you have. Shop ingredients from local supermarkets. Connect with your community.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://myrecette.com"),
-  applicationName: "My Recette",
+    "Découvrez des recettes basées sur les ingrédients que vous avez. Achetez des ingrédients auprès des supermarchés locaux. Connectez-vous avec votre communauté.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://sucre-et-sel.com"),
+  applicationName: "sucre et sel",
   manifest: "/manifest.json",
   icons: {
     icon: [
@@ -23,22 +23,22 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "My Recette — Recipes & Groceries",
-    description: "Discover recipes based on ingredients you have. Shop ingredients from local supermarkets.",
-    locale: "en_US",
+    title: "sucre et sel — Recettes & Courses",
+    description: "Découvrez des recettes basées sur les ingrédients que vous avez. Achetez des ingrédients auprès des supermarchés locaux.",
+    locale: "fr_FR",
     images: [
       {
         url: "/icons/og-image.png",
         width: 1200,
         height: 630,
-        alt: "My Recette — Recipes & Groceries",
+        alt: "sucre et sel — Recettes & Courses",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "My Recette — Recipes & Groceries",
-    description: "Discover recipes and shop ingredients from local supermarkets.",
+    title: "sucre et sel — Recettes & Courses",
+    description: "Découvrez des recettes et achetez des ingrédients auprès des supermarchés locaux.",
     images: ["/icons/og-image.png"],
   },
 };

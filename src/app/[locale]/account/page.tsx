@@ -79,7 +79,7 @@ export default function AccountHome() {
       viewVideos: "View my videos",
       preferences: "Email preferences",
       marketingLabel: "Send me promotions, discounts, and new arrival emails.",
-      marketingHelp: "You can change this anytime. We will only email you about Red Barn sales — never share your address.",
+      marketingHelp: "You can change this anytime. We will only email you about sucre et sel updates — never share your address.",
       saved: "Preference saved.",
     },
     es: {
@@ -96,7 +96,7 @@ export default function AccountHome() {
       viewVideos: "Ver mis videos",
       preferences: "Preferencias de correo",
       marketingLabel: "Quiero recibir promociones, descuentos y novedades por correo.",
-      marketingHelp: "Puede cambiarlo en cualquier momento. Solo le escribiremos sobre ofertas de Red Barn.",
+      marketingHelp: "Puede cambiarlo en cualquier momento. Solo le escribiremos sobre ofertas de sucre et sel.",
       saved: "Preferencia guardada.",
     },
     fr: {
@@ -113,7 +113,7 @@ export default function AccountHome() {
       viewVideos: "Voir mes vidéos",
       preferences: "Préférences email",
       marketingLabel: "Envoyez-moi des promotions, des réductions et des emails de nouveaux arrivages.",
-      marketingHelp: "Vous pouvez changer cela à tout moment. Nous ne vous enverrons des emails que sur les soldes de Red Barn.",
+      marketingHelp: "Vous pouvez changer cela à tout moment. Nous ne vous enverrons des emails que sur les mises à jour de sucre et sel.",
       saved: "Préférence enregistrée.",
     },
     ar: {
@@ -130,7 +130,7 @@ export default function AccountHome() {
       viewVideos: "عرض فيديوهاتي",
       preferences: "تفضيلات البريد الإلكتروني",
       marketingLabel: "أرسل لي العروض الترويجية والخصومات والبريد الإلكتروني للوافدين الجدد.",
-      marketingHelp: "يمكنك تغيير هذا في أي وقت. سنرسل لك رسائل بريد إلكتروني حول مبيعات Red Barn فقط.",
+      marketingHelp: "يمكنك تغيير هذا في أي وقت. سنرسل لك رسائل بريد إلكتروني حول تحديثات sucre et sel فقط.",
       saved: "تم حفظ التفضيل.",
     },
   }[locale];

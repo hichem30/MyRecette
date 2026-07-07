@@ -1,5 +1,5 @@
 -- =====================================================================
--- Red Barn Western Market — Canonical Supabase schema
+-- sucre et sel — Canonical Supabase schema
 -- =====================================================================
 -- Run this ONE file in the Supabase SQL editor (or `supabase db push`).
 -- It is fully idempotent: safe to re-run on an existing database; will
@@ -1592,28 +1592,27 @@ create index if not exists idx_pending_mappings_product on public.pending_ingred
 
 -- Ensure unique constraints exist for seed file compatibility
 -- For tables created before inline unique constraints were added
--- Note: Using try-catch to handle cases where constraints already exist
 DO $$ BEGIN
   EXECUTE 'ALTER TABLE public.ingredients ADD CONSTRAINT myrecette_ingredients_canonical_unq UNIQUE (canonical_name)';
-EXCEPTION WHEN duplicate_table OR duplicate_object THEN
+EXCEPTION WHEN duplicate_table THEN
   -- Constraint already exists
 END $$;
 
 DO $$ BEGIN
   EXECUTE 'ALTER TABLE public.ingredient_synonyms ADD CONSTRAINT myrecette_ing_sym_uniq UNIQUE (ingredient_id, synonym)';
-EXCEPTION WHEN duplicate_table OR duplicate_object THEN
+EXCEPTION WHEN duplicate_table THEN
   -- Constraint already exists
 END $$;
 
 DO $$ BEGIN
   EXECUTE 'ALTER TABLE public.ingredient_patterns ADD CONSTRAINT myrecette_ing_patt_uniq UNIQUE (ingredient_id, pattern_type, pattern)';
-EXCEPTION WHEN duplicate_table OR duplicate_object THEN
+EXCEPTION WHEN duplicate_table THEN
   -- Constraint already exists
 END $$;
 
 DO $$ BEGIN
   EXECUTE 'ALTER TABLE public.product_ingredients ADD CONSTRAINT myrecette_prod_ing_uniq UNIQUE (product_id, ingredient_id)';
-EXCEPTION WHEN duplicate_table OR duplicate_object THEN
+EXCEPTION WHEN duplicate_table THEN
   -- Constraint already exists
 END $$;
 

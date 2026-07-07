@@ -1,13 +1,13 @@
 {
-  "name": "Red Barn Western Market",
-  "short_name": "Red Barn",
-  "description": "Lumber, hardware, plumbing, mattresses, clothing, groceries — Sand Springs, OK since 1999.",
+  "name": "sucre et sel",
+  "short_name": "sucre et sel",
+  "description": "Découvrez des recettes basées sur les ingrédients que vous avez. Achetez des ingrédients auprès des supermarchés locaux.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#FAF7F2",
-  "theme_color": "#8B2A18",
+  "theme_color": "#F57A30",
   "orientation": "portrait",
   "icons": [
     {
@@ -29,6 +29,6 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["shopping", "business"],
-  "lang": "en-US"
+  "categories": ["food", "recipes", "shopping"],
+  "lang": "fr-FR"
 }

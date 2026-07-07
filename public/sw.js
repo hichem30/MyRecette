@@ -1,4 +1,4 @@
-// Red Barn Western Market — Service Worker kill switch.
+// sucre et sel — Service Worker kill switch.
 //
 // Past versions cached HTML, which caused stale UI on desktop after deploys
 // (e.g. user logged in as admin but shown the customer-only view because

@@ -1,5 +1,5 @@
 -- =====================================================================
--- MY RECETTE: Core Seed Ingredients Data
+-- sucre et sel: Core Seed Ingredients Data
 -- =====================================================================
 -- This file contains the core ~100 most common ingredients with synonyms and patterns
 -- Run this AFTER running schema.sql
@@ -13,10 +13,8 @@ create extension if not exists pg_trgm;
 -- =====================================================================
 
 -- Tomato
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description) 
-VALUES 
-  ('tomato', '{"en": "Tomato", "fr": "Tomate", "es": "Tomate"}', 'tomatoes', 'vegetable', 'nightshade', true, false, 'Common cooking vegetable')
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('tomato', '{"en": "Tomato", "fr": "Tomate", "es": "Tomate"}', 'tomatoes', 'vegetable', 'nightshade', true, false, 'Common cooking vegetable') ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority, context) 
 VALUES 
@@ -33,10 +31,8 @@ VALUES
 ON CONFLICT (ingredient_id, pattern_type, pattern) DO NOTHING;
 
 -- Potato
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic) 
-VALUES 
-  ('potato', '{"en": "Potato", "fr": "Pomme de terre", "es": "Patata"}', 'potatoes', 'vegetable', 'root', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('potato', '{"en": "Potato", "fr": "Pomme de terre", "es": "Patata"}', 'potatoes', 'vegetable', 'root', true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -47,10 +43,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Onion
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic) 
-VALUES 
-  ('onion', '{"en": "Onion", "fr": "Oignon", "es": "Cebolla"}', 'onions', 'vegetable', 'allium', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('onion', '{"en": "Onion", "fr": "Oignon", "es": "Cebolla"}', 'onions', 'vegetable', 'allium', true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -63,10 +57,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Carrot
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic) 
-VALUES 
-  ('carrot', '{"en": "Carrot", "fr": "Carotte", "es": "Zanahoria"}', 'carrots', 'vegetable', 'root', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('carrot', '{"en": "Carrot", "fr": "Carotte", "es": "Zanahoria"}', 'carrots', 'vegetable', 'root', true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -75,10 +67,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Bell Pepper
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic) 
-VALUES 
-  ('bell pepper', '{"en": "Bell Pepper", "fr": "Poivron", "es": "Pimiento"}', 'bell peppers', 'vegetable', 'nightshade', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('bell pepper', '{"en": "Bell Pepper", "fr": "Poivron", "es": "Pimiento"}', 'bell peppers', 'vegetable', 'nightshade', true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -89,16 +79,12 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Cucumber
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('cucumber', '{"en": "Cucumber", "fr": "Concombre", "es": "Pepino"}', 'cucumbers', 'vegetable', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('cucumber', '{"en": "Cucumber", "fr": "Concombre", "es": "Pepino"}', 'cucumbers', 'vegetable', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Lettuce
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic) 
-VALUES 
-  ('lettuce', '{"en": "Lettuce", "fr": "Laitue", "es": "Lechuga"}', 'lettuces', 'vegetable', 'leafy green', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('lettuce', '{"en": "Lettuce", "fr": "Laitue", "es": "Lechuga"}', 'lettuces', 'vegetable', 'leafy green', true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -109,22 +95,16 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Broccoli
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('broccoli', '{"en": "Broccoli", "fr": "Brocoli", "es": "Brócoli"}', 'vegetable', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('broccoli', '{"en": "Broccoli", "fr": "Brocoli", "es": "Brócoli"}', NULL, 'vegetable', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Cauliflower
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('cauliflower', '{"en": "Cauliflower", "fr": "Chou-fleur", "es": "Coliflor"}', 'vegetable', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('cauliflower', '{"en": "Cauliflower", "fr": "Chou-fleur", "es": "Coliflor"}', NULL, 'vegetable', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Zucchini
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('zucchini', '{"en": "Zucchini", "fr": "Courgette", "es": "Calabacín"}', 'vegetable', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('zucchini', '{"en": "Zucchini", "fr": "Courgette", "es": "Calabacín"}', NULL, 'vegetable', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -132,10 +112,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Eggplant
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('eggplant', '{"en": "Eggplant", "fr": "Aubergine", "es": "Berenjena"}', 'vegetable', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('eggplant', '{"en": "Eggplant", "fr": "Aubergine", "es": "Berenjena"}', NULL, 'vegetable', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -143,10 +121,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Mushroom
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('mushroom', '{"en": "Mushroom", "fr": "Champignon", "es": "Hongos"}', 'mushrooms', 'vegetable', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('mushroom', '{"en": "Mushroom", "fr": "Champignon", "es": "Hongos"}', 'mushrooms', 'vegetable', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -160,10 +136,8 @@ ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 -- =====================================================================
 
 -- Apple
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('apple', '{"en": "Apple", "fr": "Pomme", "es": "Manzana"}', 'apples', 'fruit', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('apple', '{"en": "Apple", "fr": "Pomme", "es": "Manzana"}', 'apples', 'fruit', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -173,62 +147,44 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Banana
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('banana', '{"en": "Banana", "fr": "Banane", "es": "Plátano"}', 'bananas', 'fruit', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('banana', '{"en": "Banana", "fr": "Banane", "es": "Plátano"}', 'bananas', 'fruit', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Orange
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic) 
-VALUES 
-  ('orange', '{"en": "Orange", "fr": "Orange", "es": "Naranja"}', 'oranges', 'fruit', 'citrus', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('orange', '{"en": "Orange", "fr": "Orange", "es": "Naranja"}', 'oranges', 'fruit', 'citrus', true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Strawberry
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('strawberry', '{"en": "Strawberry", "fr": "Fraise", "es": "Fresa"}', 'strawberries', 'fruit', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('strawberry', '{"en": "Strawberry", "fr": "Fraise", "es": "Fresa"}', 'strawberries', 'fruit', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Blueberry
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('blueberry', '{"en": "Blueberry", "fr": "Myrtille", "es": "Arándano"}', 'blueberries', 'fruit', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('blueberry', '{"en": "Blueberry", "fr": "Myrtille", "es": "Arándano"}', 'blueberries', 'fruit', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Grape
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('grape', '{"en": "Grape", "fr": "Raisin", "es": "Uva"}', 'grapes', 'fruit', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('grape', '{"en": "Grape", "fr": "Raisin", "es": "Uva"}', 'grapes', 'fruit', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Lemon
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic) 
-VALUES 
-  ('lemon', '{"en": "Lemon", "fr": "Citron", "es": "Limón"}', 'lemons', 'fruit', 'citrus', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('lemon', '{"en": "Lemon", "fr": "Citron", "es": "Limón"}', 'lemons', 'fruit', 'citrus', true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Lime
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic) 
-VALUES 
-  ('lime', '{"en": "Lime", "fr": "Citron vert", "es": "Lima"}', 'limes', 'fruit', 'citrus', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('lime', '{"en": "Lime", "fr": "Citron vert", "es": "Lima"}', 'limes', 'fruit', 'citrus', true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Avocado
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('avocado', '{"en": "Avocado", "fr": "Avocat", "es": "Aguacate"}', 'avocados', 'fruit', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('avocado', '{"en": "Avocado", "fr": "Avocat", "es": "Aguacate"}', 'avocados', 'fruit', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- =====================================================================
 -- PROTEINS
 -- =====================================================================
 
 -- Chicken
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('chicken', '{"en": "Chicken", "fr": "Poulet", "es": "Pollo"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('chicken', '{"en": "Chicken", "fr": "Poulet", "es": "Pollo"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -244,10 +200,8 @@ VALUES
 ON CONFLICT (ingredient_id, pattern_type, pattern) DO NOTHING;
 
 -- Beef
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('beef', '{"en": "Beef", "fr": "Bœuf", "es": "Ternera"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('beef', '{"en": "Beef", "fr": "Bœuf", "es": "Ternera"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -257,10 +211,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Pork
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('pork', '{"en": "Pork", "fr": "Porc", "es": "Cerdo"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('pork', '{"en": "Pork", "fr": "Porc", "es": "Cerdo"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -270,28 +222,20 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Fish
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('fish', '{"en": "Fish", "fr": "Poisson", "es": "Pescado"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('fish', '{"en": "Fish", "fr": "Poisson", "es": "Pescado"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Salmon
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('salmon', '{"en": "Salmon", "fr": "Saumon", "es": "Salmón"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('salmon', '{"en": "Salmon", "fr": "Saumon", "es": "Salmón"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Tuna
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('tuna', '{"en": "Tuna", "fr": "Thon", "es": "Atún"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('tuna', '{"en": "Tuna", "fr": "Thon", "es": "Atún"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Shrimp
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('shrimp', '{"en": "Shrimp", "fr": "Crevette", "es": "Gamba"}', 'shrimps', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('shrimp', '{"en": "Shrimp", "fr": "Crevette", "es": "Gamba"}', 'shrimps', 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -300,10 +244,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Egg
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('egg', '{"en": "Egg", "fr": "Œuf", "es": "Huevo"}', 'eggs', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('egg', '{"en": "Egg", "fr": "Œuf", "es": "Huevo"}', 'eggs', 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -312,20 +254,16 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Tofu
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('tofu', '{"en": "Tofu", "fr": "Tofu", "es": "Tofu"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('tofu', '{"en": "Tofu", "fr": "Tofu", "es": "Tofu"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- =====================================================================
 -- DAIRY
 -- =====================================================================
 
 -- Milk
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('milk', '{"en": "Milk", "fr": "Lait", "es": "Leche"}', 'dairy', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('milk', '{"en": "Milk", "fr": "Lait", "es": "Leche"}', NULL, 'dairy', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -335,10 +273,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Cheese
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('cheese', '{"en": "Cheese", "fr": "Fromage", "es": "Queso"}', 'dairy', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('cheese', '{"en": "Cheese", "fr": "Fromage", "es": "Queso"}', NULL, 'dairy', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -349,16 +285,12 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Butter
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('butter', '{"en": "Butter", "fr": "Beurre", "es": "Mantequilla"}', 'dairy', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('butter', '{"en": "Butter", "fr": "Beurre", "es": "Mantequilla"}', NULL, 'dairy', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Yogurt
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('yogurt', '{"en": "Yogurt", "fr": "Yaourt", "es": "Yogur"}', 'dairy', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('yogurt', '{"en": "Yogurt", "fr": "Yaourt", "es": "Yogur"}', NULL, 'dairy', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -367,26 +299,20 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Cream
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('cream', '{"en": "Cream", "fr": "Crème", "es": "Nata"}', 'dairy', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('cream', '{"en": "Cream", "fr": "Crème", "es": "Nata"}', NULL, 'dairy', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Cottage Cheese
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('cottage cheese', '{"en": "Cottage Cheese", "fr": "Fromage blanc", "es": "Queso fresco"}', 'dairy', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('cottage cheese', '{"en": "Cottage Cheese", "fr": "Fromage blanc", "es": "Queso fresco"}', NULL, 'dairy', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- =====================================================================
 -- GRAINS & BREAD
 -- =====================================================================
 
 -- Rice
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('rice', '{"en": "Rice", "fr": "Riz", "es": "Arroz"}', 'rices', 'grain', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('rice', '{"en": "Rice", "fr": "Riz", "es": "Arroz"}', 'rices', 'grain', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -396,10 +322,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Pasta
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('pasta', '{"en": "Pasta", "fr": "Pâtes", "es": "Pasta"}', 'grain', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('pasta', '{"en": "Pasta", "fr": "Pâtes", "es": "Pasta"}', NULL, 'grain', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -409,10 +333,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Bread
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('bread', '{"en": "Bread", "fr": "Pain", "es": "Pan"}', 'grain', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('bread', '{"en": "Bread", "fr": "Pain", "es": "Pan"}', NULL, 'grain', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -422,10 +344,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Flour
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('flour', '{"en": "Flour", "fr": "Farine", "es": "Harina"}', 'grain', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('flour', '{"en": "Flour", "fr": "Farine", "es": "Harina"}', NULL, 'grain', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -434,26 +354,20 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Oats
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('oats', '{"en": "Oats", "fr": "Flocons d''avoine", "es": "Avena"}', 'grain', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('oats', '{"en": "Oats", "fr": "Flocons d''avoine", "es": "Avena"}', NULL, 'grain', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Quinoa
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('quinoa', '{"en": "Quinoa", "fr": "Quinoa", "es": "Quinoa"}', 'grain', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('quinoa', '{"en": "Quinoa", "fr": "Quinoa", "es": "Quinoa"}', NULL, 'grain', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- =====================================================================
 -- BASICS (Salt, Pepper, etc.)
 -- =====================================================================
 
 -- Salt
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('salt', '{"en": "Salt", "fr": "Sel", "es": "Sal"}', 'spice', true, true)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('salt', '{"en": "Salt", "fr": "Sel", "es": "Sal"}', NULL, 'spice', NULL, true, true, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -462,16 +376,12 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Black Pepper
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('black pepper', '{"en": "Black Pepper", "fr": "Poivre noir", "es": "Pimienta negra"}', 'spice', true, true)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('black pepper', '{"en": "Black Pepper", "fr": "Poivre noir", "es": "Pimienta negra"}', NULL, 'spice', NULL, true, true, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Olive Oil
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('olive oil', '{"en": "Olive Oil", "fr": "Huile d''olive", "es": "Aceite de oliva"}', 'oil', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('olive oil', '{"en": "Olive Oil", "fr": "Huile d''olive", "es": "Aceite de oliva"}', NULL, 'oil', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -479,16 +389,12 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Vegetable Oil
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('vegetable oil', '{"en": "Vegetable Oil", "fr": "Huile végétale", "es": "Aceite vegetal"}', 'oil', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('vegetable oil', '{"en": "Vegetable Oil", "fr": "Huile végétale", "es": "Aceite vegetal"}', NULL, 'oil', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Sugar
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('sugar', '{"en": "Sugar", "fr": "Sucre", "es": "Azúcar"}', 'baking', true, true)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('sugar', '{"en": "Sugar", "fr": "Sucre", "es": "Azúcar"}', NULL, 'baking', NULL, true, true, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -498,16 +404,12 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Honey
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('honey', '{"en": "Honey", "fr": "Miel", "es": "Miel"}', 'baking', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('honey', '{"en": "Honey", "fr": "Miel", "es": "Miel"}', NULL, 'baking', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Garlic
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('garlic', '{"en": "Garlic", "fr": "Ail", "es": "Ajo"}', 'spice', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('garlic', '{"en": "Garlic", "fr": "Ail", "es": "Ajo"}', NULL, 'spice', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -516,32 +418,24 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Onion Powder
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('onion powder', '{"en": "Onion Powder", "fr": "Poudre d''oignon", "es": "Cebolla en polvo"}', 'spice', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('onion powder', '{"en": "Onion Powder", "fr": "Poudre d''oignon", "es": "Cebolla en polvo"}', NULL, 'spice', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- =====================================================================
 -- CANNED & PACKAGED
 -- =====================================================================
 
 -- Tomato Sauce
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('tomato sauce', '{"en": "Tomato Sauce", "fr": "Sauce tomate", "es": "Salsa de tomate"}', 'canned', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('tomato sauce', '{"en": "Tomato Sauce", "fr": "Sauce tomate", "es": "Salsa de tomate"}', NULL, 'canned', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Tomato Paste
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('tomato paste', '{"en": "Tomato Paste", "fr": "Purée de tomate", "es": "Pasta de tomate"}', 'canned', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('tomato paste', '{"en": "Tomato Paste", "fr": "Purée de tomate", "es": "Pasta de tomate"}', NULL, 'canned', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Chicken Broth
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('chicken broth', '{"en": "Chicken Broth", "fr": "Bouillon de poulet", "es": "Caldo de pollo"}', 'canned', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('chicken broth', '{"en": "Chicken Broth", "fr": "Bouillon de poulet", "es": "Caldo de pollo"}', NULL, 'canned', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -553,40 +447,28 @@ ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 -- =====================================================================
 
 -- Basil
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('basil', '{"en": "Basil", "fr": "Basilic", "es": "Albahaca"}', 'herb', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('basil', '{"en": "Basil", "fr": "Basilic", "es": "Albahaca"}', NULL, 'herb', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Oregano
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('oregano', '{"en": "Oregano", "fr": "Origan", "es": "Orégano"}', 'herb', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('oregano', '{"en": "Oregano", "fr": "Origan", "es": "Orégano"}', NULL, 'herb', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Thyme
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('thyme', '{"en": "Thyme", "fr": "Thym", "es": "Tomillo"}', 'herb', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('thyme', '{"en": "Thyme", "fr": "Thym", "es": "Tomillo"}', NULL, 'herb', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Rosemary
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('rosemary', '{"en": "Rosemary", "fr": "Romarin", "es": "Romero"}', 'herb', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('rosemary', '{"en": "Rosemary", "fr": "Romarin", "es": "Romero"}', NULL, 'herb', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Parsley
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('parsley', '{"en": "Parsley", "fr": "Persil", "es": "Perejil"}', 'herb', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('parsley', '{"en": "Parsley", "fr": "Persil", "es": "Perejil"}', NULL, 'herb', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Cilantro
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('cilantro', '{"en": "Cilantro", "fr": "Coriandre", "es": "Cilantro"}', 'herb', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('cilantro', '{"en": "Cilantro", "fr": "Coriandre", "es": "Cilantro"}', NULL, 'herb', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -598,10 +480,8 @@ ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 -- =====================================================================
 
 -- Mayonnaise
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('mayonnaise', '{"en": "Mayonnaise", "fr": "Mayonnaise", "es": "Mayonesa"}', 'miscellaneous', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('mayonnaise', '{"en": "Mayonnaise", "fr": "Mayonnaise", "es": "Mayonesa"}', NULL, 'miscellaneous', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -609,38 +489,28 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Mustard
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('mustard', '{"en": "Mustard", "fr": "Moutarde", "es": "Mostaza"}', 'miscellaneous', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('mustard', '{"en": "Mustard", "fr": "Moutarde", "es": "Mostaza"}', NULL, 'miscellaneous', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Ketchup
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('ketchup', '{"en": "Ketchup", "fr": "Ketchup", "es": "Ketchup"}', 'miscellaneous', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('ketchup', '{"en": "Ketchup", "fr": "Ketchup", "es": "Ketchup"}', NULL, 'miscellaneous', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Soy Sauce
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('soy sauce', '{"en": "Soy Sauce", "fr": "Sauce soja", "es": "Salsa de soja"}', 'miscellaneous', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('soy sauce', '{"en": "Soy Sauce", "fr": "Sauce soja", "es": "Salsa de soja"}', NULL, 'miscellaneous', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Peanut Butter
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('peanut butter', '{"en": "Peanut Butter", "fr": "Beurre de cacahuète", "es": "Mantequilla de maní"}', 'miscellaneous', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('peanut butter', '{"en": "Peanut Butter", "fr": "Beurre de cacahuète", "es": "Mantequilla de maní"}', NULL, 'miscellaneous', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- =====================================================================
 -- LEGUMES
 -- =====================================================================
 
 -- Lentils
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('lentil', '{"en": "Lentil", "fr": "Lentille", "es": "Lenteja"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('lentil', '{"en": "Lentil", "fr": "Lentille", "es": "Lenteja"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -649,10 +519,8 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Chickpeas
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('chickpea', '{"en": "Chickpea", "fr": "Pois chiche", "es": "Garbanzo"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('chickpea', '{"en": "Chickpea", "fr": "Pois chiche", "es": "Garbanzo"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -660,44 +528,32 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Black Beans
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('black bean', '{"en": "Black Bean", "fr": "Haricot noir", "es": "Frijol negro"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('black bean', '{"en": "Black Bean", "fr": "Haricot noir", "es": "Frijol negro"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Kidney Beans
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('kidney bean', '{"en": "Kidney Bean", "fr": "Haricot rouge", "es": "Frijol rojo"}', 'protein', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('kidney bean', '{"en": "Kidney Bean", "fr": "Haricot rouge", "es": "Frijol rojo"}', NULL, 'protein', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- =====================================================================
 -- BAKING
 -- =====================================================================
 
 -- Baking Powder
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('baking powder', '{"en": "Baking Powder", "fr": "Levure chimique", "es": "Polvo de hornear"}', 'baking', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('baking powder', '{"en": "Baking Powder", "fr": "Levure chimique", "es": "Polvo de hornear"}', NULL, 'baking', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Baking Soda
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('baking soda', '{"en": "Baking Soda", "fr": "Bicarbonate de soude", "es": "Bicarbonato de sodio"}', 'baking', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('baking soda', '{"en": "Baking Soda", "fr": "Bicarbonate de soude", "es": "Bicarbonato de sodio"}', NULL, 'baking', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Yeast
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('yeast', '{"en": "Yeast", "fr": "Levure", "es": "Levadura"}', 'baking', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('yeast', '{"en": "Yeast", "fr": "Levure", "es": "Levadura"}', NULL, 'baking', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Chocolate
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('chocolate', '{"en": "Chocolate", "fr": "Chocolat", "es": "Chocolate"}', 'baking', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('chocolate', '{"en": "Chocolate", "fr": "Chocolat", "es": "Chocolate"}', NULL, 'baking', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -706,26 +562,20 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Cocoa Powder
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('cocoa powder', '{"en": "Cocoa Powder", "fr": "Poudre de cacao", "es": "Cacao en polvo"}', 'baking', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('cocoa powder', '{"en": "Cocoa Powder", "fr": "Poudre de cacao", "es": "Cacao en polvo"}', NULL, 'baking', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Vanilla Extract
-INSERT INTO public.ingredients (canonical_name, display_name, category, is_common, is_basic) 
-VALUES 
-  ('vanilla extract', '{"en": "Vanilla Extract", "fr": "Extrait de vanille", "es": "Extracto de vainilla"}', 'baking', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('vanilla extract', '{"en": "Vanilla Extract", "fr": "Extrait de vanille", "es": "Extracto de vainilla"}', NULL, 'baking', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- =====================================================================
 -- NUTS & SEEDS
 -- =====================================================================
 
 -- Almond
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('almond', '{"en": "Almond", "fr": "Amande", "es": "Almendra"}', 'almonds', 'nuts', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('almond', '{"en": "Almond", "fr": "Amande", "es": "Almendra"}', 'almonds', 'nuts', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 INSERT INTO public.ingredient_synonyms (ingredient_id, synonym, priority) 
 VALUES 
@@ -734,22 +584,16 @@ VALUES
 ON CONFLICT (ingredient_id, synonym) DO NOTHING;
 
 -- Walnut
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('walnut', '{"en": "Walnut", "fr": "Noix", "es": "Nuez"}', 'walnuts', 'nuts', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('walnut', '{"en": "Walnut", "fr": "Noix", "es": "Nuez"}', 'walnuts', 'nuts', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Peanut
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('peanut', '{"en": "Peanut", "fr": "Cacahuète", "es": "Cacahuete"}', 'peanuts', 'nuts', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('peanut', '{"en": "Peanut", "fr": "Cacahuète", "es": "Cacahuete"}', 'peanuts', 'nuts', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- Cashew
-INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, is_common, is_basic) 
-VALUES 
-  ('cashew', '{"en": "Cashew", "fr": "Noix de cajou", "es": "Anacardo"}', 'cashews', 'nuts', true, false)
-ON CONFLICT (canonical_name) DO NOTHING;
+INSERT INTO public.ingredients (canonical_name, display_name, plural_name, category, subcategory, is_common, is_basic, description)
+VALUES ('cashew', '{"en": "Cashew", "fr": "Noix de cajou", "es": "Anacardo"}', 'cashews', 'nuts', NULL, true, false, NULL) ON CONFLICT (canonical_name) DO NOTHING;
 
 -- =====================================================================
 -- FINAL SETUP
