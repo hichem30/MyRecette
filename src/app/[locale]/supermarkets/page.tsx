@@ -39,7 +39,7 @@ export async function generateMetadata({
 }
 
 // Supermarket card component
-function SupermarketCard({
+default function SupermarketCard({
   supermarket,
   lang,
 }: {

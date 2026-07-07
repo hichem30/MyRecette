@@ -85,7 +85,7 @@ function formatRelativeDate(dateString: string): string {
 }
 
 // Feed item component
-function FeedItem({ item, lang }: { item: SupermarketFeedItem; lang: "en" | "es" }) {
+default function FeedItem({ item, lang }: { item: SupermarketFeedItem; lang: "en" | "es" }) {
   const type = item.type;
   const icon = feedIcons[type] || <ShoppingBag className="h-5 w-5" />;
   const label = feedLabels[type]?.[lang] || type;
