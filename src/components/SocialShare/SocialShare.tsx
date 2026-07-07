@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Share2, Check, Copy, Facebook, Twitter, Whatsapp, Linkedin, Mail } from "lucide-react";
+import { Share2, Check, Copy, Facebook, Twitter, MessageCircle, Linkedin, Mail } from "lucide-react";
 import type { SocialPlatform, SocialShareData } from "@/lib/types";
 
 interface SocialShareProps {
@@ -27,7 +27,7 @@ const getSocialShareUrl = (
       return `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
     case "twitter":
       return `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}${encodedDescription ? ` ${encodedDescription}` : ""}`;
-    case "whatsapp":
+    case "messageCircle":
       return `https://wa.me/?text=${encodedTitle} ${encodedUrl}`;
     case "linkedin":
       return `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}&summary=${encodedDescription}`;
@@ -42,12 +42,12 @@ const getSocialShareUrl = (
 const platformConfig: Record<SocialPlatform, { icon: React.ReactNode; color: string; label: string }> = {
   facebook: { icon: <Facebook className="h-5 w-5" />, color: "bg-[#1877F2] hover:bg-[#166FE5]", label: "Facebook" },
   twitter: { icon: <Twitter className="h-5 w-5" />, color: "bg-[#1DA1F2] hover:bg-[#1A8CD8]", label: "Twitter" },
-  whatsapp: { icon: <Whatsapp className="h-5 w-5" />, color: "bg-[#25D366] hover:bg-[#128C7E]", label: "WhatsApp" },
+  messageCircle: { icon: <MessageCircle className="h-5 w-5" />, color: "bg-[#25D366] hover:bg-[#128C7E]", label: "WhatsApp" },
   linkedin: { icon: <Linkedin className="h-5 w-5" />, color: "bg-[#0A66C2] hover:bg-[#0850A0]", label: "LinkedIn" },
   email: { icon: <Mail className="h-5 w-5" />, color: "bg-neutral-700 hover:bg-neutral-800", label: "Email" },
 };
 
-const platforms: SocialPlatform[] = ["facebook", "twitter", "whatsapp", "linkedin", "email"];
+const platforms: SocialPlatform[] = ["facebook", "twitter", "messageCircle", "linkedin", "email"];
 
 export function SocialShare({ url, title, description, imageUrl, className = "" }: SocialShareProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -73,7 +73,7 @@ export function SocialShare({ url, title, description, imageUrl, className = "" 
   };
 
   const handleShare = async (platform: SocialPlatform) => {
-    if (platform === "email" || platform === "whatsapp") {
+    if (platform === "email" || platform === "messageCircle") {
       // For mobile, open directly
       const shareUrl = getSocialShareUrl(platform, shareData);
       window.open(shareUrl, "_blank", "noopener,noreferrer");

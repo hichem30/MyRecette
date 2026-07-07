@@ -489,7 +489,7 @@ export interface VideoStats {
 }
 
 // Social sharing platform
-export type SocialPlatform = 'facebook' | 'twitter' | 'whatsapp' | 'pinterest' | 'linkedin' | 'email';
+export type SocialPlatform = 'facebook' | 'twitter' | 'messageCircle' | 'linkedin' | 'email';
 
 // Social share data
 export interface SocialShareData {
