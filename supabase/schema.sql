@@ -1592,6 +1592,47 @@ create index if not exists idx_pending_mappings_status on public.pending_ingredi
 create index if not exists idx_pending_mappings_created on public.pending_ingredient_mappings(created_at desc);
 create index if not exists idx_pending_mappings_product on public.pending_ingredient_mappings(product_id);
 
+-- Ensure unique constraints exist for seed file compatibility
+-- Handle ingredients.canonical_name unique constraint
+DO $$ 
+BEGIN
+  BEGIN
+    EXECUTE 'ALTER TABLE public.ingredients ADD CONSTRAINT ingredients_canonical_name_key UNIQUE (canonical_name)';
+  EXCEPTION WHEN duplicate_object THEN
+    -- Constraint already exists, do nothing
+  END;
+END $$;
+
+-- Handle ingredient_synonyms unique constraint  
+DO $$ 
+BEGIN
+  BEGIN
+    EXECUTE 'ALTER TABLE public.ingredient_synonyms ADD CONSTRAINT ingredient_synonyms_ingredient_id_synonym_key UNIQUE (ingredient_id, synonym)';
+  EXCEPTION WHEN duplicate_object THEN
+    -- Constraint already exists, do nothing
+  END;
+END $$;
+
+-- Handle ingredient_patterns unique constraint
+DO $$ 
+BEGIN
+  BEGIN
+    EXECUTE 'ALTER TABLE public.ingredient_patterns ADD CONSTRAINT ingredient_patterns_ingredient_id_pattern_t UNIQUE (ingredient_id, pattern_type, pattern)';
+  EXCEPTION WHEN duplicate_object THEN
+    -- Constraint already exists, do nothing
+  END;
+END $$;
+
+-- Handle product_ingredients unique constraint
+DO $$ 
+BEGIN
+  BEGIN
+    EXECUTE 'ALTER TABLE public.product_ingredients ADD CONSTRAINT product_ingredients_product_id_ingredient_id_key UNIQUE (product_id, ingredient_id)';
+  EXCEPTION WHEN duplicate_object THEN
+    -- Constraint already exists, do nothing
+  END;
+END $$;
+
 -- Recipes table (for My Recette - Supercook-style search)
 create table if not exists public.recipes (
   id uuid primary key default gen_random_uuid(),
