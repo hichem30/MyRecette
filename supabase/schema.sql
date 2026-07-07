@@ -1495,7 +1495,8 @@ create table if not exists public.ingredient_patterns (
   confidence numeric(3,2) default 1.0,
   -- Is this pattern case-sensitive?
   case_sensitive boolean default false,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  unique (ingredient_id, pattern_type, pattern)
 );
 
 create index if not exists idx_ingredient_patterns_ingredient on public.ingredient_patterns(ingredient_id);
