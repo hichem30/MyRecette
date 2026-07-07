@@ -4,7 +4,7 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { createClient as createSupabaseClient, SupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
-export function isSupabaseConfigured(): boolean {
+export async function isSupabaseConfigured(): Promise<boolean> {
   return Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
@@ -12,9 +12,9 @@ export function isSupabaseConfigured(): boolean {
   );
 }
 
-export function isSupabaseAdminConfigured(): boolean {
+export async function isSupabaseAdminConfigured(): Promise<boolean> {
   return Boolean(
-    isSupabaseConfigured() &&
+    await isSupabaseConfigured() &&
       process.env.SUPABASE_SERVICE_ROLE_KEY &&
       !process.env.SUPABASE_SERVICE_ROLE_KEY.includes("your-service"),
   );
@@ -25,7 +25,7 @@ export function isSupabaseAdminConfigured(): boolean {
  * not need cookie-bound auth. Returns a no-op client if Supabase isn't
  * configured so callers can fall back to mocks.
  */
-export function getSupabaseServerClient(): SupabaseClient {
+export async function getSupabaseServerClient(): Promise<SupabaseClient> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co";
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "placeholder-anon-key";
   return createSupabaseClient(url, key, {
