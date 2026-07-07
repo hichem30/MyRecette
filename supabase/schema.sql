@@ -24,6 +24,8 @@
 -- 1. Extensions + internal schema
 -- ---------------------------------------------------------------------
 create extension if not exists "pgcrypto";
+create extension if not exists postgis;
+create extension if not exists pg_trgm;
 
 -- The `private` schema holds helper functions that should NEVER be
 -- callable via PostgREST (/rest/v1/rpc/...). RLS policies still call
@@ -1793,12 +1795,6 @@ create index if not exists idx_video_reactions_video on public.video_reactions(v
 create index if not exists idx_video_reactions_user on public.video_reactions(user_id);
 create index if not exists idx_video_reactions_type on public.video_reactions(reaction_type);
 
--- Indexes for recipe_videos
-create index if not exists idx_recipe_videos_recipe on public.recipe_videos(recipe_id);
-create index if not exists idx_recipe_videos_user on public.recipe_videos(user_id);
-create index if not exists idx_recipe_videos_created on public.recipe_videos(created_at desc);
-create index if not exists idx_recipe_videos_status on public.recipe_videos(status);
-
 -- Recipe Favorites (users can favorite recipes)
 create table if not exists public.recipe_favorites (
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -2421,7 +2417,7 @@ begin
     order by is_common desc, canonical_name
   loop
     if ingredient_record.confidence >= p_min_confidence then
-      return next;
+      return next ingredient_record;
     end if;
   end loop;
   
@@ -2433,7 +2429,7 @@ begin
     order by i.is_common desc, i.canonical_name
   loop
     if ingredient_record.confidence >= p_min_confidence then
-      return next;
+      return next ingredient_record;
     end if;
   end loop;
   
@@ -2446,7 +2442,7 @@ begin
     order by s.priority desc, i.is_common desc, i.canonical_name
   loop
     if synonym_record.confidence >= p_min_confidence then
-      return next;
+      return next synonym_record;
     end if;
   end loop;
   
@@ -2461,7 +2457,7 @@ begin
     order by p.confidence desc, i.is_common desc, i.canonical_name
   loop
     if pattern_record.confidence >= p_min_confidence then
-      return next;
+      return next pattern_record;
     end if;
   end loop;
   
@@ -2484,7 +2480,7 @@ begin
     limit 20
   loop
     if ingredient_record.confidence >= p_min_confidence then
-      return next;
+      return next ingredient_record;
     end if;
   end loop;
   
@@ -2501,7 +2497,7 @@ begin
     limit 10
   loop
     if ingredient_record.confidence >= p_min_confidence then
-      return next;
+      return next ingredient_record;
     end if;
   end loop;
 end;
