@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
 
 async function getActiveBundles(): Promise<Bundle[]> {
   if (!isSupabaseConfigured()) return [];
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const nowIso = new Date().toISOString();
   const { data } = await sb
     .from("bundles")
@@ -37,7 +37,7 @@ async function getActiveBundles(): Promise<Bundle[]> {
 // the service-role client to read them. Returns [] when the service-role
 // key isn't configured.
 async function getActivePromoCodes(): Promise<PromoCode[]> {
-  const admin = getSupabaseAdminClient();
+  const admin = await getSupabaseAdminClient();
   if (!admin) return [];
   const nowIso = new Date().toISOString();
   const { data } = await admin

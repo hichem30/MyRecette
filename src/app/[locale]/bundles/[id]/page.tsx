@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 async function getBundle(id: string): Promise<Bundle | null> {
   if (!isSupabaseConfigured()) return null;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const { data } = await sb.from("bundles").select("*").eq("id", id).maybeSingle();
   return (data as Bundle | null) ?? null;
 }

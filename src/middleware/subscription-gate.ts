@@ -46,7 +46,7 @@ const SUBSCRIPTION_REQUIRED_API_ROUTES = [
 function requiresSubscription(pathname: string): boolean {
   // Check admin routes
   for (const route of SUBSCRIPTION_REQUIRED_ADMIN_ROUTES) {
-    if (pathname.startsWith(route.replace(\[id\]/g, ""))) {
+    if (pathname.startsWith(route.replace(/\\[id\\]/g, ""))) {
       return true;
     }
   }

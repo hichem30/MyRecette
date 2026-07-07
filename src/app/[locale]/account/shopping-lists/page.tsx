@@ -296,7 +296,7 @@ export default function ShoppingListsPage() {
 
       if (error) throw error;
 
-      setItems(data || []);
+      setItems(data as ShoppingListItem[] || []);
     } catch (err) {
       console.error("Error fetching shopping list items:", err);
       setError(t("failedToLoadItems"));

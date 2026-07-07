@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { CreditCard, ArrowLeft, ShieldCheck, Truck, MapPin, Home, CheckCircle } from "lucide-react";
+import { CreditCard, ArrowLeft, ShieldCheck, Truck, MapPin, Home, CheckCircle, Store } from "lucide-react";
 import { Link } from "@/lib/i18n/navigation";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { createCheckoutSession } from "@/lib/stripe/server";
+import { createStripeCheckoutSession as createCheckoutSession } from "@/lib/stripe/server";
 
 // Mock data for local development
 const mockCart = {

@@ -226,7 +226,7 @@ export default function AccountFavorites() {
       }
 
       // Mark all as favorited
-      const recipes = recipesData.map((r) => ({
+      const recipes = recipesData.map((r: any) => ({
         ...r,
         is_favorited: true,
         ingredients: [],

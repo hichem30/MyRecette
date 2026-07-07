@@ -230,11 +230,11 @@ export default function AccountFollowedSupermarkets() {
 
       // Add follower count and mark as followed
       const supermarketsWithData = await Promise.all(
-        supermarketsData.map(async (sm) => {
+        (supermarketsData as any[]).map(async (sm: any) => {
           const { count: followers } = await sb
             .from("supermarket_follows")
             .select("*", { count: "exact", head: true })
-            .eq("supermarket_id", sm.id);
+            .eq("supermarket_id", sm.id) as any;
           
           return {
             ...sm,
