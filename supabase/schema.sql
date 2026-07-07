@@ -2928,8 +2928,20 @@ create table if not exists public.recipe_ratings (
   updated_at timestamptz not null default now()
 );
 
-alter table public.recipe_ratings
-  add constraint unique_recipe_user_rating unique (recipe_id, user_id);
+-- Add unique constraint if it doesn't exist
+DO $$ 
+DECLARE
+  constraint_name text;
+BEGIN
+  SELECT conname INTO constraint_name
+  FROM pg_constraint 
+  WHERE conrelid = 'public.recipe_ratings'::regclass 
+    AND conname = 'unique_recipe_user_rating';
+  
+  IF constraint_name IS NULL THEN
+    EXECUTE 'ALTER TABLE public.recipe_ratings ADD CONSTRAINT unique_recipe_user_rating UNIQUE (recipe_id, user_id)';
+  END IF;
+END $$;
 
 -- Indexes for recipe_ratings
 create index if not exists idx_recipe_ratings_recipe 
