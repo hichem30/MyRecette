@@ -12,8 +12,8 @@ import {
   ThumbsUp,
   Laugh,
   Heart as HeartIcon,
-  Surprised,
-  Sad,
+  Frown,
+  Smile,
   Angry,
   Plus,
 
@@ -125,8 +125,8 @@ const reactionTypes: { type: VideoReactionType; label: string; icon: React.React
   { type: 'like', label: 'Like', icon: <ThumbsUp className="h-5 w-5" /> },
   { type: 'love', label: 'Love', icon: <HeartIcon className="h-5 w-5" /> },
   { type: 'laugh', label: 'Laugh', icon: <Laugh className="h-5 w-5" /> },
-  { type: 'surprised', label: 'Surprised', icon: <Surprised className="h-5 w-5" /> },
-  { type: 'sad', label: 'Sad', icon: <Sad className="h-5 w-5" /> },
+  { type: 'surprised', label: 'Surprised', icon: <Smile className="h-5 w-5" /> },
+  { type: 'sad', label: 'Sad', icon: <Frown className="h-5 w-5" /> },
   { type: 'angry', label: 'Angry', icon: <Angry className="h-5 w-5" /> },
 ];
 
