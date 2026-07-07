@@ -2145,6 +2145,7 @@ declare
   supermarket_available boolean;
   total_price_val numeric(10,2) := 0;
   avail_count integer := 0;
+  supermarket_record record;
 begin
   -- Find supermarkets that have at least one of the selected ingredients
   for supermarket_record in
