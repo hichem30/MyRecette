@@ -1593,44 +1593,30 @@ create index if not exists idx_pending_mappings_created on public.pending_ingred
 create index if not exists idx_pending_mappings_product on public.pending_ingredient_mappings(product_id);
 
 -- Ensure unique constraints exist for seed file compatibility
--- Handle ingredients.canonical_name unique constraint
-DO $$ 
-BEGIN
-  BEGIN
-    EXECUTE 'ALTER TABLE public.ingredients ADD CONSTRAINT ingredients_canonical_name_key UNIQUE (canonical_name)';
-  EXCEPTION WHEN duplicate_object THEN
-    -- Constraint already exists, do nothing
-  END;
+-- For tables created before inline unique constraints were added
+-- Note: Using try-catch to handle cases where constraints already exist
+DO $$ BEGIN
+  EXECUTE 'ALTER TABLE public.ingredients ADD CONSTRAINT myrecette_ingredients_canonical_unq UNIQUE (canonical_name)';
+EXCEPTION WHEN duplicate_object THEN
+  -- Constraint already exists
 END $$;
 
--- Handle ingredient_synonyms unique constraint  
-DO $$ 
-BEGIN
-  BEGIN
-    EXECUTE 'ALTER TABLE public.ingredient_synonyms ADD CONSTRAINT ingredient_synonyms_ingredient_id_synonym_key UNIQUE (ingredient_id, synonym)';
-  EXCEPTION WHEN duplicate_object THEN
-    -- Constraint already exists, do nothing
-  END;
+DO $$ BEGIN
+  EXECUTE 'ALTER TABLE public.ingredient_synonyms ADD CONSTRAINT myrecette_ing_sym_uniq UNIQUE (ingredient_id, synonym)';
+EXCEPTION WHEN duplicate_object THEN
+  -- Constraint already exists
 END $$;
 
--- Handle ingredient_patterns unique constraint
-DO $$ 
-BEGIN
-  BEGIN
-    EXECUTE 'ALTER TABLE public.ingredient_patterns ADD CONSTRAINT ingredient_patterns_ingredient_id_pattern_t UNIQUE (ingredient_id, pattern_type, pattern)';
-  EXCEPTION WHEN duplicate_object THEN
-    -- Constraint already exists, do nothing
-  END;
+DO $$ BEGIN
+  EXECUTE 'ALTER TABLE public.ingredient_patterns ADD CONSTRAINT myrecette_ing_patt_uniq UNIQUE (ingredient_id, pattern_type, pattern)';
+EXCEPTION WHEN duplicate_object THEN
+  -- Constraint already exists
 END $$;
 
--- Handle product_ingredients unique constraint
-DO $$ 
-BEGIN
-  BEGIN
-    EXECUTE 'ALTER TABLE public.product_ingredients ADD CONSTRAINT product_ingredients_product_id_ingredient_id_key UNIQUE (product_id, ingredient_id)';
-  EXCEPTION WHEN duplicate_object THEN
-    -- Constraint already exists, do nothing
-  END;
+DO $$ BEGIN
+  EXECUTE 'ALTER TABLE public.product_ingredients ADD CONSTRAINT myrecette_prod_ing_uniq UNIQUE (product_id, ingredient_id)';
+EXCEPTION WHEN duplicate_object THEN
+  -- Constraint already exists
 END $$;
 
 -- Recipes table (for My Recette - Supercook-style search)
@@ -2969,19 +2955,11 @@ create table if not exists public.recipe_ratings (
   updated_at timestamptz not null default now()
 );
 
--- Add unique constraint if it doesn't exist
-DO $$ 
-DECLARE
-  constraint_name text;
-BEGIN
-  SELECT conname INTO constraint_name
-  FROM pg_constraint 
-  WHERE conrelid = 'public.recipe_ratings'::regclass 
-    AND conname = 'unique_recipe_user_rating';
-  
-  IF constraint_name IS NULL THEN
-    EXECUTE 'ALTER TABLE public.recipe_ratings ADD CONSTRAINT unique_recipe_user_rating UNIQUE (recipe_id, user_id)';
-  END IF;
+-- Add unique constraint for recipe_ratings
+DO $$ BEGIN
+  EXECUTE 'ALTER TABLE public.recipe_ratings ADD CONSTRAINT myrecette_recipe_ratings_unq UNIQUE (recipe_id, user_id)';
+EXCEPTION WHEN duplicate_object THEN
+  -- Constraint already exists
 END $$;
 
 -- Indexes for recipe_ratings
