@@ -172,7 +172,7 @@ const mockShoppingListItems: Record<string, ShoppingListItem[]> = {
 };
 
 // Format date for display
-def formatDate(dateString: string | null | undefined, lang: string): string {
+function formatDate(dateString: string | null | undefined, lang: string): string {
   if (!dateString) return "";
   
   const date = new Date(dateString);
