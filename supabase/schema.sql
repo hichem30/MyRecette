@@ -2138,6 +2138,7 @@ set search_path = public, pg_temp
 as $$
 declare
   ingredient_name text;
+  ingredient_loop_record record;
   available_ings jsonb := '[]'::jsonb;
   missing_ings jsonb := '[]'::jsonb;
   supermarket_price numeric(10,2);
@@ -2151,8 +2152,8 @@ begin
   for supermarket_record in
     select 
       p.id as supermarket_id,
-      p.supermarket_name,
-      p.location_geometry,
+      p.supermarket_name as supermarket_name,
+      p.location_geometry as location_geometry,
       p.id as profile_id
     from public.profiles p
     where p.is_supermarket = true 
@@ -2170,13 +2171,13 @@ begin
     avail_count := 0;
 
     -- Check each ingredient
-    for ingredient_name in select unnest(p_ingredient_names)
+    for ingredient_loop_record in (select unnest(p_ingredient_names) as ingredient_name)
     loop
       -- Check if any supermarket product has this ingredient
       perform from public.supermarket_products_ingredients_denormalized spid
       join public.ingredients i on spid.ingredient_id = i.id
       where spid.supermarket_id = supermarket_record.supermarket_id
-        and i.canonical_name = ingredient_name
+        and i.canonical_name = ingredient_loop_record.ingredient_name
         and spid.is_available = true
         and spid.stock > 0
       limit 1;
@@ -2188,7 +2189,7 @@ begin
         from public.supermarket_products_ingredients_denormalized spid
         join public.ingredients i on spid.ingredient_id = i.id
         where spid.supermarket_id = supermarket_record.supermarket_id
-          and i.canonical_name = ingredient_name
+          and i.canonical_name = ingredient_loop_record.ingredient_name
           and spid.is_available = true
           and spid.stock > 0
         order by spid.price asc
@@ -2196,17 +2197,17 @@ begin
 
         if supermarket_available then
           available_ings := available_ings || jsonb_build_object(
-            'ingredient', ingredient_name,
+            'ingredient', ingredient_loop_record.ingredient_name,
             'price', supermarket_price,
             'in_stock', supermarket_stock > 0
           );
           total_price_val := total_price_val + supermarket_price;
           avail_count := avail_count + 1;
         else
-          missing_ings := missing_ings || jsonb_build_object('ingredient', ingredient_name);
+          missing_ings := missing_ings || jsonb_build_object('ingredient', ingredient_loop_record.ingredient_name);
         end if;
       else
-        missing_ings := missing_ings || jsonb_build_object('ingredient', ingredient_name);
+        missing_ings := missing_ings || jsonb_build_object('ingredient', ingredient_loop_record.ingredient_name);
       end if;
     end loop;
 
