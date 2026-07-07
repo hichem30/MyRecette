@@ -141,7 +141,7 @@ function SupermarketCard({
 }
 
 // Category filter chips
-default function CategoryFilter({
+function CategoryFilter({
   categories,
   selectedCategory,
   lang,
@@ -190,7 +190,7 @@ default function CategoryFilter({
 }
 
 // Search bar component
-default function SearchBar({ placeholder }: { placeholder: string }) {
+function SearchBar({ placeholder }: { placeholder: string }) {
   return (
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
@@ -204,7 +204,7 @@ default function SearchBar({ placeholder }: { placeholder: string }) {
 }
 
 // Sort options
-default function SortOptions() {
+function SortOptions() {
   return (
     <div className="inline-flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-neutral-300 bg-white">
       <TrendingUp className="h-4 w-4 text-neutral-500" />

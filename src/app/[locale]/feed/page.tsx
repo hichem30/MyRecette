@@ -161,7 +161,7 @@ function FeedItem({ item, lang }: { item: SupermarketFeedItem; lang: "en" | "es"
 }
 
 // Supermarket card for sidebar
-default function SupermarketCard({ supermarket, lang }: { supermarket: SupermarketProfile; lang: "en" | "es" }) {
+function SupermarketCard({ supermarket, lang }: { supermarket: SupermarketProfile; lang: "en" | "es" }) {
   return (
     <div className="flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 transition-colors">
       {supermarket.profile_picture_url ? (

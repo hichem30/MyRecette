@@ -138,7 +138,7 @@ function getAddressString(supermarket: SupermarketProfile): string {
 }
 
 // Helper to format opening hours
-default function formatOpeningHours(hours?: Array<{ day: string; opens: string; closes: string; is_open: boolean }>): string {
+function formatOpeningHours(hours?: Array<{ day: string; opens: string; closes: string; is_open: boolean }>): string {
   if (!hours || hours.length === 0) return "";
   
   const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
@@ -152,7 +152,7 @@ default function formatOpeningHours(hours?: Array<{ day: string; opens: string; 
 }
 
 // Helper to format phone number
-default function formatPhone(phone?: string | null): string {
+function formatPhone(phone?: string | null): string {
   if (!phone) return "";
   return phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
 }
@@ -167,8 +167,6 @@ function FollowButtonClient({
   isFollowed: boolean;
   userId: string;
 }) {
-  "use client";
-  
   const [isFollowed, setIsFollowed] = useState(initialIsFollowed);
   const [loading, setLoading] = useState(false);
   
@@ -233,7 +231,7 @@ function FollowButton({
 }
 
 // Social links component
-default function SocialLinks({ supermarket }: { supermarket: SupermarketProfile }) {
+function SocialLinks({ supermarket }: { supermarket: SupermarketProfile }) {
   const links = supermarket.social_links;
   if (!links) return null;
   
@@ -266,7 +264,7 @@ default function SocialLinks({ supermarket }: { supermarket: SupermarketProfile 
 }
 
 // About section
-default function AboutSection({ supermarket }: { supermarket: SupermarketProfile }) {
+function AboutSection({ supermarket }: { supermarket: SupermarketProfile }) {
   const address = getAddressString(supermarket);
   const hours = formatOpeningHours(supermarket.opening_hours);
   const phone = formatPhone(supermarket.phone);
@@ -822,7 +820,7 @@ default async function JobsSection({ supermarketId, lang }: { supermarketId: str
 }
 
 // Tab content component
-default function TabContent({
+function TabContent({
   activeTab,
   supermarket,
   lang,

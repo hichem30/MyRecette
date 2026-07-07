@@ -584,8 +584,6 @@ function CommentFormClient({
   onCommentAdded: () => void;
   lang: "en" | "es";
 }) {
-  "use client";
-  
   const [content, setContent] = useState("");
   const [rating, setRating] = useState<number | null>(null);
   const [hoverRating, setHoverRating] = useState<number | null>(null);
@@ -862,8 +860,6 @@ function FavoriteButtonClient({
   userId: string;
   onToggle: (isFavorited: boolean) => void;
 }) {
-  "use client";
-  
   const [isFavorited, setIsFavorited] = useState(initialIsFavorited);
   const [loading, setLoading] = useState(false);
   
