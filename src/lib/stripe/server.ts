@@ -22,3 +22,9 @@ export function getStripeClient(): Stripe | null {
   });
   return cached;
 }
+
+// Stub function - Stripe integration to be implemented later
+export async function createStripeCheckoutSession(): Promise<null> {
+  console.warn("Stripe checkout session creation not yet implemented");
+  return null;
+}

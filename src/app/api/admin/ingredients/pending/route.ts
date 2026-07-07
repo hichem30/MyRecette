@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase/server";
-import { cookies } from "next/headers";
+import { getSupabaseRouteClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
 // GET - List pending ingredient mappings with filters
 export async function GET(request: Request) {
-  const cookieStore = await cookies();
-  const sb = createServerClient();
+  const sb = await getSupabaseRouteClient();
   
   const { searchParams } = new URL(request.url);
   const status = searchParams.get("status");
