@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import { notFound } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
@@ -392,48 +393,6 @@ function getMealTypeLabel(mealType: string | null | undefined, lang: "en" | "es"
     drink: { en: "Drink", es: "Bebida" },
   };
   return labels[mealType || ""]?.[lang] || mealType || "";
-}
-
-export async function generateStaticParams() {
-  // In production, fetch all recipe slugs from database
-  return [];
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string; slug: string }>;
-}): Promise<Metadata> {
-  const { locale, slug } = await params;
-  const lang = locale as "en" | "es";
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://myrecette.com";
-  const url = `${base}/${lang}/recipes/${slug}`;
-  
-  // Use mock for now
-  const name = mockRecipe.title[lang] || mockRecipe.title.en || "Recipe";
-  const description = mockRecipe.description?.[lang] || mockRecipe.description?.en || "";
-  
-  return {
-    title: `${name} — My Recette`,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title: `${name} — My Recette`,
-      description,
-      url,
-      siteName: "My Recette",
-      type: "article",
-      images: mockRecipe.image_url ? [{ url: mockRecipe.image_url, alt: name }] : undefined,
-      publishedTime: mockRecipe.published_at,
-      authors: ["My Recette"],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${name} — My Recette`,
-      description,
-      images: mockRecipe.image_url ? [mockRecipe.image_url] : undefined,
-    },
-  };
 }
 
 // Star rating component

@@ -411,7 +411,7 @@ function AboutSection({ supermarket }: { supermarket: SupermarketProfile }) {
 }
 
 // Products section
-default async function ProductsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
+async function ProductsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
   const products = await getSupermarketProducts(supermarketId);
   
   return (
@@ -486,7 +486,7 @@ default async function ProductsSection({ supermarketId, lang }: { supermarketId:
 }
 
 // Coupons section
-default async function CouponsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
+async function CouponsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
   const coupons = await getSupermarketCoupons(supermarketId);
   
   return (
@@ -564,7 +564,7 @@ default async function CouponsSection({ supermarketId, lang }: { supermarketId: 
 }
 
 // Bundles section
-default async function BundlesSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
+async function BundlesSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
   const bundles = await getSupermarketBundles(supermarketId);
   
   return (
@@ -637,7 +637,7 @@ default async function BundlesSection({ supermarketId, lang }: { supermarketId: 
 }
 
 // Sales section
-default async function SalesSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
+async function SalesSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
   const sales = await getSupermarketSales(supermarketId);
   
   return (
@@ -711,7 +711,7 @@ default async function SalesSection({ supermarketId, lang }: { supermarketId: st
 }
 
 // Jobs section
-default async function JobsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
+async function JobsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
   const jobs = await getSupermarketJobs(supermarketId);
   
   const positionTypeLabels: Record<string, { en: string; es: string }> = {

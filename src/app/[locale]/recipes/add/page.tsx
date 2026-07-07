@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
@@ -76,15 +77,6 @@ const dietaryTags = [
   "halal",
   "kosher",
 ];
-
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
-  const lang = locale as "en" | "es";
-  return {
-    title: `Add Recipe — My Recette`,
-    description: lang === "es" ? "Añade tu propia receta para compartir con la comunidad" : "Add your own recipe to share with the community",
-  };
-}
 
 // Helper to generate slug from title
 function generateSlug(title: string): string {

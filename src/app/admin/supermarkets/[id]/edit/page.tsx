@@ -1,6 +1,3 @@
-"use client";
-
-import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Building2, MapPin, Phone, Mail, Globe, Calendar, Clock, Users, DollarSign, Upload, Camera, X, Plus, Trash2, CheckCircle, AlertTriangle, ChevronDown } from "lucide-react";
 import Link from "next/link";
@@ -14,11 +11,6 @@ import { getCurrentUser } from "@/lib/supabase/user";
 
 export const revalidate = 0;
 export const dynamicParams = true;
-
-export const metadata: Metadata = {
-  title: "Edit Supermarket — My Recette Admin",
-  description: "Update supermarket profile and settings",
-};
 
 // Mock data for local development
 const mockSupermarket = {
@@ -319,9 +311,7 @@ function CategorySelector({ selectedCategories, onChange, availableCategories }:
   );
 }
 
-// Note: This component uses client-side features, so we need to make it a client component
-import { useState, useRef } from "react";
-import { ChevronDown } from "lucide-react";
+"use client";
 
 export default function EditSupermarketPage({
   params,
