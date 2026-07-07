@@ -1344,12 +1344,12 @@ begin
 
     -- Validate required fields
     if price_val <= 0 or stock_val < 0 then
-      return next row (row_index, null, null, 'skip', 'error', 'Invalid price or stock value');
+      return query select row_index, null::uuid, null::uuid, 'skip', 'error', 'Invalid price or stock value';
       continue;
     end if;
 
     if sku_val = '' and barcode_val = '' and name_val = '' then
-      return next row (row_index, null, null, 'skip', 'error', 'Missing product identifier (sku, barcode, or name required)');
+      return query select row_index, null::uuid, null::uuid, 'skip', 'error', 'Missing product identifier (sku, barcode, or name required)';
       continue;
     end if;
 
@@ -1374,7 +1374,7 @@ begin
         returning id into matched_product_id;
 
         if matched_product_id is not null then
-          return next row (row_index, matched_product_id, matched_product_id, 'update', 'success', 'Updated existing supermarket product');
+          return query select row_index, matched_product_id, matched_product_id, 'update', 'success', 'Updated existing supermarket product';
           continue;
         end if;
       exception when no_data_found then
@@ -1390,7 +1390,7 @@ begin
         (stock_val > 0), nullif(sku_val, ''), nullif(barcode_val, ''), nullif(location_val, '')
       ) returning id into matched_product_id;
 
-      return next row (row_index, matched_product_id, matched_product_id, 'insert', 'success', 'Created new supermarket product');
+      return query select row_index, matched_product_id, matched_product_id, 'insert', 'success', 'Created new supermarket product';
       continue;
     end if;
 
@@ -1415,10 +1415,10 @@ begin
         (stock_val > 0), nullif(sku_val, ''), nullif(barcode_val, ''), nullif(location_val, '')
       ) returning id into matched_product_id;
 
-      return next row (row_index, matched_product_id, matched_product_id, 'insert_new', 'success', 'Created new product and supermarket product');
+      return query select row_index, matched_product_id, matched_product_id, 'insert_new', 'success', 'Created new product and supermarket product';
       continue;
     exception when others then
-      return next row (row_index, null, null, 'skip', 'error', 'Error creating new product: ' || SQLERRM);
+      return query select row_index, null::uuid, null::uuid, 'skip', 'error', 'Error creating new product: ' || SQLERRM;
       continue;
     end;
   end loop;
@@ -2661,12 +2661,12 @@ begin
 
     -- Validate required fields
     if price_val <= 0 or stock_val < 0 then
-      return next row (row_index, null, null, 'skip', 'error', 'Invalid price or stock value', 0, false);
+      return query select row_index, null, null, 'skip', 'error', 'Invalid price or stock value', 0, false;
       continue;
     end if;
 
     if sku_val = '' and barcode_val = '' and name_val = '' then
-      return next row (row_index, null, null, 'skip', 'error', 'Missing product identifier (sku, barcode, or name required)', 0, false);
+      return query select row_index, null, null, 'skip', 'error', 'Missing product identifier (sku, barcode, or name required)', 0, false;
       continue;
     end if;
 
@@ -2701,7 +2701,7 @@ begin
             end if;
           end loop;
           
-          return next row (row_index, matched_product_id, matched_product_id, 'update', 'success', 'Updated existing supermarket product', ingredients_extracted_count, ingredients_needs_review_flag);
+          return query select row_index, matched_product_id, matched_product_id, 'update', 'success', 'Updated existing supermarket product', ingredients_extracted_count, ingredients_needs_review_flag;
           continue;
         end if;
       exception when no_data_found then
@@ -2727,7 +2727,7 @@ begin
         end if;
       end loop;
 
-      return next row (row_index, matched_product_id, matched_product_id, 'insert', 'success', 'Created new supermarket product', ingredients_extracted_count, ingredients_needs_review_flag);
+      return query select row_index, matched_product_id, matched_product_id, 'insert', 'success', 'Created new supermarket product', ingredients_extracted_count, ingredients_needs_review_flag;
       continue;
     end if;
 
@@ -2762,10 +2762,10 @@ begin
         end if;
       end loop;
 
-      return next row (row_index, matched_product_id, matched_product_id, 'insert_new', 'success', 'Created new product and supermarket product', ingredients_extracted_count, ingredients_needs_review_flag);
+      return query select row_index, matched_product_id, matched_product_id, 'insert_new', 'success', 'Created new product and supermarket product', ingredients_extracted_count, ingredients_needs_review_flag;
       continue;
     exception when others then
-      return next row (row_index, null, null, 'skip', 'error', 'Error creating new product: ' || SQLERRM, 0, false);
+      return query select row_index, null, null, 'skip', 'error', 'Error creating new product: ' || SQLERRM, 0, false;
       continue;
     end;
   end loop;
