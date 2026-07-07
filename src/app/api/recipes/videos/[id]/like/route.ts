@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient, isSupabaseConfigured } from "@supabase/server";
+import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 // POST: Like a video
 // DELETE: Unlike a video

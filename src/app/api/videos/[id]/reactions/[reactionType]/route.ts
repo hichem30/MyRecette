@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient, isSupabaseConfigured } from "@supabase/server";
+import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/supabase/user";
 import type { VideoReactionType } from "@/lib/types";
 

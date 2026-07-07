@@ -37,7 +37,7 @@ export async function getSupabaseServerClient(): Promise<SupabaseClient> {
  * Service-role client. NEVER expose to the browser. Bypasses RLS — use only
  * in server-only code (admin routes, webhooks).
  */
-export function getSupabaseAdminClient(): SupabaseClient | null {
+export async function getSupabaseAdminClient(): Promise<SupabaseClient | null> {
   if (!isSupabaseAdminConfigured()) return null;
   return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
