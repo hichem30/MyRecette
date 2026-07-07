@@ -562,7 +562,7 @@ alter table public.delivery_zones   enable row level security;
 -- Profiles
 drop policy if exists "profiles read own" on public.profiles;
 create policy "profiles read own" on public.profiles for select
-  using ((select auth.uid()) = id or (select private.is_admin()));
+  using (((select auth.uid()) = id) or (select private.is_admin()));
 
 drop policy if exists "profiles update own" on public.profiles;
 create policy "profiles update own" on public.profiles for update
@@ -583,7 +583,7 @@ create policy "categories admin write" on public.categories
 -- Products (customers see published only; admin sees all)
 drop policy if exists "products public read" on public.products;
 create policy "products public read" on public.products
-  for select using (published = true or (select private.is_admin()));
+  for select using ((published = true) or (select private.is_admin()));
 
 drop policy if exists "products admin write" on public.products;
 create policy "products admin write" on public.products
@@ -1098,7 +1098,7 @@ create policy "supermarket_products: supermarket can manage own" on public.super
 -- supermarket_products: read for all if available
 create policy "supermarket_products: public can read available" on public.supermarket_products
   for select
-  using (is_available = true or (select private.is_admin()));
+  using ((is_available = true) or (select private.is_admin()));
 
 -- Enable RLS on supermarket_follows
 alter table public.supermarket_follows enable row level security;
@@ -1813,7 +1813,7 @@ alter table public.recipe_favorites enable row level security;
 
 -- RLS Policies for Recipes
 -- Recipes: public read, admin/supermarket write, users can create their own
-create policy "recipes_public_read" on public.recipes for select using (published = true or (select private.is_admin()));
+create policy "recipes_public_read" on public.recipes for select using ((published = true) or (select private.is_admin()));
 
 create policy "recipes_admin_write" on public.recipes for all
   using ((select private.is_admin()))
@@ -2349,7 +2349,7 @@ create policy "product_ingredients_admin_write" on public.product_ingredients
 
 -- Pending ingredient mappings: admin/supermarket read own, admin write
 create policy "pending_mappings_admin_read" on public.pending_ingredient_mappings 
-  for select using ((select private.is_admin()) or supermarket_id = (select id from public.profiles where id = auth.uid()));
+  for select using ((select private.is_admin()) or (supermarket_id = (select id from public.profiles where id = auth.uid())));
 create policy "pending_mappings_admin_write" on public.pending_ingredient_mappings 
   for all using ((select private.is_admin())) 
   with check ((select private.is_admin()));
@@ -3058,7 +3058,7 @@ create policy "subscriptions_admin_all" on public.subscriptions
 
 create policy "subscriptions_supermarket_own" on public.subscriptions
   for select using (
-    (select auth.uid()) = supermarket_id or (select private.is_admin())
+    ((select auth.uid()) = supermarket_id) or (select private.is_admin())
   );
 
 -- Subscription History RLS
@@ -3069,7 +3069,7 @@ create policy "subscription_history_admin_all" on public.subscription_history
 
 create policy "subscription_history_supermarket_own" on public.subscription_history
   for select using (
-    (select auth.uid()) = (select supermarket_id from public.subscriptions where id = subscription_id) or
+    ((select auth.uid()) = (select supermarket_id from public.subscriptions where id = subscription_id)) or
     (select private.is_admin())
   );
 
