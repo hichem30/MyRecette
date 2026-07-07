@@ -1248,9 +1248,9 @@ create policy "supermarket_feed: followers can read followers_only posts" on pub
 
 -- Function to find product by barcode, SKU, or name (in that order)
 create or replace function public.find_product_by_identifier(
-  p_barcode text default null,
-  p_sku text default null,
-  p_name text default null
+  barcode_val text default null,
+  sku_val text default null,
+  name_val text default null
 )
 returns table (
   id uuid,
@@ -1259,44 +1259,39 @@ returns table (
   name jsonb,
   category_slug text
 )
-language sql
+language plpgsql
 security invoker
 set search_path = public, pg_temp
 as $$
+begin
   -- Try barcode first (exact match)
-  select p.id, p.barcode, p.sku, p.name, p.category_slug
-  from public.products p
-  where p.barcode = p_barcode
-  limit 1
+  return query
+  select pr.id, pr.barcode, pr.sku, pr.name, pr.category_slug
+  from public.products pr
+  where pr.barcode = barcode_val
+  limit 1;
   
-  union all
-  
-  -- Then try SKU (only if barcode didn't match or product has no barcode)
-  select p.id, p.barcode, p.sku, p.name, p.category_slug
-  from public.products p
-  where (p.barcode is null or p.barcode != p_barcode)
-    and p.sku = p_sku
-  limit 1
-  
-  union all
+  -- Then try SKU
+  return query
+  select pr.id, pr.barcode, pr.sku, pr.name, pr.category_slug
+  from public.products pr
+  where pr.sku = sku_val
+  limit 1;
   
   -- Then try name (case-insensitive, exact match on English name)
-  select p.id, p.barcode, p.sku, p.name, p.category_slug
-  from public.products p
-  where (p.barcode is null or p.barcode != p_barcode)
-    and (p.sku is null or p.sku != p_sku)
-    and lower(p.name->>'en') = lower(p_name)
-  limit 1
-  
-  union all
+  return query
+  select pr.id, pr.barcode, pr.sku, pr.name, pr.category_slug
+  from public.products pr
+  where lower(pr.name->>'en') = lower(name_val)
+  limit 1;
   
   -- Finally try name (case-insensitive, partial match on English name as fallback)
-  select p.id, p.barcode, p.sku, p.name, p.category_slug
-  from public.products p
-  where (p.barcode is null or p.barcode != p_barcode)
-    and (p.sku is null or p.sku != p_sku)
-    and lower(p.name->>'en') like '%' || lower(p_name) || '%'
+  return query
+  select pr.id, pr.barcode, pr.sku, pr.name, pr.category_slug
+  from public.products pr
+  where lower(pr.name->>'en') like '%' || lower(name_val) || '%'
   limit 1;
+end;
 $$;
 
 -- Function to process bulk CSV upload for a supermarket
@@ -2556,7 +2551,7 @@ begin
           product_id, ingredient_id, mapping_method, confidence, is_primary
         ) values (
           p_product_id, candidate.ingredient_id, 'auto_name', candidate.confidence,
-          total_created = 0
+          (total_created = 0)
         );
         
         total_created := total_created + 1;
