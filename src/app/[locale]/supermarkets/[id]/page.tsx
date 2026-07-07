@@ -124,7 +124,7 @@ export async function generateMetadata({
 }
 
 // Helper to get address string
-default function getAddressString(supermarket: SupermarketProfile): string {
+function getAddressString(supermarket: SupermarketProfile): string {
   const addr = supermarket.address;
   if (!addr) return "";
   const parts: string[] = [];

@@ -320,8 +320,6 @@ function CategorySelector({ selectedCategories, onChange, availableCategories }:
 }
 
 // Note: This component uses client-side features, so we need to make it a client component
-"use client";
-
 import { useState, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 

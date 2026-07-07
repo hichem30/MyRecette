@@ -1,5 +1,3 @@
-"use client";
-
 import type { Metadata } from "next";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -125,6 +123,8 @@ function getYouTubeEmbedUrl(url: string): string | null {
   if (!id) return null;
   return `https://www.youtube.com/embed/${id}?rel=0`;
 }
+
+"use client";
 
 export default function AddRecipePage({ params }: { params: Promise<{ locale: string }> }) {
   const router = useRouter();
