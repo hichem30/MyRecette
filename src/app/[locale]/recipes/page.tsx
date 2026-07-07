@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { useState } from "react";
@@ -412,35 +413,6 @@ const sortOptions = [
   { id: "rating", label: { en: "Top Rated", es: "Mejor Valorados" } },
   { id: "quick", label: { en: "Quickest", es: "Más Rápidos" } },
 ];
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const lang = locale as "en" | "es";
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://myrecette.com";
-  const url = `${base}/${lang}/recipes`;
-  
-  return {
-    title: `Recipes — My Recette`,
-    description: "Discover delicious recipes with step-by-step instructions. Find the perfect dish for any occasion.",
-    alternates: { canonical: url },
-    openGraph: {
-      title: `Recipes — My Recette`,
-      description: "Discover delicious recipes with step-by-step instructions.",
-      url,
-      siteName: "My Recette",
-      type: "website",
-    },
-    twitter: {
-      card: "summary",
-      title: `Recipes — My Recette`,
-      description: "Discover delicious recipes with step-by-step instructions.",
-    },
-  };
-}
 
 export default async function RecipesPage({
   params,

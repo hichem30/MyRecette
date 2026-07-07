@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+"use client";
+
 import { notFound, revalidatePath } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
@@ -77,50 +78,6 @@ function getTabLabel(lang: string, tabId: TabType): string {
   const tab = tabConfig.find((t) => t.id === tabId);
   if (!tab) return tabId;
   return tab.label[lang as keyof typeof tab.label] || tab.label.en;
-}
-
-export async function generateStaticParams() {
-  // In a real implementation, fetch all supermarket IDs from the database
-  return []; // Dynamic for now
-}
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string; id: string }>;
-}): Promise<Metadata> {
-  const { locale, id } = await params;
-  const supermarket = await getSupermarketById(id);
-  
-  if (!supermarket) return {};
-  
-  const lang = locale as "en" | "es";
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://myrecette.com";
-  const url = `${base}/${lang}/supermarkets/${id}`;
-  const name = supermarket.supermarket_name[lang] || supermarket.supermarket_name.en || "My Recette";
-  const description =
-    supermarket.description?.[lang] || supermarket.description?.en ||
-    "Explore products, coupons, and more from this supermarket.";
-  
-  return {
-    title: `${name} — My Recette`,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title: `${name} — My Recette`,
-      description,
-      url,
-      siteName: "My Recette",
-      type: "website",
-      images: supermarket.banner_url ? [{ url: supermarket.banner_url, alt: name }] : undefined,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${name} — My Recette`,
-      description,
-      images: supermarket.banner_url ? [supermarket.banner_url] : undefined,
-    },
-  };
 }
 
 // Helper to get address string

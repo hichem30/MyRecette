@@ -508,29 +508,6 @@ function Instructions({ instructions, lang }: { instructions: Recipe["instructio
   );
 }
 
-// YouTube video embed
-function VideoEmbed({ url }: { url: string | null | undefined }) {
-  const embedUrl = getYouTubeEmbedUrl(url);
-  
-  if (!embedUrl) return null;
-  
-  return (
-    <div className="space-y-4">
-      <h3 className="font-semibold text-neutral-900">Video Tutorial</h3>
-      <div className="relative aspect-video rounded-xl overflow-hidden">
-        <iframe
-          src={embedUrl}
-          title="Recipe Video"
-          className="absolute inset-0 w-full h-full"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
-    </div>
-  );
-}
-
 // Comment form (client component)
 function CommentFormClient({
   recipeId,

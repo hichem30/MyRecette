@@ -1,3 +1,5 @@
+"use client";
+
 import { notFound, redirect } from "next/navigation";
 import { Building2, MapPin, Phone, Mail, Globe, Calendar, Clock, Users, DollarSign, Upload, Camera, X, Plus, Trash2, CheckCircle, AlertTriangle, ChevronDown } from "lucide-react";
 import Link from "next/link";
@@ -310,8 +312,6 @@ function CategorySelector({ selectedCategories, onChange, availableCategories }:
     </div>
   );
 }
-
-"use client";
 
 export default function EditSupermarketPage({
   params,

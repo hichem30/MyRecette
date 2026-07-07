@@ -116,8 +116,6 @@ function getYouTubeEmbedUrl(url: string): string | null {
   return `https://www.youtube.com/embed/${id}?rel=0`;
 }
 
-"use client";
-
 export default function AddRecipePage({ params }: { params: Promise<{ locale: string }> }) {
   const router = useRouter();
   const [locale] = useState<"en" | "es">("en");
