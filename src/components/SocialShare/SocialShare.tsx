@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Share2, Check, Copy, Facebook, Twitter, Whatsapp, Pinterest, Linkedin, Mail } from "lucide-react";
+import { Share2, Check, Copy, Facebook, Twitter, Whatsapp, Linkedin, Mail } from "lucide-react";
 import type { SocialPlatform, SocialShareData } from "@/lib/types";
 
 interface SocialShareProps {
@@ -29,8 +29,6 @@ const getSocialShareUrl = (
       return `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}${encodedDescription ? ` ${encodedDescription}` : ""}`;
     case "whatsapp":
       return `https://wa.me/?text=${encodedTitle} ${encodedUrl}`;
-    case "pinterest":
-      return `https://pinterest.com/pin/create/button/?url=${encodedUrl}&media=${encodedImage}&description=${encodedDescription}`;
     case "linkedin":
       return `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}&summary=${encodedDescription}`;
     case "email":
@@ -45,12 +43,11 @@ const platformConfig: Record<SocialPlatform, { icon: React.ReactNode; color: str
   facebook: { icon: <Facebook className="h-5 w-5" />, color: "bg-[#1877F2] hover:bg-[#166FE5]", label: "Facebook" },
   twitter: { icon: <Twitter className="h-5 w-5" />, color: "bg-[#1DA1F2] hover:bg-[#1A8CD8]", label: "Twitter" },
   whatsapp: { icon: <Whatsapp className="h-5 w-5" />, color: "bg-[#25D366] hover:bg-[#128C7E]", label: "WhatsApp" },
-  pinterest: { icon: <Pinterest className="h-5 w-5" />, color: "bg-[#E60023] hover:bg-[#CC001F]", label: "Pinterest" },
   linkedin: { icon: <Linkedin className="h-5 w-5" />, color: "bg-[#0A66C2] hover:bg-[#0850A0]", label: "LinkedIn" },
   email: { icon: <Mail className="h-5 w-5" />, color: "bg-neutral-700 hover:bg-neutral-800", label: "Email" },
 };
 
-const platforms: SocialPlatform[] = ["facebook", "twitter", "whatsapp", "pinterest", "linkedin", "email"];
+const platforms: SocialPlatform[] = ["facebook", "twitter", "whatsapp", "linkedin", "email"];
 
 export function SocialShare({ url, title, description, imageUrl, className = "" }: SocialShareProps) {
   const [isOpen, setIsOpen] = useState(false);
