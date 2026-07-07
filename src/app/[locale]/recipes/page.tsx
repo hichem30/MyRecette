@@ -1,6 +1,7 @@
 "use client";
 
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { useLocale, useTranslations } from "next-intl";
+import { use } from "react";
 import Image from "next/image";
 import { useState } from "react";
 import { Link } from "@/lib/i18n/navigation";
@@ -15,7 +16,6 @@ import {
   Grid3X3,
   List,
 } from "lucide-react";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type { Recipe } from "@/lib/types";
 
 export const revalidate = 60;
@@ -414,7 +414,7 @@ const sortOptions = [
   { id: "quick", label: { en: "Quickest", es: "Más Rápidos" } },
 ];
 
-export default async function RecipesPage({
+export default function RecipesPage({
   params,
   searchParams,
 }: {
@@ -428,20 +428,14 @@ export default async function RecipesPage({
     view?: "grid" | "list";
   }>;
 }) {
-  const { locale } = await params;
-  const { search, category, difficulty, meal_type, sort, view: viewParam } = await searchParams;
-  
-  setRequestLocale(locale);
+  const { locale } = use(params);
+  const { search, category, difficulty, meal_type, sort, view: viewParam } = use(searchParams);
   
   const lang = locale as "en" | "es";
-  const t = await getTranslations("common");
+  const t = useTranslations("common");
   
-  // Get user session for favorites
-  const sb = getSupabaseServerClient();
-  const {
-    data: { user },
-  } = await sb.auth.getUser();
-  const userId = user?.id;
+  // Get user session for favorites - using mock data for now
+  const userId = null;
   
   // For now, use mock recipes
   // In production: const recipes = await getAllRecipes();

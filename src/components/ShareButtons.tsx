@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Share2, Copy, Check, Facebook, Twitter, Whatsapp, Pinterest, Linkedin, Mail } from "lucide-react";
+import { Share2, Copy, Check, Facebook, Twitter, MessageCircle, Linkedin, Mail, Image } from "lucide-react";
 
 interface ShareButtonsProps {
   url: string;
@@ -85,8 +85,8 @@ export default function ShareButtons({
   const platformConfigs = {
     facebook: { icon: Facebook, label: "Facebook", color: "text-blue-600" },
     twitter: { icon: Twitter, label: "Twitter", color: "text-sky-500" },
-    whatsapp: { icon: Whatsapp, label: "WhatsApp", color: "text-green-500" },
-    pinterest: { icon: Pinterest, label: "Pinterest", color: "text-red-600" },
+    whatsapp: { icon: MessageCircle, label: "WhatsApp", color: "text-green-500" },
+    pinterest: { icon: Image, label: "Pinterest", color: "text-red-600" },
     linkedin: { icon: Linkedin, label: "LinkedIn", color: "text-blue-700" },
     email: { icon: Mail, label: "Email", color: "text-gray-600" },
     copy: { icon: copied ? Check : Copy, label: t("copyLink"), color: "text-gray-600" },
@@ -209,9 +209,9 @@ export function ShareButton({
       case "twitter":
         return <Twitter className="w-5 h-5" />;
       case "whatsapp":
-        return <Whatsapp className="w-5 h-5" />;
+        return <MessageCircle className="w-5 h-5" />;
       case "pinterest":
-        return <Pinterest className="w-5 h-5" />;
+        return <Image className="w-5 h-5" />;
       case "linkedin":
         return <Linkedin className="w-5 h-5" />;
       case "email":

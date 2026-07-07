@@ -1,7 +1,8 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { useLocale, useTranslations } from "next-intl";
+import { use } from "react";
 import Image from "next/image";
 import { useState } from "react";
 import {
@@ -997,23 +998,17 @@ function AvailabilityPanel({
   );
 }
 
-export default async function RecipeDetailPage({
+export default function RecipeDetailPage({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { locale, slug } = await params;
-  setRequestLocale(locale);
-  
+  const { locale, slug } = use(params);
   const lang = locale as "en" | "es" | "fr" | "ar";
-  const t = await getTranslations("common");
+  const t = useTranslations("common");
   
-  // Get user session
-  const sb = getSupabaseServerClient();
-  const {
-    data: { user },
-  } = await sb.auth.getUser();
-  const userId = user?.id;
+  // Get user session - using mock data for now
+  const userId = null;
   
   // For now, use mock data
   // In production, fetch from database:
