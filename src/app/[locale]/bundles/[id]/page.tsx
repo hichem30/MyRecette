@@ -29,13 +29,15 @@ export async function generateMetadata({
   const bundle = await getBundle(id);
   if (!bundle) return {};
   const lang = locale as "en" | "es";
+  const name = bundle.name[lang] || bundle.name.en || "Bundle";
+  const description = bundle.description?.[lang] || bundle.description?.en || "";
   return {
-    title: `${bundle.name[lang]} — Bundle Deal — Red Barn Western Market`,
-    description: bundle.description?.[lang]?.slice(0, 160) || bundle.name[lang],
+    title: `${name} — Bundle Deal — sucre et sel`,
+    description: description.slice(0, 160) || name,
     openGraph: {
-      title: bundle.name[lang],
-      description: bundle.description?.[lang] ?? undefined,
-      images: bundle.image_url ? [{ url: bundle.image_url, alt: bundle.name[lang] }] : undefined,
+      title: name,
+      description: description || undefined,
+      images: bundle.image_url ? [{ url: bundle.image_url, alt: name }] : undefined,
     },
   };
 }
@@ -74,7 +76,7 @@ export default async function BundleDetailPage({
             {lang === "en" ? "Deals" : "Ofertas"}
           </Link>
           <ChevronRight className="h-3 w-3" />
-          <span className="text-neutral-700">{bundle.name[lang]}</span>
+          <span className="text-neutral-700">{bundle.name[lang] || bundle.name.en || "Bundle"}</span>
         </nav>
       </div>
 
@@ -85,7 +87,7 @@ export default async function BundleDetailPage({
             {bundle.image_url ? (
               <Image
                 src={bundle.image_url}
-                alt={bundle.name[lang]}
+                alt={bundle.name[lang] || bundle.name.en || "Bundle"}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -114,7 +116,7 @@ export default async function BundleDetailPage({
               {items.length} {lang === "en" ? "items" : "artículos"}
             </p>
             <h1 className="mt-2 font-serif text-3xl font-bold text-neutral-900 sm:text-4xl">
-              {bundle.name[lang]}
+              {bundle.name[lang] || bundle.name.en || "Bundle"}
             </h1>
 
             <div className="mt-4 flex items-baseline gap-3">
@@ -134,7 +136,7 @@ export default async function BundleDetailPage({
             </div>
 
             {bundle.description?.[lang] && (
-              <p className="mt-4 text-neutral-600">{bundle.description[lang]}</p>
+              <p className="mt-4 text-neutral-600">{bundle.description[lang] || bundle.description?.en || ""}</p>
             )}
 
             {bundle.ends_at && (
