@@ -23,19 +23,19 @@ export async function generateMetadata({
   const url = `${base}/${lang}/feed`;
   
   return {
-    title: `Your Feed — My Recette`,
+    title: `Your Feed — sucre et sel`,
     description: "Stay updated with the latest products, coupons, and offers from supermarkets you follow.",
     alternates: { canonical: url },
     openGraph: {
-      title: `Your Feed — My Recette`,
+      title: `Your Feed — sucre et sel`,
       description: "Stay updated with the latest products, coupons, and offers from supermarkets you follow.",
       url,
-      siteName: "My Recette",
+      siteName: "sucre et sel",
       type: "website",
     },
     twitter: {
       card: "summary",
-      title: `Your Feed — My Recette`,
+      title: `Your Feed — sucre et sel`,
       description: "Stay updated with the latest products, coupons, and offers from supermarkets you follow.",
     },
   };
