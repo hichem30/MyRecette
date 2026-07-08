@@ -112,7 +112,7 @@ export function RecipeCommunityTabs({ recipe, comments, userId, lang }: RecipeCo
           url={`${process.env.NEXT_PUBLIC_SITE_URL || "https://myrecette.com"}/${lang}/recipes/${recipe.slug}`}
           title={recipe.title[lang] || recipe.title.en || "sucre et sel Recipe"}
           description={recipe.description?.[lang] || recipe.description?.en || ""}
-          imageUrl={recipe.image_url}
+          imageUrl={recipe.image_url || undefined}
         />
       </div>
 

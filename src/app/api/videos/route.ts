@@ -49,7 +49,7 @@ function getYouTubeThumbnail(videoId: string): string {
 
 // GET: Search and list videos with filtering and sorting
 export async function GET(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Format response
-    const formattedVideos = (videos || []).map((v) => ({
+    const formattedVideos = ((videos as unknown as any[]) || []).map((v: any) => ({
       ...v,
       user: v.profiles ? { ...v.profiles } : null,
       recipe: v.recipes ? { ...v.recipes } : null,
@@ -162,7 +162,7 @@ export async function GET(request: NextRequest) {
 
 // POST: Create a new recipe video
 export async function POST(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(

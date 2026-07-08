@@ -54,7 +54,7 @@ export async function GET() {
   // profile still says "user", promote them via the service-role client
   // (bypasses RLS) so they don't get stuck looking like a customer.
   if (matchesBootstrap && role !== "admin") {
-    const admin = getSupabaseAdminClient();
+    const admin = await getSupabaseAdminClient();
     if (admin) {
       try {
         await admin

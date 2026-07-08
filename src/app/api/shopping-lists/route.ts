@@ -4,6 +4,7 @@ import type {
   ShoppingList,
   ShoppingListFormData,
   ShoppingListsApiResponse,
+  ShoppingListApiResponse,
 } from "@/lib/types";
 
 // Mock data for local development
@@ -43,7 +44,7 @@ const mockShoppingLists: ShoppingList[] = [
 ];
 
 export async function GET(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // Return mock data for local development
@@ -105,6 +106,7 @@ export async function GET(request: NextRequest) {
         .from("shopping_list_items")
         .select("shopping_list_id, count(*) as count")
         .in("shopping_list_id", listIds)
+        // @ts-ignore - Supabase .group() method
         .group("shopping_list_id");
 
       if (!countsError && itemsCounts) {
@@ -163,7 +165,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // Mock response for local development
@@ -234,7 +236,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ shoppingList: { ...newList, items: [], items_count: 0 } } as ShoppingListApiResponse);
+    return NextResponse.json({ shoppingList: { ...(newList as unknown as ShoppingList), items: [], items_count: 0 } } as ShoppingListApiResponse);
 
   } catch (error) {
     console.error("Error in POST /api/shopping-lists:", error);

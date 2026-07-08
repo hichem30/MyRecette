@@ -137,7 +137,7 @@ export function VideoList({ recipeId, recipeSlug, videos: initialVideos, current
                   url={`https://myrecette.com/en/recipes/${recipeSlug}?video=${video.id}`}
                   title={video.title?.en || "Check out this recipe video"}
                   description={video.description?.en || "User-submitted recipe video"}
-                  imageUrl={video.thumbnail_url}
+                  imageUrl={video.thumbnail_url || undefined}
                 />
               </div>
             </div>

@@ -12,7 +12,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: supermarketId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -42,7 +42,7 @@ export async function POST(
       data: { user },
     } = await sb.auth.getUser();
 
-    if (!user || user.id !== supermarket.id) {
+    if (!user || (user as any).id !== (supermarket as any).id) {
       return NextResponse.json(
         { error: "Unauthorized - only the supermarket owner can manage subscriptions" },
         { status: 403 }
@@ -128,7 +128,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: supermarketId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -158,14 +158,14 @@ export async function DELETE(
       data: { user },
     } = await sb.auth.getUser();
 
-    if (!user || user.id !== supermarket.id) {
+    if (!user || (user as any).id !== (supermarket as any).id) {
       return NextResponse.json(
         { error: "Unauthorized - only the supermarket owner can manage subscriptions" },
         { status: 403 }
       );
     }
 
-    if (!supermarket.stripe_subscription_id) {
+    if (!(supermarket as any).stripe_subscription_id) {
       return NextResponse.json(
         { error: "No active subscription found" },
         { status: 400 }
@@ -181,14 +181,14 @@ export async function DELETE(
     }
 
     // Cancel the subscription in Stripe
-    const subscription = await stripe.subscriptions.cancel(supermarket.stripe_subscription_id);
+    const subscription = await stripe.subscriptions.cancel((supermarket as any).stripe_subscription_id);
 
     // Update supermarket subscription status
     const { error: updateError } = await sb
       .from("profiles")
       .update({
         subscription_status: "canceled",
-        subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+        subscription_end_date: new Date((subscription as any).current_period_end * 1000).toISOString(),
       })
       .eq("id", supermarketId);
 
@@ -199,8 +199,8 @@ export async function DELETE(
 
     return NextResponse.json({
       message: "Subscription canceled successfully",
-      cancelationDate: new Date(subscription.canceled_at * 1000).toISOString(),
-      effectiveDate: new Date(subscription.current_period_end * 1000).toISOString(),
+      cancelationDate: new Date((subscription as any).canceled_at * 1000).toISOString(),
+      effectiveDate: new Date((subscription as any).current_period_end * 1000).toISOString(),
     });
   } catch (error) {
     console.error("Error canceling subscription:", error);
@@ -216,7 +216,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: supermarketId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -249,7 +249,7 @@ export async function GET(
       data: { user },
     } = await sb.auth.getUser();
 
-    if (!user || user.id !== supermarket.id) {
+    if (!user || (user as any).id !== (supermarket as any).id) {
       return NextResponse.json(
         { error: "Unauthorized - only the supermarket owner can view subscriptions" },
         { status: 403 }
@@ -259,16 +259,16 @@ export async function GET(
     let subscriptionData = null;
     const stripe = getStripeClient();
     
-    if (stripe && supermarket.stripe_subscription_id) {
+    if (stripe && (supermarket as any).stripe_subscription_id) {
       try {
-        const subscription = await stripe.subscriptions.retrieve(supermarket.stripe_subscription_id);
+        const subscription = await stripe.subscriptions.retrieve((supermarket as any).stripe_subscription_id);
         subscriptionData = {
           id: subscription.id,
           status: subscription.status,
-          current_period_start: subscription.current_period_start * 1000,
-          current_period_end: subscription.current_period_end * 1000,
-          cancel_at_period_end: subscription.cancel_at_period_end,
-          canceled_at: subscription.canceled_at ? subscription.canceled_at * 1000 : null,
+          current_period_start: (subscription as any).current_period_start * 1000,
+          current_period_end: (subscription as any).current_period_end * 1000,
+          cancel_at_period_end: (subscription as any).cancel_at_period_end,
+          canceled_at: (subscription as any).canceled_at ? (subscription as any).canceled_at * 1000 : null,
         };
       } catch (err) {
         console.error("Error fetching subscription from Stripe:", err);
@@ -276,12 +276,12 @@ export async function GET(
     }
 
     return NextResponse.json({
-      supermarket_id: supermarket.id,
-      subscription_status: supermarket.subscription_status,
-      stripe_customer_id: supermarket.stripe_customer_id,
-      stripe_subscription_id: supermarket.stripe_subscription_id,
-      subscription_start_date: supermarket.subscription_start_date,
-      subscription_end_date: supermarket.subscription_end_date,
+      supermarket_id: (supermarket as any).id,
+      subscription_status: (supermarket as any).subscription_status,
+      stripe_customer_id: (supermarket as any).stripe_customer_id,
+      stripe_subscription_id: (supermarket as any).stripe_subscription_id,
+      subscription_start_date: (supermarket as any).subscription_start_date,
+      subscription_end_date: (supermarket as any).subscription_end_date,
       stripe_data: subscriptionData,
     });
   } catch (error) {

@@ -232,7 +232,7 @@ export default function BulkUploadPage() {
       header: true,
       skipEmptyLines: true,
       dynamicTyping: false,
-      complete: (results) => {
+      complete: (results: { data: unknown[] }) => {
         const rows = results.data as CSVProductRow[];
         const processed: ProcessedRow[] = [];
 
@@ -243,7 +243,7 @@ export default function BulkUploadPage() {
         setPreview(processed);
         setIsPreviewing(false);
       },
-      error: (error) => {
+      error: (error: { message: string }) => {
         alert(`Error parsing CSV: ${error.message}`);
         setIsPreviewing(false);
       },
@@ -346,7 +346,7 @@ PROD003,,Whole Wheat Bread,bakery,4.50,25,Artisan whole wheat bread,Local Bakery
     } catch (error) {
       setUploadResult({
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        errors: [error instanceof Error ? error.message : "Unknown error"],
       });
     } finally {
       setIsProcessing(false);
@@ -641,7 +641,7 @@ PROD003,,Whole Wheat Bread,bakery,4.50,25,Artisan whole wheat bread,Local Bakery
                   <p className="text-sm text-neutral-600 mb-4">
                     {uploadResult.success
                       ? `Successfully processed ${uploadResult.totalRows} rows for ${uploadResult.supermarketName || "your supermarket"}.`
-                      : uploadResult.error}
+                      : uploadResult.errors?.join(", ")}
                   </p>
 
                   {uploadResult.success && (

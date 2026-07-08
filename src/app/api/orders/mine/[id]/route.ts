@@ -27,7 +27,7 @@ export async function GET(
 
   const email = user.email?.trim().toLowerCase() ?? null;
 
-  const admin = getSupabaseAdminClient();
+  const admin = await getSupabaseAdminClient();
   if (!admin) {
     console.warn("[api/orders/mine/[id]] missing SUPABASE_SERVICE_ROLE_KEY");
     return NextResponse.json({ order: null }, { status: 200 });

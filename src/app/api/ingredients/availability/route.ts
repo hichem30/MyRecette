@@ -38,7 +38,7 @@ const mockAvailability: SupermarketIngredientAvailability[] = [
 ];
 
 export async function POST(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   if (!isSupabaseConfigured()) {
     // Return mock data for local development

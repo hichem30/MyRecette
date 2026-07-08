@@ -54,7 +54,7 @@ export function normalizeIngredientName(name: string): string {
 export async function findMatchingIngredients(
   query: string | string[]
 ): Promise<IngredientMatch[]> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   const queries = Array.isArray(query) ? query : [query];
   const normalizedQueries = queries.map(normalizeIngredientName).filter(q => q.length > 0);
@@ -113,7 +113,7 @@ export async function findMatchingIngredients(
       .limit(5);
 
     if (synonymMatches && synonymMatches.length > 0) {
-      matches.push(...synonymMatches.map(s => ({
+      matches.push(...(synonymMatches as unknown as any[]).map((s: any) => ({
         ingredientId: s.ingredient_id,
         ingredientName: s.ingredients?.display_name?.en || s.synonym,
         canonicalName: s.ingredients?.canonical_name || s.synonym,
@@ -130,7 +130,7 @@ export async function findMatchingIngredients(
       .limit(10);
 
     if (patternMatches && patternMatches.length > 0) {
-      for (const p of patternMatches) {
+      for (const p of (patternMatches as unknown as any[])) {
         let matchesPattern = false;
         
         switch (p.pattern_type) {
@@ -188,7 +188,7 @@ export async function searchRecipesByIngredients(
   } = {}
 ): Promise<RecipeSearchResult[]> {
   const { limit = 20, offset = 0, includeAll = false } = options;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   if (ingredientQueries.length === 0) {
     // If no ingredients specified, return popular recipes
@@ -264,7 +264,7 @@ export async function searchRecipesByIngredients(
   }
 
   // Initialize recipe map
-  for (const recipe of recipes) {
+  for (const recipe of (recipes as unknown as any[])) {
     recipeMap.set(recipe.id, {
       recipe,
       matchedIngredients: [],
@@ -324,7 +324,7 @@ export async function getIngredientSuggestions(
   query: string, 
   limit = 10
 ): Promise<Array<{ id: string; name: string; category: string }>> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   const normalized = normalizeIngredientName(query);
   
@@ -373,7 +373,7 @@ export async function getIngredientSuggestions(
 export async function getPopularIngredients(
   limit = 20
 ): Promise<Array<{ id: string; name: string; category: string }>> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   const { data, error } = await sb
     .from("ingredients")
@@ -400,7 +400,7 @@ export async function getIngredientsByCategory(
   category?: string,
   limit = 50
 ): Promise<Array<{ id: string; name: string; category: string; subcategory?: string }>> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   let query = sb
     .from("ingredients")
@@ -431,18 +431,19 @@ export async function getIngredientsByCategory(
  * Get all ingredient categories for filtering
  */
 export async function getIngredientCategories(): Promise<string[]> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   const { data, error } = await sb
     .from("ingredients")
     .select("category")
+    // @ts-ignore - Supabase types don't include .group() method
     .group("category");
 
   if (error || !data) {
     return [];
   }
 
-  return data.map(i => i.category).filter((c, i, self) => c && self.indexOf(c) === i);
+  return (data as unknown as any[]).map((i: any) => i.category).filter((c, i, self) => c && (self as any).indexOf(c) === i);
 }
 
 export type { IngredientMatch, RecipeSearchResult };

@@ -1,10 +1,12 @@
 {
   "nav": {
     "home": "Home",
+    "recipes": "Recipes",
     "products": "Products",
     "deals": "Deals",
     "bundles": "Bundles",
     "categories": "Categories",
+    "supermarkets": "Supermarkets",
     "videos": "Videos",
     "about": "About",
     "contact": "Contact",

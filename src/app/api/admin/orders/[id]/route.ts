@@ -12,7 +12,7 @@ async function requireAdmin(): Promise<boolean> {
   const user = userData.user;
   if (!user) return false;
 
-  const admin = getSupabaseAdminClient();
+  const admin = await getSupabaseAdminClient();
   if (!admin) return false;
 
   const { data: profile } = await admin
@@ -79,7 +79,7 @@ export async function PATCH(
     return NextResponse.json({ error: "no fields to update" }, { status: 400 });
   }
 
-  const admin = getSupabaseAdminClient();
+  const admin = await getSupabaseAdminClient();
   if (!admin) {
     return NextResponse.json({ error: "supabase admin unavailable" }, { status: 503 });
   }

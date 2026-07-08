@@ -8,7 +8,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: videoId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -25,7 +25,7 @@ export async function POST(
     } = await sb.auth.getUser();
 
     // Get IP address and user agent from headers
-    const ipAddress = request.ip || request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
+    const ipAddress = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
     const userAgent = request.headers.get("user-agent") || "unknown";
 
     // Check if video exists

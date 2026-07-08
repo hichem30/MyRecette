@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import type {
+  ShoppingList,
   ShoppingListWithItems,
   ShoppingListFormData,
   ShoppingListItemFormData,
@@ -12,7 +13,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: listId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // Mock data for local development
@@ -124,8 +125,8 @@ export async function GET(
     }
 
     // Check if user owns this list or it's public
-    const isOwner = list.user_id === user.id;
-    const isPublic = list.is_public;
+    const isOwner = (list as any).user_id === user.id;
+    const isPublic = (list as any).is_public;
 
     if (!isOwner && !isPublic) {
       return NextResponse.json(
@@ -166,7 +167,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: listId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // Mock response for local development
@@ -256,7 +257,7 @@ export async function PUT(
       );
     }
 
-    return NextResponse.json({ shoppingList: { ...updatedList, items: [] } } as ShoppingListApiResponse);
+    return NextResponse.json({ shoppingList: { ...(updatedList as unknown as ShoppingList), items: [] } } as ShoppingListApiResponse);
 
   } catch (error) {
     console.error("Error in PUT /api/shopping-lists/[id]:", error);
@@ -272,7 +273,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: listId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // Mock response for local development

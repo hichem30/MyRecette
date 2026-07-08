@@ -1,10 +1,12 @@
 {
   "nav": {
     "home": "الرئيسية",
+    "recipes": "الوصفات",
     "products": "المنتجات",
     "deals": "العروض",
     "bundles": "الباقات",
     "categories": "الفئات",
+    "supermarkets": "المتاجر",
     "videos": "الفيديوهات",
     "about": "من نحن",
     "contact": "اتصل بنا",
@@ -288,5 +290,26 @@
     "paymentHistory": "سجل الدفعات",
     "billingInfo": "معلومات الفواتير",
     "noSubscription": "لا يوجد اشتراك نشط لديك"
+  },
+  "products": {
+    "title": "جميع المنتجات",
+    "subtitle": "كل شيء للمنزل والبناء وكل ما بينهما.",
+    "filters": "مرشحات",
+    "allCategories": "جميع الفئات",
+    "priceRange": "نطاق السعر"
+  },
+  "footer": {
+    "tagline": "منصتك الموثوقة للوصفات والمنتجات المحلية. كل شيء تحت سقف واحد.",
+    "quickLinks": "روابط سريعة",
+    "categoriesHeading": "الفئات",
+    "contactUs": "تواصل معنا",
+    "stayInLoop": "ابق على اتصال",
+    "stayInLoopBody": "احصل على العروض والوصولات الجديدة عبر البريد الإلكتروني.",
+    "emailPlaceholder": "عنوان بريدك الإلكتروني",
+    "subscribe": "اشتراك",
+    "thanks": "شكرًا، أنت في القائمة.",
+    "rights": "كل الحقوق محفوظة.",
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة"
   }
 }

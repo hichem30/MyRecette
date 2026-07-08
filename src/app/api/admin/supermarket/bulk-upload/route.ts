@@ -319,7 +319,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error: "CSV parsing errors",
-          details: parseResult.errors.map((e) => e.message),
+          details: parseResult.errors.map((e: { message: string }) => e.message),
         },
         { status: 400 }
       );

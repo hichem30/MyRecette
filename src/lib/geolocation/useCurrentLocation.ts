@@ -237,19 +237,5 @@ export function useWatchLocation(options?: PositionOptions): UseCurrentLocationR
   };
 }
 
-// Type definitions
-export interface GeolocationPositionError extends Error {
-  code: number;
-  PERMISSION_DENIED: number;
-  POSITION_UNAVAILABLE: number;
-  TIMEOUT: number;
-}
-
-// Polyfill for browsers that don't have these constants
-declare global {
-  interface GeolocationPositionError {
-    PERMISSION_DENIED: number;
-    POSITION_UNAVAILABLE: number;
-    TIMEOUT: number;
-  }
-}
+// Browser's GeolocationPositionError already has these constants:
+// PERMISSION_DENIED = 1, POSITION_UNAVAILABLE = 2, TIMEOUT = 3

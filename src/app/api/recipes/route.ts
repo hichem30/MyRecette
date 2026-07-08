@@ -3,7 +3,7 @@ import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/se
 import type { NewRecipeFormData, Recipe } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   if (!isSupabaseConfigured()) {
     // Return mock data for local development
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   if (!isSupabaseConfigured()) {
     return NextResponse.json(

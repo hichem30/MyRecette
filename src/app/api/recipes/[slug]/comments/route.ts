@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // Return mock data for local development
@@ -71,7 +71,7 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -135,7 +135,7 @@ export async function POST(
         .from("recipe_comments")
         .select("rating")
         .eq("recipe_id", recipe.id)
-        .eq("rating", sb.not.snull);
+        .not('rating', 'is', null);
 
       const ratings = (comments ?? []).map((c) => c.rating).filter((r) => r !== null) as number[];
       if (ratings.length > 0) {

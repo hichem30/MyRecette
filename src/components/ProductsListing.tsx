@@ -52,8 +52,8 @@ export function ProductsListing({
       .filter((p) => (freeShipping ? !!p.free_shipping : true))
       .filter((p) =>
         lower
-          ? p.name[locale].toLowerCase().includes(lower) ||
-            p.description[locale].toLowerCase().includes(lower)
+          ? (p.name?.[locale] || "").toLowerCase().includes(lower) ||
+            (p.description?.[locale] || "").toLowerCase().includes(lower)
           : true,
       )
       .sort((a, b) => {

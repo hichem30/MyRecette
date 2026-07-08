@@ -17,7 +17,7 @@ export function CategoryCard({ category, productCount }: { category: Category; p
         {category.image_url && (
           <Image
             src={category.image_url}
-            alt={category.name[locale]}
+            alt={category.name?.[locale] || category.name?.en || category.name?.es || "Category"}
             fill
             sizes="(max-width: 768px) 50vw, 25vw"
             className="object-cover transition group-hover:scale-105"

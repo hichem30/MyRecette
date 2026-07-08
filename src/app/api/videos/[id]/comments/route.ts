@@ -19,7 +19,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: videoId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -50,7 +50,7 @@ export async function GET(
     // Organize comments into parent-child relationships
     const commentsMap = new Map<string, any>();
     
-    (comments || []).forEach((c) => {
+    ((comments as unknown as any[]) || []).forEach((c: any) => {
       commentsMap.set(c.id, {
         ...c,
         user: c.profiles ? { ...c.profiles } : null,
@@ -87,7 +87,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: videoId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -183,8 +183,8 @@ export async function POST(
       .eq("id", videoId);
 
     return NextResponse.json({
-      ...comment,
-      user: comment.profiles ? { ...comment.profiles } : null,
+      ...(comment as any),
+      user: (comment as any).profiles ? { ...(comment as any).profiles } : null,
       replies: [],
     }, { status: 201 });
   } catch (error) {

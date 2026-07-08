@@ -72,7 +72,7 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -126,7 +126,7 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -152,7 +152,7 @@ export async function POST(
     // Get recipe ID from slug
     const { data: recipe, error: recipeError } = await sb
       .from("recipes")
-      .select("id, author_id")
+      .select("id, author_id, video_count")
       .eq("slug", slug)
       .single();
 
@@ -269,7 +269,7 @@ export async function PATCH(
     );
   }
 
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -295,7 +295,7 @@ export async function PATCH(
     // Get video
     const { data: video, error: videoError } = await sb
       .from("recipe_videos")
-      .select("id, user_id, recipe_id")
+      .select("id, user_id, recipe_id, platform, video_url")
       .eq("id", videoId)
       .single();
 
@@ -399,7 +399,7 @@ export async function DELETE(
     );
   }
 
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -425,7 +425,7 @@ export async function DELETE(
     // Get video
     const { data: video, error: videoError } = await sb
       .from("recipe_videos")
-      .select("id, user_id, recipe_id")
+      .select("id, user_id, recipe_id, platform, video_url")
       .eq("id", videoId)
       .single();
 

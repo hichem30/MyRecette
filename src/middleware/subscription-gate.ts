@@ -65,8 +65,8 @@ function requiresSubscription(pathname: string): boolean {
  * Extract supermarket ID from request
  * This could be from session, cookies, or path parameters
  */
-async function getSupermarketIdFromRequest(request: NextRequest): string | null {
-  const sb = getSupabaseServerClient();
+async function getSupermarketIdFromRequest(request: NextRequest): Promise<string | null> {
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // For local development, return a mock ID

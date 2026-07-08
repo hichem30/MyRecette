@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, dev: true });
     }
 
-    const admin = getSupabaseAdminClient();
+    const admin = await getSupabaseAdminClient();
     if (!admin) return NextResponse.json({ ok: true, dev: true });
 
     await admin.from("bulk_quotes").insert({

@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 // GET: Get user's feed (recipes from followed supermarkets and popular content)
 export async function GET(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   if (!isSupabaseConfigured()) {
     // Return mock data for local development

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSupabaseRouteClient } from "@/lib/supabase/server";
+import { getSupabaseRouteClient, getSupabaseAdminClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
@@ -153,8 +153,7 @@ export async function GET(request: Request) {
 
 // POST - Bulk update pending ingredient mappings
 export async function POST(request: Request) {
-  const cookieStore = await cookies();
-  const sb = createServerClient();
+  const sb = await getSupabaseRouteClient();
 
   // Check admin permissions
   const {
@@ -209,17 +208,10 @@ export async function POST(request: Request) {
     }
 
     // Get the admin client for transactions
-    const adminSb = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co",
-      process.env.SUPABASE_SERVICE_ROLE_KEY ?? "placeholder",
-      {
-        cookies: {
-          get() { return ""; },
-          set() {},
-          remove() {},
-        },
-      }
-    );
+    const adminSb = await getSupabaseAdminClient();
+    if (!adminSb) {
+      return NextResponse.json({ error: "Admin client not configured" }, { status: 500 });
+    }
 
     const userId = user.id;
     const now = new Date().toISOString();
@@ -318,8 +310,7 @@ export async function POST(request: Request) {
 
 // PATCH - Update a single pending ingredient mapping
 export async function PATCH(request: Request) {
-  const cookieStore = await cookies();
-  const sb = createServerClient();
+  const sb = await getSupabaseRouteClient();
 
   // Check permissions
   const {
@@ -395,17 +386,10 @@ export async function PATCH(request: Request) {
     }
 
     // Get admin client
-    const adminSb = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co",
-      process.env.SUPABASE_SERVICE_ROLE_KEY ?? "placeholder",
-      {
-        cookies: {
-          get() { return ""; },
-          set() {},
-          remove() {},
-        },
-      }
-    );
+    const adminSb = await getSupabaseAdminClient();
+    if (!adminSb) {
+      return NextResponse.json({ error: "Admin client not configured" }, { status: 500 });
+    }
 
     const userId = user.id;
     const now = new Date().toISOString();

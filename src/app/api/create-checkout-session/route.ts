@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const admin = getSupabaseAdminClient();
+  const admin = await getSupabaseAdminClient();
 
   // -------------------------------------------------------------------
   // Delivery zone check — block out-of-zone addresses up front.
@@ -151,7 +151,7 @@ export async function POST(req: Request) {
       price_data: {
         currency: "usd",
         product_data: {
-          name: product.name[parsed.locale] ?? product.name.en,
+          name: product.name[parsed.locale as keyof typeof product.name] ?? product.name.en ?? "",
           images: product.image_url ? [product.image_url] : undefined,
           metadata: { product_id: product.id },
         },

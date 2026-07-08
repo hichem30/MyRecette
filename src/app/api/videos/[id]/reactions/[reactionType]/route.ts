@@ -13,7 +13,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string; reactionType: string }> }
 ) {
   const { id: videoId, reactionType } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(

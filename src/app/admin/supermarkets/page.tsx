@@ -233,7 +233,7 @@ export default function AdminSupermarketsPage() {
         
         // Add follower counts
         const withFollowers = await Promise.all(
-          (data || []).map(async (sm) => {
+          (data as any[] || []).map(async (sm: any) => {
             const { count: followers } = await sb
               .from("supermarket_follows")
               .select("*", { count: "exact", head: true })

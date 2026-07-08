@@ -13,7 +13,7 @@ export async function getCurrentUser(): Promise<User | null> {
     return null;
   }
 
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   try {
     const {
@@ -43,7 +43,7 @@ export async function getUserProfile(userId: string) {
     return null;
   }
 
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   try {
     const { data, error } = await sb
@@ -68,7 +68,7 @@ export async function isAdminUser(userId: string): Promise<boolean> {
     return false;
   }
 
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   try {
     const { data, error } = await sb

@@ -13,7 +13,7 @@ export async function checkSupermarketSubscription(supermarketId: string): Promi
   subscription?: any;
   error?: string;
 }> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // For local development, return true to allow all features
@@ -180,7 +180,7 @@ export async function getSubscriptionStatusForMiddleware(userId: string): Promis
   hasActiveSubscription: boolean;
   error?: string;
 }> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // For local development, allow all features
@@ -202,6 +202,7 @@ export async function getSubscriptionStatusForMiddleware(userId: string): Promis
     if (profileError || !profile) {
       return {
         isSupermarket: false,
+        hasActiveSubscription: false,
         error: "User not found",
       };
     }
@@ -209,6 +210,7 @@ export async function getSubscriptionStatusForMiddleware(userId: string): Promis
     if (!profile.is_supermarket) {
       return {
         isSupermarket: false,
+        hasActiveSubscription: false,
         error: "User is not a supermarket",
       };
     }
@@ -227,6 +229,7 @@ export async function getSubscriptionStatusForMiddleware(userId: string): Promis
     console.error("Error in getSubscriptionStatusForMiddleware:", error);
     return {
       isSupermarket: false,
+      hasActiveSubscription: false,
       error: "Failed to check subscription status",
     };
   }

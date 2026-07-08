@@ -267,13 +267,13 @@ export default function AdminSupermarketBulkUploadPage() {
     Papa.parse(selectedFile, {
       header: true,
       skipEmptyLines: true,
-      complete: (results) => {
-        const processedRows = results.data.map((row: CSVProductRow, index: number) =>
+      complete: (results: { data: unknown[] }) => {
+        const processedRows = (results.data as CSVProductRow[]).map((row: CSVProductRow, index: number) =>
           validateRow(row, index)
         );
         setParsed(processedRows);
       },
-      error: (err) => {
+      error: (err: { message: string }) => {
         setError(`Error parsing CSV: ${err.message}`);
         setFile(null);
       },

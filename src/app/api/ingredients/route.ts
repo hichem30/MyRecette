@@ -8,7 +8,7 @@ export const runtime = "nodejs";
  * Used for ingredient selection UI and autocomplete
  */
 export async function GET(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const { searchParams } = new URL(request.url);
   
   const q = searchParams.get("q");

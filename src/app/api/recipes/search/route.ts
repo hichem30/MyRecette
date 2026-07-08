@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 
 // GET: Search recipes by ingredients (Supercook-like functionality)
 export async function GET(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   if (!isSupabaseConfigured()) {
     return NextResponse.json(

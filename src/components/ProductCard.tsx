@@ -24,7 +24,7 @@ export function ProductCard({ product, compact = false }: { product: Product; co
       >
         <Image
           src={product.image_url}
-          alt={product.name[locale]}
+          alt={product.name?.[locale] || product.name?.en || product.name?.es || "Product"}
           fill
           sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           className="object-cover transition group-hover:scale-105"

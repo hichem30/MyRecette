@@ -9,7 +9,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const { slug } = await params;
   
   if (!isSupabaseConfigured()) {
@@ -99,7 +99,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const { slug } = await params;
   
   if (!isSupabaseConfigured()) {

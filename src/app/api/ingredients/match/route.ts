@@ -8,7 +8,7 @@ export const runtime = "nodejs";
  * This is used for the "check availability" feature
  */
 export async function POST(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // Return mock data for local development
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         .limit(5);
 
       if (exactMatches && exactMatches.length > 0) {
-        ingredientMatches.push(...exactMatches.map(i => ({
+        ingredientMatches.push(...(exactMatches as any[]).map((i: any) => ({
           ingredientId: i.id,
           ingredientName: i.display_name?.en || i.canonical_name,
           canonicalName: i.canonical_name,
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
         .limit(5);
 
       if (likeMatches && likeMatches.length > 0) {
-        ingredientMatches.push(...likeMatches.map(i => ({
+        ingredientMatches.push(...(likeMatches as any[]).map((i: any) => ({
           ingredientId: i.id,
           ingredientName: i.display_name?.en || i.canonical_name,
           canonicalName: i.canonical_name,
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
         .limit(5);
 
       if (synonymMatches && synonymMatches.length > 0) {
-        ingredientMatches.push(...synonymMatches.map(s => ({
+        ingredientMatches.push(...(synonymMatches as any[]).map((s: any) => ({
           ingredientId: s.ingredient_id,
           ingredientName: s.ingredients?.display_name?.en || s.synonym,
           canonicalName: s.ingredients?.canonical_name || s.synonym,
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
       matchCount: number;
     }>();
 
-    for (const row of (productRows || [])) {
+    for (const row of (productRows as any[] || [])) {
       const productId = row.supermarket_product_id;
       
       if (!productMap.has(productId)) {

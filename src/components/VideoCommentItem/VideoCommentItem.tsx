@@ -113,7 +113,7 @@ export function VideoCommentItem({
 }: VideoCommentItemProps) {
   const [isLiked, setIsLiked] = useState(comment.is_liked || false);
   const [showReplyForm, setShowReplyForm] = useState(false);
-  const [isLiking, setIsLiking] = useTransition();
+  const [isLiking, setIsLiking] = useState(false);
 
   const handleLike = async () => {
     if (!currentUserId || !comment.id) return;
@@ -177,7 +177,8 @@ export function VideoCommentItem({
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-neutral-900">
-                {comment.user?.supermarket_name || comment.user?.email || 
+                {(typeof comment.user?.supermarket_name === 'string' ? comment.user?.supermarket_name : 
+                  typeof comment.user?.supermarket_name === 'object' ? (comment.user?.supermarket_name as Record<string, string>)?.[lang] : null) || comment.user?.email || 
                  (lang === "es" ? "Anónimo" : 
                   lang === "fr" ? "Anonyme" : 
                   lang === "ar" ? "مجهول" : "Anonymous")}

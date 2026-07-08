@@ -96,7 +96,7 @@ export default function AdminCampaignsPage() {
     return products.filter((p) => {
       if (productFilter === "discount" && !p.discount) return false;
       if (productFilter === "new" && !p.new_arrival) return false;
-      if (q && !p.name.en.toLowerCase().includes(q)) return false;
+      if (q && !(p.name.en || "").toLowerCase().includes(q)) return false;
       return true;
     });
   }, [products, productFilter, productSearch]);
@@ -167,7 +167,7 @@ export default function AdminCampaignsPage() {
   function productCardHtml(p: Product) {
     const link = `${SITE_URL}/en/products/${p.slug}`;
     const img = p.image_url
-      ? `<a href="${link}" style="display:inline-block"><img src="${htmlEscape(p.image_url)}" alt="${htmlEscape(p.name.en)}" width="140" style="display:block;width:140px;height:140px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb" /></a>`
+      ? `<a href="${link}" style="display:inline-block"><img src="${htmlEscape(p.image_url)}" alt="${htmlEscape(p.name.en || "")}" width="140" style="display:block;width:140px;height:140px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb" /></a>`
       : "";
     const priceHtml =
       p.original_price && p.original_price > p.price
@@ -178,7 +178,7 @@ export default function AdminCampaignsPage() {
   <td style="padding:8px 12px 8px 0;vertical-align:top;width:160px">${img}</td>
   <td style="padding:8px 0;vertical-align:top">
     <p style="margin:0 0 4px 0;font-size:15px;font-weight:600">
-      <a href="${link}" style="color:#1c1917;text-decoration:none">${htmlEscape(p.name.en)}</a>
+      <a href="${link}" style="color:#1c1917;text-decoration:none">${htmlEscape(p.name.en || "")}</a>
     </p>
     <p style="margin:0 0 6px 0;font-size:14px">${priceHtml}</p>
     <p style="margin:0"><a href="${link}" style="color:#8B2A18;font-size:13px">Shop this item →</a></p>
@@ -190,14 +190,14 @@ export default function AdminCampaignsPage() {
     const link = `${SITE_URL}/en/bundles/${b.id}`;
     const itemCount = (b.product_ids ?? []).length;
     const img = b.image_url
-      ? `<a href="${link}" style="display:inline-block"><img src="${htmlEscape(b.image_url)}" alt="${htmlEscape(b.name.en)}" width="140" style="display:block;width:140px;height:140px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb" /></a>`
+      ? `<a href="${link}" style="display:inline-block"><img src="${htmlEscape(b.image_url)}" alt="${htmlEscape(b.name.en || "")}" width="140" style="display:block;width:140px;height:140px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb" /></a>`
       : "";
     return `
 <tr>
   <td style="padding:8px 12px 8px 0;vertical-align:top;width:160px">${img}</td>
   <td style="padding:8px 0;vertical-align:top">
     <p style="margin:0 0 4px 0;font-size:15px;font-weight:600">
-      <a href="${link}" style="color:#1c1917;text-decoration:none">${htmlEscape(b.name.en)}</a>
+      <a href="${link}" style="color:#1c1917;text-decoration:none">${htmlEscape(b.name.en || "")}</a>
     </p>
     <p style="margin:0 0 4px 0;font-size:14px"><strong style="color:#8B2A18">$${Number(b.bundle_price).toFixed(2)}</strong> · ${itemCount} items</p>
     ${b.description?.en ? `<p style="margin:0 0 6px 0;font-size:13px;color:#525252">${htmlEscape(b.description.en)}</p>` : ""}

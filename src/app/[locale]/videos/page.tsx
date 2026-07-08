@@ -135,7 +135,7 @@ const mockVideos: RecipeVideo[] = [
 ];
 
 async function getAllVideos(): Promise<RecipeVideo[]> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   try {
     const { data, error } = await sb
@@ -155,7 +155,7 @@ async function getAllVideos(): Promise<RecipeVideo[]> {
       throw error;
     }
 
-    return (data || []).map((v) => ({
+    return (data as any[] || []).map((v: any) => ({
       ...v,
       user: v.profiles ? { ...v.profiles } : null,
       recipe: v.recipes ? { ...v.recipes } : null,

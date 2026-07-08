@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 // GET: List all supermarkets with filtering and sorting
 export async function GET(request: NextRequest) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   if (!isSupabaseConfigured()) {
     // Return mock data for local development

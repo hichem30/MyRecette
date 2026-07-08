@@ -55,7 +55,7 @@ export default function EditBundle() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return products;
-    return products.filter((p) => p.name.en.toLowerCase().includes(q));
+    return products.filter((p) => (p.name.en || "").toLowerCase().includes(q));
   }, [products, search]);
 
   function toggle(productId: string) {

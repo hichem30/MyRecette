@@ -48,7 +48,7 @@ export async function POST(request: Request) {
   }
 
   // Look up the target profile by email (case-insensitive).
-  const admin = getSupabaseAdminClient();
+  const admin = await getSupabaseAdminClient();
   if (!admin) {
     return NextResponse.json({ error: "Service-role client unavailable." }, { status: 500 });
   }

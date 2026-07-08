@@ -9,7 +9,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const { id } = await params;
   
   if (!isSupabaseConfigured()) {
@@ -98,13 +98,14 @@ export async function GET(
     }
 
     // Format response
+    const s = supermarket as any;
     const formattedSupermarket = {
-      ...supermarket,
-      supermarket_name: supermarket.supermarket_name?.[lang] || supermarket.supermarket_name?.en || "Unnamed Supermarket",
-      description: supermarket.description?.[lang] || supermarket.description?.en || "",
-      address: supermarket.address || {},
-      social_links: supermarket.social_links || {},
-      categories: supermarket.categories || [],
+      ...s,
+      supermarket_name: s.supermarket_name?.[lang] || s.supermarket_name?.en || "Unnamed Supermarket",
+      description: s.description?.[lang] || s.description?.en || "",
+      address: s.address || {},
+      social_links: s.social_links || {},
+      categories: s.categories || [],
       is_followed: isFollowed
     };
 
@@ -126,7 +127,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const { id } = await params;
   
   if (!isSupabaseConfigured()) {
@@ -161,15 +162,15 @@ export async function PUT(
     }
 
     // Check if user is admin
-    const { data: whoami, error: whoamiError } = await fetch("/api/whoami", { cache: "no-store" })
-      .then(res => res.json()) as Promise<{ isAdmin?: boolean }>;
+    const whoami = await fetch("/api/whoami", { cache: "no-store" })
+      .then(res => res.json()) as { isAdmin?: boolean };
 
     const isAdmin = whoami?.isAdmin || profile.role === "admin";
     
     // Check if user owns this supermarket
     const { data: supermarket, error: supermarketError } = await sb
       .from("profiles")
-      .select("id")
+      .select("id, supermarket_name, slug, description, address, phone, email, website, opening_hours, social_links, categories, location_geometry")
       .eq("id", id)
       .maybeSingle();
 
@@ -239,7 +240,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const { id } = await params;
   
   if (!isSupabaseConfigured()) {
@@ -260,8 +261,8 @@ export async function DELETE(
     }
 
     // Check if user is admin
-    const { data: whoami, error: whoamiError } = await fetch("/api/whoami", { cache: "no-store" })
-      .then(res => res.json()) as Promise<{ isAdmin?: boolean }>;
+    const whoami = await fetch("/api/whoami", { cache: "no-store" })
+      .then(res => res.json()) as { isAdmin?: boolean };
 
     const isAdmin = whoami?.isAdmin;
     

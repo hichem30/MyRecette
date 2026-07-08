@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       event.type === "customer.subscription.updated" ||
       event.type === "customer.subscription.deleted") {
     const subscription = event.data.object as Stripe.Subscription;
-    const admin = getSupabaseAdminClient();
+    const admin = await getSupabaseAdminClient();
     
     if (!admin) {
       console.error(
@@ -67,15 +67,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ received: true, warning: "No supermarket_id in metadata" }, { status: 200 });
     }
 
+    const currentPeriodStart = (subscription as any).current_period_start;
+    const currentPeriodEnd = (subscription as any).current_period_end;
+
     const subscriptionData: Record<string, any> = {
       stripe_subscription_id: subscription.id,
       subscription_status: subscription.status,
-      subscription_start_date: new Date(subscription.current_period_start * 1000).toISOString(),
+      subscription_start_date: currentPeriodStart ? new Date(currentPeriodStart * 1000).toISOString() : null,
     };
 
     // Set end date if canceled or will cancel at period end
-    if (subscription.cancel_at_period_end || subscription.status === "canceled") {
-      subscriptionData.subscription_end_date = new Date(subscription.current_period_end * 1000).toISOString();
+    if ((subscription as any).cancel_at_period_end || subscription.status === "canceled") {
+      subscriptionData.subscription_end_date = currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null;
     } else if (subscription.status === "active") {
       subscriptionData.subscription_end_date = null;
     }
@@ -108,7 +111,7 @@ export async function POST(req: Request) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const admin = getSupabaseAdminClient();
+    const admin = await getSupabaseAdminClient();
     if (!admin) {
       console.error(
         "[stripe-webhook] SUPABASE_SERVICE_ROLE_KEY not set — cannot write order",

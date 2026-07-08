@@ -1,10 +1,12 @@
 {
   "nav": {
     "home": "Accueil",
+    "recipes": "Recettes",
     "products": "Produits",
     "deals": "Promotions",
     "bundles": "Lots",
     "categories": "Catégories",
+    "supermarkets": "Supermarchés",
     "videos": "Vidéos",
     "about": "À propos",
     "contact": "Contact",
@@ -288,5 +290,26 @@
     "paymentHistory": "Historique des paiements",
     "billingInfo": "Informations de facturation",
     "noSubscription": "Vous n'avez pas d'abonnement actif"
+  },
+  "products": {
+    "title": "Tous les produits",
+    "subtitle": "Tout pour la maison, la construction et tout le reste.",
+    "filters": "Filtres",
+    "allCategories": "Toutes les catégories",
+    "priceRange": "Fourchette de prix"
+  },
+  "footer": {
+    "tagline": "Votre plateforme de confiance pour les recettes et produits locaux. Tout sous un même toit.",
+    "quickLinks": "LIENS RAPIDES",
+    "categoriesHeading": "CATÉGORIES",
+    "contactUs": "NOUS CONTACTER",
+    "stayInLoop": "RESTEZ INFORMÉ",
+    "stayInLoopBody": "Recevez des offres, des nouveautés et des promotions par e-mail.",
+    "emailPlaceholder": "Votre adresse e-mail",
+    "subscribe": "S'abonner",
+    "thanks": "Merci, vous êtes sur la liste.",
+    "rights": "Tous droits réservés.",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation"
   }
 }

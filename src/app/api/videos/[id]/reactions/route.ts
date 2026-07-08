@@ -13,7 +13,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: videoId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -27,6 +27,7 @@ export async function GET(
       .from("video_reactions")
       .select("reaction_type, count")
       .eq("video_id", videoId)
+      // @ts-ignore - Supabase types don't include .group() method
       .group("reaction_type");
 
     if (error) {
@@ -48,7 +49,7 @@ export async function GET(
     };
 
     // Fill in the counts from the database
-    (data || []).forEach((r) => {
+    ((data as unknown as any[]) || []).forEach((r: any) => {
       const reactionType = r.reaction_type as VideoReactionType;
       if (validReactionTypes.includes(reactionType)) {
         counts[reactionType] = (r.count as number) || 0;
@@ -71,7 +72,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: videoId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(

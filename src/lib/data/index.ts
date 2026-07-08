@@ -61,7 +61,7 @@ function applyCategoryDiscounts(products: Product[], categories: Category[]): Pr
 export const getAllCategories = cache(async (): Promise<Category[]> => {
   if (!isSupabaseConfigured()) return mockCategories;
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from("categories")
       .select("*")
@@ -86,7 +86,7 @@ const getAllProductsRaw = cache(
   async (): Promise<{ products: Product[]; categories: Category[] }> => {
     if (!isSupabaseConfigured()) return { products: mockProducts, categories: mockCategories };
     try {
-      const supabase = getSupabaseServerClient();
+      const supabase = await getSupabaseServerClient();
       const [productsRes, categoriesRes] = await Promise.all([
         supabase.from("products").select("*").order("created_at", { ascending: false }),
         supabase.from("categories").select("*"),
@@ -368,7 +368,7 @@ export const mockSupermarketFeed: SupermarketFeedItem[] = [
 export const getAllSupermarkets = cache(async (): Promise<SupermarketProfile[]> => {
   if (!isSupabaseConfigured()) return mockSupermarkets;
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from("profiles")
       .select(
@@ -401,7 +401,7 @@ export async function getSupermarketById(id: string, userId?: string): Promise<S
   // If user is logged in, check if they follow this supermarket
   if (userId) {
     try {
-      const supabase = getSupabaseServerClient();
+      const supabase = await getSupabaseServerClient();
       const { data: followData, error: followError } = await supabase
         .from("supermarket_follows")
         .select("id")
@@ -423,7 +423,7 @@ export async function getSupermarketProducts(supermarketId: string): Promise<Sup
     return mockSupermarketProducts.filter((sp) => sp.supermarket_id === supermarketId);
   }
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from("supermarket_products")
       .select(
@@ -447,7 +447,7 @@ export async function getSupermarketCoupons(supermarketId: string): Promise<Supe
     return mockSupermarketCoupons.filter((c) => c.supermarket_id === supermarketId);
   }
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from("supermarket_coupons")
       .select("*")
@@ -468,7 +468,7 @@ export async function getSupermarketBundles(supermarketId: string): Promise<Supe
     return mockSupermarketBundles.filter((b) => b.supermarket_id === supermarketId);
   }
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from("supermarket_bundles")
       .select("*")
@@ -488,7 +488,7 @@ export async function getSupermarketSales(supermarketId: string): Promise<Superm
     return mockSupermarketSales.filter((s) => s.supermarket_id === supermarketId);
   }
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from("supermarket_sales")
       .select("*")
@@ -509,7 +509,7 @@ export async function getSupermarketJobs(supermarketId: string): Promise<Superma
     return mockSupermarketJobs.filter((j) => j.supermarket_id === supermarketId);
   }
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from("supermarket_jobs")
       .select("*")
@@ -527,7 +527,7 @@ export async function getSupermarketJobs(supermarketId: string): Promise<Superma
 export async function getUserFeed(userId: string): Promise<SupermarketFeedItem[]> {
   if (!isSupabaseConfigured()) return mockSupermarketFeed;
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     
     // Get followed supermarket IDs
     const { data: follows, error: followsError } = await supabase
@@ -563,7 +563,7 @@ export async function getFollowedSupermarkets(userId: string): Promise<Supermark
     return mockSupermarkets.map((sm) => ({ ...sm, is_followed: true }));
   }
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from("supermarket_follows")
       .select(
@@ -576,7 +576,7 @@ export async function getFollowedSupermarkets(userId: string): Promise<Supermark
     
     if (error || !data) return [];
     
-    return data.map((d) => ({
+    return (data as unknown as any[]).map((d: any) => ({
       ...(d.supermarket as unknown as Omit<SupermarketProfile, 'follower_count' | 'is_followed'>),
       follower_count: 0,
       is_followed: true,
@@ -597,11 +597,14 @@ export async function getRecipeVideos(recipeSlug: string): Promise<RecipeVideo[]
         id: "v-1",
         recipe_id: "r-1",
         user_id: "user-1",
+        platform: "youtube",
         video_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
         title: { en: "My Spaghetti Bolognese" },
         youtube_video_id: "dQw4w9WgXcQ",
         thumbnail_url: "https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg",
         like_count: 42,
+        comment_count: 0,
+        share_count: 0,
         view_count: 1567,
         is_approved: true,
         status: "approved",
@@ -618,11 +621,14 @@ export async function getRecipeVideos(recipeSlug: string): Promise<RecipeVideo[]
         id: "v-2",
         recipe_id: "r-1",
         user_id: "user-2",
+        platform: "youtube",
         video_url: "https://www.youtube.com/watch?v=9bZkp7q19s4",
         title: { en: "Grandma's Special Bolognese" },
         youtube_video_id: "9bZkp7q19s4",
         thumbnail_url: "https://img.youtube.com/vi/9bZkp7q19s4/mqdefault.jpg",
         like_count: 89,
+        comment_count: 0,
+        share_count: 0,
         view_count: 3421,
         is_approved: true,
         status: "approved",
@@ -639,7 +645,7 @@ export async function getRecipeVideos(recipeSlug: string): Promise<RecipeVideo[]
   }
 
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from("recipes")
       .select("id")
@@ -678,7 +684,7 @@ export async function getUserRecipeVideos(userId: string): Promise<RecipeVideo[]
   }
 
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from("recipe_videos")
       .select(

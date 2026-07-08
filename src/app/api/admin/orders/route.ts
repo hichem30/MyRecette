@@ -13,7 +13,7 @@ async function requireAdmin(): Promise<{ ok: boolean; userId?: string }> {
   const user = userData.user;
   if (!user) return { ok: false };
 
-  const admin = getSupabaseAdminClient();
+  const admin = await getSupabaseAdminClient();
   if (!admin) return { ok: false };
 
   const { data: profile } = await admin
@@ -47,7 +47,7 @@ export async function GET() {
   if (!auth.ok) {
     return NextResponse.json({ orders: [], error: "forbidden" }, { status: 403 });
   }
-  const admin = getSupabaseAdminClient();
+  const admin = await getSupabaseAdminClient();
   if (!admin) {
     return NextResponse.json({ orders: [], error: "supabase admin client unavailable" }, { status: 200 });
   }

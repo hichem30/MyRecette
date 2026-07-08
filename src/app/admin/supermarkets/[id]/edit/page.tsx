@@ -354,7 +354,7 @@ export default function EditSupermarketPage({
     setFormData(prev => ({
       ...prev,
       [parent]: {
-        ...(prev[parent] as Record<string, any>),
+        ...((prev as Record<string, any>)[parent] as Record<string, any>),
         [child]: value
       }
     }));
@@ -368,7 +368,7 @@ export default function EditSupermarketPage({
     setFormData(prev => ({
       ...prev,
       [parent]: {
-        ...(prev[parent] as Record<string, any>),
+        ...((prev as Record<string, any>)[parent] as Record<string, any>),
         [lang]: value
       }
     }));

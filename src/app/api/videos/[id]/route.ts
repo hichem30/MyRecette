@@ -9,7 +9,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: videoId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -42,9 +42,9 @@ export async function GET(
 
     // Format the response
     return NextResponse.json({
-      ...video,
-      user: video.profiles ? { ...video.profiles } : null,
-      recipe: video.recipes ? { ...video.recipes } : null,
+      ...(video as any),
+      user: (video as any).profiles ? { ...(video as any).profiles } : null,
+      recipe: (video as any).recipes ? { ...(video as any).recipes } : null,
     });
   } catch (error) {
     console.error("Error fetching video:", error);
@@ -61,7 +61,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: videoId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(
@@ -178,7 +178,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: videoId } = await params;
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     return NextResponse.json(

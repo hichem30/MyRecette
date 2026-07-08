@@ -340,10 +340,15 @@ export default function AdminIngredientsPendingPage() {
     }
 
     if (!isSupabaseConfigured()) {
+      const statusMap: Record<"approve" | "reject" | "ignore", "approved" | "rejected" | "ignored"> = {
+        approve: "approved",
+        reject: "rejected",
+        ignore: "ignored"
+      };
       setPendingMappings((prev) =>
         prev.map((m) => ({
           ...m,
-          status: selectedIds.has(m.id) ? action : m.status,
+          status: selectedIds.has(m.id) ? statusMap[action] : m.status,
         }))
       );
       setSelectedIds(new Set());
@@ -375,10 +380,15 @@ export default function AdminIngredientsPendingPage() {
         }
 
         // Update pending mapping status
+        const statusMap: Record<"approve" | "reject" | "ignore", "approved" | "rejected" | "ignored"> = {
+          approve: "approved",
+          reject: "rejected",
+          ignore: "ignored"
+        };
         await sb
           .from("pending_ingredient_mappings")
           .update({
-            status: action,
+            status: statusMap[action],
             resolved_by: userId,
             resolved_at: new Date().toISOString(),
           })

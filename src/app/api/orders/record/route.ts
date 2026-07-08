@@ -124,7 +124,7 @@ export async function POST(req: Request): Promise<NextResponse<OrderDiagnostics>
   const email = rawEmail ? rawEmail.trim().toLowerCase() : null;
 
   // Step 2: see if the order is already saved (webhook may have raced us).
-  const admin = getSupabaseAdminClient();
+  const admin = await getSupabaseAdminClient();
   if (!admin) {
     return NextResponse.json(
       {

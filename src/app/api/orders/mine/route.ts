@@ -26,7 +26,7 @@ export async function GET() {
     return NextResponse.json({ orders: [] satisfies Order[] }, { status: 200 });
   }
 
-  const admin = getSupabaseAdminClient();
+  const admin = await getSupabaseAdminClient();
   if (!admin) {
     // Without the service role we cannot reliably bypass the legacy RLS
     // rule. Return an empty list; the page will surface "no orders yet".

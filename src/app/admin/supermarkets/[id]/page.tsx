@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Building2, MapPin, Phone, Mail, Globe, Calendar, Users, DollarSign, Upload, FileText, Package, Tag, TrendingUp, Briefcase, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, Building2, MapPin, Phone, Mail, Globe, Calendar, Users, DollarSign, Upload, FileText, Package, Tag, TrendingUp, Briefcase, Edit, Trash2, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
