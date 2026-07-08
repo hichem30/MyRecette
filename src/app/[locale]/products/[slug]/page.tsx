@@ -280,21 +280,21 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
   if (!product) return {};
   const lang = locale as "en" | "es";
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://myrecette.com";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sucre-et-sel.sucre-et-sel.workers.dev";
   const url = `${base}/${lang}/products/${product.slug}`;
-  const title = `${product.name[lang]} — My Recette`;
-  const description = product.description[lang]?.slice(0, 160) || product.name[lang];
+  const name = product.name[lang] || product.name.en || "Product";
+  const description = product.description[lang]?.slice(0, 160) || name;
   return {
-    title,
+    title: `${name} — sucre et sel`,
     description,
     alternates: { canonical: url },
     openGraph: {
-      title,
+      title: `${name} — sucre et sel`,
       description,
       url,
-      siteName: "My Recette",
+      siteName: "sucre et sel",
       type: "website",
-      images: product.image_url ? [{ url: product.image_url, alt: product.name[lang] }] : undefined,
+      images: product.image_url ? [{ url: product.image_url, alt: name }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
