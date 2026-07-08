@@ -1,18 +1,14 @@
 import Image from "next/image";
 import { ArrowRight, Award, Clock, Headphones, MapPin, Phone, Search, Star, Truck } from "lucide-react";
-import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/lib/i18n/navigation";
+import { Link } from "next/link";
 import { ProductCard } from "@/components/ProductCard";
 import { CategoryCard } from "@/components/CategoryCard";
 import { getAllCategories, getAllProducts } from "@/lib/data";
+import { t } from "@/lib/fr";
 
 export const revalidate = 60;
 
-export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const tH = await getTranslations("home");
-  const tC = await getTranslations("common");
+export default async function HomePage() {
   // One DB round-trip for everything: derive arrivals / deals / featured
   // locally instead of calling getAllProducts() 4× per request. Cuts CPU on
   // the Cloudflare worker by ~75% on a home page render.
