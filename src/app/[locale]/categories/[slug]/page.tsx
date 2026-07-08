@@ -23,24 +23,24 @@ export async function generateMetadata({
   const cat = await getCategoryBySlug(slug);
   if (!cat) return {};
   const lang = locale as "en" | "es";
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://myrecette.com";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sucre-et-sel.sucre-et-sel.workers.dev";
   const url = `${base}/${lang}/categories/${cat.slug}`;
-  const title = `${cat.name[lang]} — My Recette`;
+  const name = cat.name[lang] || cat.name.en || "Category";
   const description =
     lang === "es"
-      ? `Explora todos los productos de ${cat.name.es} en My Recette.`
-      : `Shop all ${cat.name.en} products at My Recette.`;
+      ? `Explora todos los productos de ${cat.name.es} en sucre et sel.`
+      : `Shop all ${cat.name.en} products at sucre et sel.`;
   return {
-    title,
+    title: `${name} — sucre et sel`,
     description,
     alternates: { canonical: url },
     openGraph: {
-      title,
+      title: `${name} — sucre et sel`,
       description,
       url,
-      siteName: "My Recette",
+      siteName: "sucre et sel",
       type: "website",
-      images: cat.image_url ? [{ url: cat.image_url, alt: cat.name[lang] }] : undefined,
+      images: cat.image_url ? [{ url: cat.image_url, alt: name }] : undefined,
     },
   };
 }
@@ -60,7 +60,7 @@ export default async function CategoryDetail({
 
   return (
     <>
-      <PageHeader title={cat.name[lang]} subtitle={`${products.length} ${t("products")}`} />
+      <PageHeader title={cat.name[lang] || cat.name.en || "Category"} subtitle={`${products.length} ${t("products")}`} />
       <section className="container-page py-10">
         {products.length === 0 ? (
           <p className="text-center text-neutral-500">{t("noResults")}</p>
