@@ -62,9 +62,9 @@ const mockRecipesUsingProduct: Recipe[] = [
 ];
 
 const mockIngredients: Ingredient[] = [
-  { id: "i-tomato", canonical_name: "tomato", display_name: { en: "Tomato", es: "Tomate" }, category: "vegetable", is_common: true, is_basic: true },
-  { id: "i-onion", canonical_name: "onion", display_name: { en: "Onion", es: "Cebolla" }, category: "vegetable", is_common: true, is_basic: true },
-  { id: "i-garlic", canonical_name: "garlic", display_name: { en: "Garlic", es: "Ajo" }, category: "vegetable", is_common: true, is_basic: true },
+  { id: "i-tomato", canonical_name: "tomato", display_name: { en: "Tomato", es: "Tomate" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-onion", canonical_name: "onion", display_name: { en: "Onion", es: "Cebolla" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-garlic", canonical_name: "garlic", display_name: { en: "Garlic", es: "Ajo" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
 ];
 
 const mockAvailability: SupermarketIngredientAvailability[] = [
@@ -155,7 +155,7 @@ function RecipeCardForProduct({ recipe, lang }: { recipe: Recipe; lang: "en" | "
             <span><Users className="h-3.5 w-3.5 inline" /> Serves {recipe.servings || 1}</span>
           </div>
           <div className="flex items-center justify-between mt-3">
-            <StarRating rating={recipe.rating} count={recipe.rating_count} />
+            <StarRating rating={recipe.rating ?? null} count={recipe.rating_count} />
             <span className="text-xs text-neutral-500">{recipe.favorite_count?.toLocaleString() || "0"} favorites</span>
           </div>
         </div>
@@ -298,7 +298,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: `${name} — sucre et sel`,
       description,
       images: product.image_url ? [product.image_url] : undefined,
     },
@@ -318,7 +318,7 @@ export default async function ProductDetail({
   const lang = locale as "en" | "es";
 
   // Get user session
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const { data: { user } } = await sb.auth.getUser();
 
   const all = await getAllProducts();

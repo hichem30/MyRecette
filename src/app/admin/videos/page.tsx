@@ -418,7 +418,7 @@ export default async function VideosPage({
                         {video.thumbnail_url && (
                           <img
                             src={video.thumbnail_url}
-                            alt={video.title?.en}
+                            alt={video.title?.en || "Video"}
                             className="w-full h-full object-cover"
                           />
                         )}

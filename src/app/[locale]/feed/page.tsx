@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Users } from "lucide-react";
+import { Users, ShoppingBag } from "lucide-react";
 import { Link } from "@/lib/i18n/navigation";
 import { getFollowedSupermarkets, getUserFeed } from "@/lib/data";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
@@ -82,7 +82,7 @@ export default async function UserFeedPage({
   const t = await getTranslations("common");
   
   // Get current user
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const {
     data: { user },
   } = await sb.auth.getUser();

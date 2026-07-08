@@ -416,7 +416,7 @@ export default async function RecipesPage({
                         {recipe.main_image && (
                           <img
                             src={recipe.main_image}
-                            alt={recipe.title.en}
+                            alt={recipe.title.en || "Recipe"}
                             className="w-full h-full object-cover"
                           />
                         )}

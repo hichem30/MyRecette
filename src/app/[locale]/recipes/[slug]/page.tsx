@@ -24,8 +24,8 @@ import {
 import { Link } from "@/lib/i18n/navigation";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import type { Recipe, RecipeComment, Ingredient, SupermarketIngredientAvailability, RecipeVideo } from "@/lib/types";
-import { VideoList } from "@/components/VideoList";
-import { SocialShare } from "@/components/SocialShare";
+import { VideoList } from "@/components/VideoList/VideoList";
+import { SocialShare } from "@/components/SocialShare/SocialShare";
 import { VideoEmbed } from "@/components/VideoEmbed/VideoEmbed";
 import { RecipeCommunityTabs } from "@/components/RecipeCommunityTabs/RecipeCommunityTabs";
 
@@ -80,6 +80,8 @@ const mockRecipe: Recipe = {
         category: "grain",
         is_common: true,
         is_basic: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
       quantity: 400,
       unit: "g",

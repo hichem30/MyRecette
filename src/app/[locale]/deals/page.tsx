@@ -172,7 +172,7 @@ export default async function DealsPage({
                       {b.image_url ? (
                         <Image
                           src={b.image_url}
-                          alt={b.name.en}
+                          alt={b.name[lang] || b.name.en || "Bundle"}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           className="object-cover transition group-hover:scale-[1.02]"
@@ -190,11 +190,11 @@ export default async function DealsPage({
                     </div>
                     <div className="flex flex-1 flex-col p-4">
                       <h3 className="font-serif text-lg font-bold leading-snug text-neutral-900 group-hover:text-barn-700">
-                        {b.name.en}
+                        {b.name[lang] || b.name.en || "Bundle"}
                       </h3>
                       {b.description?.en && (
                         <p className="mt-1 line-clamp-2 text-xs text-neutral-600">
-                          {b.description.en}
+                          {b.description[lang] || b.description.en || ""}
                         </p>
                       )}
 
@@ -205,7 +205,7 @@ export default async function DealsPage({
                         </span>{" "}
                         {inBundle.slice(0, 3).map((p, i) => (
                           <span key={p.id}>
-                            {p.name.en}
+                            {p.name[lang] || p.name.en || "Product"}
                             {i < Math.min(2, inBundle.length - 1) ? ", " : ""}
                           </span>
                         ))}
@@ -274,7 +274,7 @@ export default async function DealsPage({
                 if (promo.applies_to_product_ids?.length) {
                   for (const id of promo.applies_to_product_ids) {
                     const p = productById.get(id);
-                    if (p) scopeNames.push(p.name.en);
+                    if (p) scopeNames.push(p.name.en || "Product");
                   }
                 }
                 const scopeText =

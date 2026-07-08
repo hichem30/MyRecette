@@ -235,7 +235,7 @@ export default async function CheckoutPage({ params, searchParams }: {
               <div key={index} className="flex items-center gap-4">
                 <img
                   src={`https://images.unsplash.com/photo-1592841200221-21e7500398b3?auto=format&fit=crop&w=100&q=80&index=${index}`}
-                  alt={item.name.en}
+                  alt={item.name[locale as keyof typeof item.name] || item.name.en || "Product"}
                   className="h-16 w-16 rounded-md object-cover"
                 />
                 <div className="flex-1">

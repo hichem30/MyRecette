@@ -779,7 +779,7 @@ export default function RecipesSearchPage() {
                           {recipe.image_url ? (
                             <img
                               src={recipe.image_url}
-                              alt={recipe.title.en}
+                              alt={recipe.title.en || "Recipe"}
                               className="h-full w-full object-cover transition group-hover:scale-105"
                             />
                           ) : (
