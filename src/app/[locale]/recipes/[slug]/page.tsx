@@ -100,6 +100,8 @@ const mockRecipe: Recipe = {
         category: "protein",
         is_common: true,
         is_basic: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
       quantity: 500,
       unit: "g",
@@ -118,6 +120,8 @@ const mockRecipe: Recipe = {
         category: "vegetable",
         is_common: true,
         is_basic: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
       quantity: 1,
       unit: null,
@@ -136,6 +140,8 @@ const mockRecipe: Recipe = {
         category: "vegetable",
         is_common: true,
         is_basic: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
       quantity: 1,
       unit: null,
@@ -154,6 +160,8 @@ const mockRecipe: Recipe = {
         category: "vegetable",
         is_common: true,
         is_basic: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
       quantity: 400,
       unit: "g",
@@ -312,11 +320,11 @@ const mockAvailability: SupermarketIngredientAvailability[] = [
 ];
 
 const mockIngredients: Ingredient[] = [
-  { id: "i-spaghetti", canonical_name: "spaghetti", display_name: { en: "Spaghetti", es: "Espaguetis" }, category: "grain", is_common: true, is_basic: true },
-  { id: "i-ground-beef", canonical_name: "ground beef", display_name: { en: "Ground Beef", es: "Carne molida" }, category: "protein", is_common: true, is_basic: true },
-  { id: "i-onion", canonical_name: "onion", display_name: { en: "Onion", es: "Cebolla" }, category: "vegetable", is_common: true, is_basic: true },
-  { id: "i-carrot", canonical_name: "carrot", display_name: { en: "Carrot", es: "Zanahoria" }, category: "vegetable", is_common: true, is_basic: true },
-  { id: "i-tomato", canonical_name: "tomato", display_name: { en: "Tomato", es: "Tomate" }, category: "vegetable", is_common: true, is_basic: true },
+  { id: "i-spaghetti", canonical_name: "spaghetti", display_name: { en: "Spaghetti", es: "Espaguetis" }, category: "grain", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-ground-beef", canonical_name: "ground beef", display_name: { en: "Ground Beef", es: "Carne molida" }, category: "protein", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-onion", canonical_name: "onion", display_name: { en: "Onion", es: "Cebolla" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-carrot", canonical_name: "carrot", display_name: { en: "Carrot", es: "Zanahoria" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-tomato", canonical_name: "tomato", display_name: { en: "Tomato", es: "Tomate" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
 ];
 
 export const revalidate = 60;
@@ -364,12 +372,12 @@ function formatTime(minutes: number | null | undefined): string {
 }
 
 // Helper to format difficulty
-function getDifficultyLabel(difficulty: string | null | undefined, lang: "en" | "es"): string {
-  const labels: Record<string, { en: string; es: string }> = {
-    easy: { en: "Easy", es: "Fácil" },
-    medium: { en: "Medium", es: "Media" },
-    hard: { en: "Hard", es: "Difícil" },
-    expert: { en: "Expert", es: "Experto" },
+function getDifficultyLabel(difficulty: string | null | undefined, lang: "en" | "es" | "fr" | "ar"): string {
+  const labels: Record<string, { en: string; es: string; fr?: string; ar?: string }> = {
+    easy: { en: "Easy", es: "Fácil", fr: "Facile", ar: "سهل" },
+    medium: { en: "Medium", es: "Media", fr: "Moyen", ar: "متوسط" },
+    hard: { en: "Hard", es: "Difícil", fr: "Difficile", ar: "صعب" },
+    expert: { en: "Expert", es: "Experto", fr: "Expert", ar: "خبير" },
   };
   return labels[difficulty || ""]?.[lang] || difficulty || "";
 }
@@ -385,15 +393,15 @@ function formatDate(dateString: string | null | undefined): string {
 }
 
 // Helper to get meal type label
-function getMealTypeLabel(mealType: string | null | undefined, lang: "en" | "es"): string {
-  const labels: Record<string, { en: string; es: string }> = {
-    breakfast: { en: "Breakfast", es: "Desayuno" },
-    lunch: { en: "Lunch", es: "Almuerzo" },
-    dinner: { en: "Dinner", es: "Cena" },
-    dessert: { en: "Dessert", es: "Postre" },
-    snack: { en: "Snack", es: "Merienda" },
-    appetizer: { en: "Appetizer", es: "Entrante" },
-    drink: { en: "Drink", es: "Bebida" },
+function getMealTypeLabel(mealType: string | null | undefined, lang: "en" | "es" | "fr" | "ar"): string {
+  const labels: Record<string, { en: string; es: string; fr?: string; ar?: string }> = {
+    breakfast: { en: "Breakfast", es: "Desayuno", fr: "Petit déjeuner", ar: "إفطار" },
+    lunch: { en: "Lunch", es: "Almuerzo", fr: "Déjeuner", ar: "غداء" },
+    dinner: { en: "Dinner", es: "Cena", fr: "Dîner", ar: "عشاء" },
+    dessert: { en: "Dessert", es: "Postre", fr: "Dessert", ar: "حلاء" },
+    snack: { en: "Snack", es: "Merienda", fr: "Collation", ar: "وجبة خفيفة" },
+    appetizer: { en: "Appetizer", es: "Entrante", fr: "Amuse-bouche", ar: "مقبلات" },
+    drink: { en: "Drink", es: "Bebida", fr: "Boisson", ar: "مشروب" },
   };
   return labels[mealType || ""]?.[lang] || mealType || "";
 }
@@ -426,7 +434,7 @@ function StarRating({ rating, count, lang }: { rating: number | null; count?: nu
 }
 
 // Recipe metadata badges
-function RecipeBadges({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" }) {
+function RecipeBadges({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" | "fr" | "ar" }) {
   return (
     <div className="flex flex-wrap gap-2">
       {recipe.cuisine && (
@@ -461,7 +469,7 @@ function RecipeBadges({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" }) {
 }
 
 // Ingredient list
-function IngredientList({ ingredients, lang }: { ingredients: Recipe["ingredients"]; lang: "en" | "es" }) {
+function IngredientList({ ingredients, lang }: { ingredients: Recipe["ingredients"]; lang: "en" | "es" | "fr" | "ar" }) {
   if (!ingredients || ingredients.length === 0) return null;
   
   return (
@@ -1185,7 +1193,7 @@ export default function RecipeDetailPage({
                 <FavoriteButton
                   recipeId={recipe.id}
                   isFavorited={recipe.is_favorited || false}
-                  userId={userId || undefined}
+                  userId={userId}
                   count={recipe.favorite_count || 0}
                   onToggle={(isFavorited) => {
                     // Update state
