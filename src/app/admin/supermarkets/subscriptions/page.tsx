@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: "Supermarket Subscriptions — My Recette Admin",
+  title: "Supermarket Subscriptions — sucre et sel Admin",
   description: "Manage supermarket subscriptions and payment status",
 };
 

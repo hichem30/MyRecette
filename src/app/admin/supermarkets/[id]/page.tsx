@@ -9,7 +9,7 @@ export const revalidate = 0;
 export const dynamicParams = true;
 
 export const metadata: Metadata = {
-  title: "Supermarket Details — My Recette Admin",
+  title: "Supermarket Details — sucre et sel Admin",
   description: "View and manage supermarket profile, products, and settings",
 };
 

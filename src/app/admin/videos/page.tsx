@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: "All Videos — My Recette Admin",
+  title: "All Videos — sucre et sel Admin",
   description: "Manage and moderate all user-submitted recipe videos",
 };
 
