@@ -38,9 +38,9 @@ export default function AdminCampaignsPage() {
   const [loading, setLoading] = useState(true);
   const [productFilter, setProductFilter] = useState<ProductFilter>("discount");
   const [productSearch, setProductSearch] = useState("");
-  const [subject, setSubject] = useState("New deals from Red Barn Western Market");
+  const [subject, setSubject] = useState("New deals from sucre et sel");
   const [intro, setIntro] = useState(
-    "Hi there! Here are some fresh deals at Red Barn Western Market — stop by the yard or order online.",
+    "Hi there! Here are some fresh deals at sucre et sel — stop by the yard or order online.",
   );
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
 

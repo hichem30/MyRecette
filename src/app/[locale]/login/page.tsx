@@ -34,7 +34,7 @@ export default async function LoginPage({
           ))}
         </div>
         <p className="mt-6 text-center text-xs text-neutral-400">
-          © {new Date().getFullYear()} Red Barn Western Market · Sand Springs, OK · All rights reserved.
+          © {new Date().getFullYear()} sucre et sel · All rights reserved.
         </p>
       </div>
     </section>

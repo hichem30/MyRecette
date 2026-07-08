@@ -84,7 +84,7 @@ export async function Footer() {
 
       <div className="border-t border-neutral-800">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-neutral-500 sm:flex-row sm:px-6 lg:px-8">
-          <span>© {new Date().getFullYear()} My Recette · {tF("rights")}</span>
+          <span>© {new Date().getFullYear()} sucre et sel · {tF("rights")}</span>
           <div className="flex gap-5">
             <Link href="/privacy" className="hover:text-white">{tF("privacy")}</Link>
             <Link href="/terms" className="hover:text-white">{tF("terms")}</Link>

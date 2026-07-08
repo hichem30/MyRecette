@@ -65,7 +65,7 @@ export default async function AboutPage({
           <div className="relative aspect-[5/4] overflow-hidden rounded-2xl bg-neutral-100 shadow-card">
             <Image
               src="/about/storefront.jpg"
-              alt="My Recette marketplace storefront"
+              alt="sucre et sel marketplace storefront"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"

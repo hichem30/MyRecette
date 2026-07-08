@@ -193,7 +193,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
           <div className="relative h-80 overflow-hidden rounded-2xl bg-neutral-100 shadow-card lg:h-auto">
             <iframe
-              title="Red Barn map"
+              title="sucre et sel map"
               src="https://www.google.com/maps?q=308+S+209th+W+Ave+Sand+Springs+OK&output=embed"
               loading="lazy"
               className="h-full w-full"
@@ -212,8 +212,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               [
                 {
                   author: "Billy C.",
-                  en: "I own a small construction company local and Red Barn saves me a hour drive to Tulsa to the big box stores. They always have what I need. Thank God for Red Barn.",
-                  es: "Soy dueño de una pequeña constructora local y Red Barn me ahorra una hora de viaje a Tulsa a las tiendas grandes. Siempre tienen lo que necesito. Gracias a Dios por Red Barn.",
+                  en: "I own a small construction company local and sucre et sel saves me a hour drive to Tulsa to the big box stores. They always have what I need. Thank God for sucre et sel.",
+                  es: "Soy dueño de una pequeña constructora local y sucre et sel me ahorra una hora de viaje a Tulsa a las tiendas grandes. Siempre tienen lo que necesito. Gracias a Dios por sucre et sel.",
                 },
                 {
                   author: "Paula L.",

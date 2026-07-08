@@ -1034,7 +1034,7 @@ export default function RecipeDetailPage({
     description: recipe.description?.[lang] || recipe.description?.en,
     author: {
       "@type": "Person",
-      name: recipe.author?.email || "My Recette",
+      name: recipe.author?.email || "sucre et sel",
     },
     datePublished: recipe.published_at || recipe.created_at,
     dateModified: recipe.updated_at,
@@ -1152,7 +1152,7 @@ export default function RecipeDetailPage({
               <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-500">
                 <div className="flex items-center gap-1.5">
                   <Users className="h-4 w-4" />
-                  <span>By {recipe.author?.email || "My Recette"}</span>
+                  <span>By {recipe.author?.email || "sucre et sel"}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4" />

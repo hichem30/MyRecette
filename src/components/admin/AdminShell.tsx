@@ -252,7 +252,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           MR
         </span>
         <div className="leading-tight">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-recette-600">My Recette</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-recette-600">sucre et sel</p>
           <p className="text-sm font-semibold text-neutral-900">Admin Console</p>
         </div>
       </div>

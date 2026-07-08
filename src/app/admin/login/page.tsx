@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <Link href="/" className="text-xs text-neutral-500 hover:text-barn-700">← Back to store</Link>
         <h1 className="mt-3 font-serif text-2xl font-bold">Admin Login</h1>
-        <p className="mt-1 text-sm text-neutral-500">Sign in to manage Red Barn Western Market.</p>
+        <p className="mt-1 text-sm text-neutral-500">Sign in to manage sucre et sel.</p>
 
         <div className="mt-5 space-y-2">
           <button onClick={() => provider("google")} className="w-full rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium hover:border-neutral-400">

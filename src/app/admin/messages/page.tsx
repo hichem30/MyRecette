@@ -150,7 +150,7 @@ export default function AdminMessagesPage() {
                     <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
                       <a
                         href={`mailto:${m.email}?subject=${encodeURIComponent(
-                          `Re: your message to Red Barn`,
+                          `Re: your message to sucre et sel`,
                         )}`}
                         className="inline-flex items-center gap-1 rounded-md border border-barn-600 bg-barn-600 px-3 py-1.5 font-semibold text-white hover:bg-barn-700"
                       >

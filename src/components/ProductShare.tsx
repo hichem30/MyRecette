@@ -32,8 +32,8 @@ export function ProductShare({ product }: { product: Product }) {
   const title = `${product.name[locale]} — ${formatPrice(product.price)}`;
   const text =
     locale === "en"
-      ? `Check out ${product.name.en} at Red Barn Western Market`
-      : `Mira ${product.name.es} en Red Barn Western Market`;
+      ? `Check out ${product.name.en} at sucre et sel`
+      : `Mira ${product.name.es} en sucre et sel`;
 
   async function nativeShare() {
     if (typeof navigator === "undefined" || typeof navigator.share !== "function") return;

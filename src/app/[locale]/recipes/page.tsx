@@ -261,7 +261,7 @@ function RecipeCard({
 }) {
   const title = recipe.title[lang] || recipe.title.en || "Recipe";
   const description = recipe.description?.[lang] || recipe.description?.en || "";
-  const author = recipe.author?.email || "My Recette";
+  const author = recipe.author?.email || "sucre et sel";
   const totalTime = (recipe.prep_time_minutes || 0) + (recipe.cook_time_minutes || 0);
   
   if (view === "list") {

@@ -162,7 +162,7 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
                     ${item.price.toFixed(2)} {t("each")}
                   </p>
                   
-                  {/* Supermarket selector (for My Recette) */}
+                  {/* Supermarket selector (for sucre et sel) */}
                   <div className="mt-2">
                     <select className="text-xs border border-neutral-300 rounded-md px-2 py-1 bg-white">
                       {mockSupermarkets.map((s) => (

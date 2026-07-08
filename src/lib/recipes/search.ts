@@ -1,5 +1,5 @@
 /**
- * Supercook-like ingredient search algorithm for My Recette
+ * Supercook-like ingredient search algorithm for sucre et sel
  * 
  * This module provides:
  * - Ingredient name normalization for matching

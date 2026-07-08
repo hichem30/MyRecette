@@ -467,7 +467,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
           <div>
             <h1 className="font-serif text-3xl font-bold text-neutral-900">Add New Recipe</h1>
             <p className="text-neutral-600 mt-1">
-              Share your favorite recipe with the My Recette community
+              Share your favorite recipe with the sucre et sel community
             </p>
           </div>
           <Link

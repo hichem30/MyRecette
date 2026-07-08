@@ -442,10 +442,10 @@ export default async function SupermarketSubscribePage({
                "Why €50 per month?"}
             </h3>
             <p className="text-neutral-600 text-sm">
-              {lang === "es" ? "My Recette es tu plataforma todo en uno para gestionar tu supermercado en línea. Este precio cubre todos los servicios incluyendo listados de productos, herramientas promocionales, y soporte dedicado." :
-               lang === "fr" ? "My Recette est votre plateforme tout-en-un pour gérer votre supermarché en ligne. Ce prix couvre tous les services y compris les listages de produits, les outils promotionnels et le support dédié." :
-               lang === "ar" ? "My Recette هي منصة شاملة لإدارة متجرك عبر الإنترنت. يشمل هذا السعر جميع الخدمات بما في ذلك قائمة المنتجات والأدوات الترويجية والدعم المخصص." :
-               "My Recette is your all-in-one platform for managing your supermarket online. This price covers all services including product listings, promotional tools, and dedicated support."}
+              {lang === "es" ? "sucre et sel es tu plataforma todo en uno para gestionar tu supermercado en línea. Este precio cubre todos los servicios incluyendo listados de productos, herramientas promocionales, y soporte dedicado." :
+               lang === "fr" ? "sucre et sel est votre plateforme tout-en-un pour gérer votre supermarché en ligne. Ce prix couvre tous les services y compris les listages de produits, les outils promotionnels et le support dédié." :
+               lang === "ar" ? "sucre et sel هي منصة شاملة لإدارة متجرك عبر الإنترنت. يشمل هذا السعر جميع الخدمات بما في ذلك قائمة المنتجات والأدوات الترويجية والدعم المخصص." :
+               "sucre et sel is your all-in-one platform for managing your supermarket online. This price covers all services including product listings, promotional tools, and dedicated support."}
             </p>
           </div>
           <div className="bg-white rounded-lg border border-neutral-200 p-6">

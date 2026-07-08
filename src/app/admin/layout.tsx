@@ -6,7 +6,7 @@ import { AdminShell } from "@/components/admin/AdminShell";
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "Admin · Red Barn Western Market",
+  title: "Admin · sucre et sel",
   robots: { index: false, follow: false },
 };
 

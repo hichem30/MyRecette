@@ -85,7 +85,7 @@ export function SocialShare({ url, title, description, imageUrl, className = "" 
       try {
         setIsSharing(true);
         await navigator.share({
-          title: title || "My Recette",
+          title: title || "sucre et sel",
           text: description || "Check out this recipe!",
           url: url,
         });

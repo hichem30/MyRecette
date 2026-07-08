@@ -326,7 +326,7 @@ export default async function ProductDetail({
     .filter((p) => p.category_slug === product.category_slug && p.id !== product.id)
     .slice(0, 4);
 
-  // For now, use mock data for My Recette features
+  // For now, use mock data for sucre et sel features
   // In production, fetch from database
   const recipesUsingProduct = mockRecipesUsingProduct;
   const matchingIngredients = mockIngredients;

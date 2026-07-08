@@ -271,7 +271,7 @@ export default function AdminSupermarketsPage() {
       <div className="flex flex-col gap-2">
         <h1 className="font-serif text-2xl font-bold text-neutral-900">Supermarkets</h1>
         <p className="text-sm text-neutral-600">
-          Manage all supermarkets on My Recette. Supermarkets pay €50/month for their subscription.
+          Manage all supermarkets on sucre et sel. Supermarkets pay €50/month for their subscription.
         </p>
       </div>
 

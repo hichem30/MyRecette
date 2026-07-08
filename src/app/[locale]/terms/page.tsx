@@ -174,7 +174,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
           ))}
         </div>
 
-        {/* My Recette Specific Section */}
+        {/* sucre et sel Specific Section */}
         <section className="mt-12 p-6 rounded-lg bg-recette-50 border border-recette-200">
           <div className="flex items-start gap-4">
             <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-recette-700 flex-shrink-0">
