@@ -131,7 +131,7 @@ const reactionTypes: { type: VideoReactionType; label: string; icon: React.React
 ];
 
 async function getVideoById(videoId: string): Promise<RecipeVideo | null> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   try {
     const { data, error } = await sb
@@ -152,10 +152,11 @@ async function getVideoById(videoId: string): Promise<RecipeVideo | null> {
       return null;
     }
 
+    const video = data as any;
     return {
-      ...data,
-      user: data.profiles ? { ...data.profiles } : null,
-      recipe: data.recipes ? { ...data.recipes } : null,
+      ...video,
+      user: video.profiles ? { ...video.profiles } : null,
+      recipe: video.recipes ? { ...video.recipes } : null,
     };
   } catch (error) {
     console.error("Database error:", error);
@@ -164,7 +165,7 @@ async function getVideoById(videoId: string): Promise<RecipeVideo | null> {
 }
 
 async function getVideoComments(videoId: string): Promise<VideoComment[]> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   try {
     const { data, error } = await sb
@@ -185,7 +186,7 @@ async function getVideoComments(videoId: string): Promise<VideoComment[]> {
     // Organize comments into parent-child relationships
     const commentsMap = new Map<string, VideoComment>();
     
-    (data || []).forEach((c) => {
+    (data as any[] || []).forEach((c: any) => {
       commentsMap.set(c.id, {
         ...c,
         user: c.profiles ? { ...c.profiles } : null,
@@ -214,10 +215,10 @@ async function getVideoComments(videoId: string): Promise<VideoComment[]> {
 }
 
 async function getVideoReactions(videoId: string): Promise<Record<VideoReactionType, number>> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   try {
-    const { data, error } = await sb
+    const { data, error } = await (sb as any)
       .from("video_reactions")
       .select("reaction_type, count")
       .eq("video_id", videoId)
@@ -237,7 +238,7 @@ async function getVideoReactions(videoId: string): Promise<Record<VideoReactionT
       angry: 0,
     };
 
-    (data || []).forEach((r) => {
+    (data as any[] || []).forEach((r: any) => {
       if (r.reaction_type in counts) {
         counts[r.reaction_type as VideoReactionType] = (r.count as number) || 0;
       }
@@ -251,7 +252,7 @@ async function getVideoReactions(videoId: string): Promise<Record<VideoReactionT
 }
 
 async function getUserReaction(videoId: string, userId: string): Promise<VideoReactionType | null> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   try {
     const { data, error } = await sb
@@ -273,7 +274,7 @@ async function getUserReaction(videoId: string, userId: string): Promise<VideoRe
 }
 
 async function getRelatedVideos(videoId: string, recipeId: string, limit: number = 4): Promise<RecipeVideo[]> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   
   try {
     const { data, error } = await sb
@@ -296,7 +297,7 @@ async function getRelatedVideos(videoId: string, recipeId: string, limit: number
       return [];
     }
 
-    return (data || []).map((v) => ({
+    return (data as any[] || []).map((v: any) => ({
       ...v,
       user: v.profiles ? { ...v.profiles } : null,
       recipe: v.recipes ? { ...v.recipes } : null,

@@ -368,7 +368,7 @@ function AboutSection({ supermarket }: { supermarket: SupermarketProfile }) {
 }
 
 // Products section
-async function ProductsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
+async function ProductsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" | "fr" | "ar" }) {
   const products = await getSupermarketProducts(supermarketId);
   
   return (
@@ -443,7 +443,7 @@ async function ProductsSection({ supermarketId, lang }: { supermarketId: string;
 }
 
 // Coupons section
-async function CouponsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
+async function CouponsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" | "fr" | "ar" }) {
   const coupons = await getSupermarketCoupons(supermarketId);
   
   return (
@@ -521,7 +521,7 @@ async function CouponsSection({ supermarketId, lang }: { supermarketId: string; 
 }
 
 // Bundles section
-async function BundlesSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
+async function BundlesSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" | "fr" | "ar" }) {
   const bundles = await getSupermarketBundles(supermarketId);
   
   return (
@@ -594,7 +594,7 @@ async function BundlesSection({ supermarketId, lang }: { supermarketId: string; 
 }
 
 // Sales section
-async function SalesSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
+async function SalesSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" | "fr" | "ar" }) {
   const sales = await getSupermarketSales(supermarketId);
   
   return (
@@ -668,15 +668,15 @@ async function SalesSection({ supermarketId, lang }: { supermarketId: string; la
 }
 
 // Jobs section
-async function JobsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" }) {
+async function JobsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" | "fr" | "ar" }) {
   const jobs = await getSupermarketJobs(supermarketId);
   
-  const positionTypeLabels: Record<string, { en: string; es: string }> = {
-    full_time: { en: "Full-time", es: "Tiempo completo" },
-    part_time: { en: "Part-time", es: "Tiempo parcial" },
-    temporary: { en: "Temporary", es: "Temporal" },
-    contract: { en: "Contract", es: "Contrato" },
-    internship: { en: "Internship", es: "Prácticas" },
+  const positionTypeLabels: Record<string, { en: string; es: string; fr?: string; ar?: string }> = {
+    full_time: { en: "Full-time", es: "Tiempo completo", fr: "Temps plein", ar: "دوام كامل" },
+    part_time: { en: "Part-time", es: "Tiempo parcial", fr: "Temps partiel", ar: "دوام جزئي" },
+    temporary: { en: "Temporary", es: "Temporal", fr: "Temporaire", ar: "مؤقت" },
+    contract: { en: "Contract", es: "Contrato", fr: "Contrat", ar: "عقد" },
+    internship: { en: "Internship", es: "Prácticas", fr: "Stage", ar: "تدريب" },
   };
   
   return (
@@ -784,7 +784,7 @@ function TabContent({
 }: {
   activeTab: TabType;
   supermarket: SupermarketProfile;
-  lang: "en" | "es";
+  lang: "en" | "es" | "fr" | "ar";
 }) {
   switch (activeTab) {
     case "about":
@@ -817,7 +817,7 @@ export default async function SupermarketProfilePage({
   setRequestLocale(locale);
   
   // Get user session for follow status
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const {
     data: { user },
   } = await sb.auth.getUser();
