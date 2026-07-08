@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import { Share2, Copy, Check, Facebook, Twitter, MessageCircle, Linkedin, Mail, Image } from "lucide-react";
 
 interface ShareButtonsProps {

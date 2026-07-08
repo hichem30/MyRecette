@@ -1,8 +1,8 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale } from "@/lib/fr";
 import { useEffect, useState } from "react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
 export default function AccountHome() {

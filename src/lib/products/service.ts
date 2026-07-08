@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server';
+import { getSupabaseServerClient } from '@/lib/supabase/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * PRODUCT NAMING SERVICE
@@ -28,7 +29,7 @@ export async function getProductName(sku: string): Promise<string> {
   }
 
   try {
-    const supabase = createClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from('products')
       .select('name_fr, name, sku')
@@ -70,7 +71,7 @@ export async function getProductNames(skus: string[]): Promise<Record<string, st
   }
 
   try {
-    const supabase = createClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from('products')
       .select('sku, name_fr, name')
@@ -120,7 +121,7 @@ export async function getProductNames(skus: string[]): Promise<Record<string, st
  * Get product with French name included
  */
 export async function getProductWithFrenchName(sku: string) {
-  const supabase = createClient();
+  const supabase = await getSupabaseServerClient();
   const { data, error } = await supabase
     .from('products')
     .select('*, name_fr as french_name')
@@ -142,7 +143,7 @@ export async function getProductWithFrenchName(sku: string) {
  */
 export async function setProductFrenchName(sku: string, frenchName: string): Promise<boolean> {
   try {
-    const supabase = createClient();
+    const supabase = await getSupabaseServerClient();
     const { error } = await supabase
       .from('products')
       .update({ name_fr: frenchName })
@@ -175,7 +176,7 @@ export function clearProductNameCache(): void {
  */
 export async function preloadCommonProducts(topN: number = 100): Promise<void> {
   try {
-    const supabase = createClient();
+    const supabase = await getSupabaseServerClient();
     const { data, error } = await supabase
       .from('products')
       .select('sku, name_fr, name')

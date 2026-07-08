@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import { Star, StarHalf } from "lucide-react";
 
 interface RatingDisplayProps {

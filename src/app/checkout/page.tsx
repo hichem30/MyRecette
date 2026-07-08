@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
 import { redirect } from "next/navigation";
 import { CreditCard, ArrowLeft, ShieldCheck, Truck, MapPin, Home, CheckCircle, Store } from "lucide-react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { createStripeCheckoutSession as createCheckoutSession } from "@/lib/stripe/server";
 
@@ -56,29 +57,17 @@ const mockUser = {
 export const revalidate = 0;
 export const dynamicParams = true;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "checkout" });
-  
+export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: t("title"),
-    description: t("description"),
+    title: t("checkout.title"),
+    description: t("checkout.description"),
   };
 }
 
-export default async function CheckoutPage({ params, searchParams }: {
-  params: Promise<{ locale: string }>;
+export default async function CheckoutPage({ searchParams }: {
   searchParams: Promise<{ supermarket?: string; items?: string }>;
 }) {
-  const { locale } = await params;
   const { supermarket, items } = await searchParams;
-  setRequestLocale(locale);
-  const t = await getTranslations("checkout");
-  const tC = await getTranslations("common");
 
   // Parse items from search params if present
   // In a real implementation, we would get this from the cart context
@@ -97,7 +86,7 @@ export default async function CheckoutPage({ params, searchParams }: {
     
     if (!isSupabaseConfigured()) {
       // In local dev, just redirect to success
-      redirect(`/${locale}/checkout/success?session_id=mock_session`);
+      redirect("/checkout/success?session_id=mock_session");
     }
     
     try {
@@ -107,9 +96,9 @@ export default async function CheckoutPage({ params, searchParams }: {
       // 3. Redirect to Stripe
       
       // For now, redirect to success page
-      redirect(`/${locale}/checkout/success?session_id=mock_session`);
+      redirect("/checkout/success?session_id=mock_session");
     } catch (error) {
-      redirect(`/${locale}/checkout/cancel`);
+      redirect("/checkout/cancel");
     }
   }
 
@@ -119,27 +108,27 @@ export default async function CheckoutPage({ params, searchParams }: {
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6">
           <Link href="/cart" className="hover:text-recette-600">
-            {tC("cart")}
+            {t("nav.cart")}
           </Link>
           <span>{'>'}</span>
-          <span className="text-neutral-900">{t("title")}</span>
+          <span className="text-neutral-900">{t("checkout.title")}</span>
         </nav>
 
         <div className="flex items-center justify-between mb-8">
-          <h1 className="font-serif text-3xl font-bold text-neutral-900">{t("title")}</h1>
+          <h1 className="font-serif text-3xl font-bold text-neutral-900">{t("checkout.title")}</h1>
           <Link
             href="/cart"
             className="inline-flex items-center gap-2 text-sm text-recette-600 hover:text-recette-700"
           >
             <ArrowLeft className="h-4 w-4" />
-            {t("backToCart")}
+            {t("common.back")}
           </Link>
         </div>
 
         {/* Checkout Steps */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
-            {[t("step1"), t("step2"), t("step3")].map((step, index) => (
+            {[t("checkout.shippingInfo"), t("checkout.paymentInfo"), t("checkout.reviewOrder")].map((step, index) => (
               <div key={index} className="flex items-center">
                 <div className="flex flex-col items-center">
                   <div
@@ -172,7 +161,7 @@ export default async function CheckoutPage({ params, searchParams }: {
               <Store className="h-6 w-6 text-recette-700" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-neutral-900">{t("selectedSupermarket")}</h3>
+              <h3 className="font-semibold text-neutral-900">{t("checkout.selectedSupermarket")}</h3>
               <div className="flex items-center gap-3 mt-2">
                 <img
                   src={selectedSupermarket.profile_picture_url}
@@ -181,12 +170,10 @@ export default async function CheckoutPage({ params, searchParams }: {
                 />
                 <div>
                   <p className="font-medium text-neutral-900">
-                    {selectedSupermarket.supermarket_name[locale as keyof typeof selectedSupermarket.supermarket_name] || 
-                     selectedSupermarket.supermarket_name.en}
+                    {selectedSupermarket.supermarket_name?.fr || selectedSupermarket.supermarket_name?.en}
                   </p>
                   <p className="text-sm text-neutral-500">
-                    {selectedSupermarket.address[locale as keyof typeof selectedSupermarket.address] || 
-                     selectedSupermarket.address.en} ({selectedSupermarket.distance_km.toFixed(1)} km)
+                    {selectedSupermarket.address?.fr || selectedSupermarket.address?.en} ({selectedSupermarket.distance_km.toFixed(1)} km)
                   </p>
                 </div>
               </div>
@@ -195,31 +182,31 @@ export default async function CheckoutPage({ params, searchParams }: {
               href="/cart"
               className="text-sm text-recette-600 hover:text-recette-700 flex-shrink-0"
             >
-              {t("change")}
+              {t("common.edit")}
             </Link>
           </div>
         </div>
 
         {/* Order Summary */}
         <div className="p-6 rounded-lg border border-neutral-200 mb-8">
-          <h3 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("orderSummary")}</h3>
+          <h3 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("checkout.orderSummary")}</h3>
           
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-neutral-600">{t("subtotal")}</span>
+              <span className="text-neutral-600">{t("cart.subtotal")}</span>
               <span className="font-medium">${subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-neutral-600">{t("tax")}</span>
+              <span className="text-neutral-600">{t("cart.tax")}</span>
               <span className="font-medium">${tax.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-neutral-600">{t("shipping")}</span>
-              <span className="font-medium">{shipping === 0 ? t("free") : `$${shipping.toFixed(2)}`}</span>
+              <span className="text-neutral-600">{t("cart.shipping")}</span>
+              <span className="font-medium">{shipping === 0 ? t("common.freeShipping") : `$${shipping.toFixed(2)}`}</span>
             </div>
             <div className="border-t border-neutral-200 pt-3">
               <div className="flex justify-between font-bold text-lg">
-                <span>{t("total")}</span>
+                <span>{t("cart.total")}</span>
                 <span>${total.toFixed(2)}</span>
               </div>
             </div>
@@ -228,19 +215,19 @@ export default async function CheckoutPage({ params, searchParams }: {
 
         {/* Items in Order */}
         <div className="p-6 rounded-lg border border-neutral-200 mb-8">
-          <h3 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("itemsInOrder")}</h3>
+          <h3 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("checkout.orderSummary")}</h3>
           
           <div className="space-y-4">
             {cart.items.map((item, index) => (
               <div key={index} className="flex items-center gap-4">
                 <img
                   src={`https://images.unsplash.com/photo-1592841200221-21e7500398b3?auto=format&fit=crop&w=100&q=80&index=${index}`}
-                  alt={item.name[locale as keyof typeof item.name] || item.name.en || "Product"}
+                  alt={item.name?.fr || item.name?.en || "Produit"}
                   className="h-16 w-16 rounded-md object-cover"
                 />
                 <div className="flex-1">
                   <h4 className="font-medium text-neutral-900">
-                    {item.name[locale as keyof typeof item.name] || item.name.en}
+                    {item.name?.fr || item.name?.en}
                   </h4>
                   <p className="text-sm text-neutral-500">
                     ${item.price.toFixed(2)} × {item.quantity}
@@ -256,24 +243,23 @@ export default async function CheckoutPage({ params, searchParams }: {
 
         {/* Delivery Information */}
         <div className="p-6 rounded-lg border border-neutral-200 mb-8">
-          <h3 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("deliveryInfo")}</h3>
+          <h3 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("checkout.deliveryInfo")}</h3>
           
           <div className="space-y-4">
             <div className="flex items-center gap-3 p-4 rounded-lg bg-neutral-50">
               <Truck className="h-6 w-6 text-recette-600 flex-shrink-0" />
               <div>
-                <p className="font-medium">{t("deliveryMethod")}</p>
-                <p className="text-sm text-neutral-500">{t("inStorePickup")}</p>
+                <p className="font-medium">{t("checkout.deliveryMethod")}</p>
+                <p className="text-sm text-neutral-500">{t("checkout.inStorePickup")}</p>
               </div>
             </div>
             
             <div className="flex items-center gap-3 p-4 rounded-lg bg-neutral-50">
               <MapPin className="h-6 w-6 text-recette-600 flex-shrink-0" />
               <div>
-                <p className="font-medium">{t("pickupLocation")}</p>
+                <p className="font-medium">{t("checkout.pickupLocation")}</p>
                 <p className="text-sm text-neutral-500">
-                  {selectedSupermarket.address[locale as keyof typeof selectedSupermarket.address] || 
-                   selectedSupermarket.address.en}
+                  {selectedSupermarket.address?.fr || selectedSupermarket.address?.en}
                 </p>
               </div>
             </div>
@@ -281,7 +267,7 @@ export default async function CheckoutPage({ params, searchParams }: {
             <div className="flex items-center gap-3 p-4 rounded-lg bg-neutral-50">
               <Home className="h-6 w-6 text-recette-600 flex-shrink-0" />
               <div>
-                <p className="font-medium">{t("deliveryAddress")}</p>
+                <p className="font-medium">{t("checkout.deliveryAddress")}</p>
                 <p className="text-sm text-neutral-500">
                   {mockUser.address.line1}, {mockUser.address.city}
                 </p>
@@ -292,7 +278,7 @@ export default async function CheckoutPage({ params, searchParams }: {
 
         {/* Payment Method */}
         <div className="p-6 rounded-lg border border-neutral-200 mb-8">
-          <h3 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("paymentMethod")}</h3>
+          <h3 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("checkout.paymentMethod")}</h3>
           
           <div className="space-y-3">
             <label className="flex items-center gap-3 p-4 rounded-lg border border-neutral-200 cursor-pointer hover:border-recette-300">
@@ -305,8 +291,8 @@ export default async function CheckoutPage({ params, searchParams }: {
               />
               <CreditCard className="h-6 w-6 text-neutral-400" />
               <div>
-                <p className="font-medium">{t("creditCard")}</p>
-                <p className="text-sm text-neutral-500">{t("securePayment")}</p>
+                <p className="font-medium">{t("checkout.creditCard")}</p>
+                <p className="text-sm text-neutral-500">{t("checkout.securePayment")}</p>
               </div>
               <div className="ml-auto">
                 <ShieldCheck className="h-5 w-5 text-recette-600" />
@@ -317,12 +303,12 @@ export default async function CheckoutPage({ params, searchParams }: {
 
         {/* Checkout Form */}
         <form action={handleCheckout} className="p-6 rounded-lg border border-neutral-200">
-          <h3 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("contactInfo")}</h3>
+          <h3 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("checkout.contactInfo")}</h3>
           
           <div className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-1">
-                {t("email")}
+                {t("login.email")}
               </label>
               <input
                 type="email"
@@ -336,7 +322,7 @@ export default async function CheckoutPage({ params, searchParams }: {
             
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-neutral-700 mb-1">
-                {t("phone")}
+                {t("contact.phone")}
               </label>
               <input
                 type="tel"
@@ -357,7 +343,7 @@ export default async function CheckoutPage({ params, searchParams }: {
                 required
               />
               <label htmlFor="terms" className="text-sm text-neutral-600">
-                {t("acceptTerms")} <Link href="/terms" className="text-recette-600 hover:underline">{t("termsOfService")}</Link>
+                {t("checkout.acceptTerms")} <Link href="/terms" className="text-recette-600 hover:underline">{t("terms.title")}</Link>
               </label>
             </div>
             
@@ -366,7 +352,7 @@ export default async function CheckoutPage({ params, searchParams }: {
               className="w-full bg-recette-600 hover:bg-recette-700 text-white font-semibold py-3 rounded-full transition flex items-center justify-center gap-2"
             >
               <CheckCircle className="h-5 w-5" />
-              {t("completeOrder")}
+              {t("checkout.placeOrder")}
             </button>
           </div>
         </form>
@@ -375,7 +361,7 @@ export default async function CheckoutPage({ params, searchParams }: {
         <div className="mt-6 text-center">
           <p className="text-xs text-neutral-500 flex items-center justify-center gap-2">
             <ShieldCheck className="h-4 w-4" />
-            {t("secureNotice")}
+            {t("login.securePrivate")}
           </p>
         </div>
       </div>

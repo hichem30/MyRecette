@@ -1,6 +1,6 @@
 import { Facebook, Mail, MapPin, Phone } from "lucide-react";
-import { getLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/lib/i18n/navigation";
+import { t } from "@/lib/fr";
+import Link from "next/link";
 import { Logo } from "./Logo";
 import { NewsletterForm } from "./NewsletterForm";
 import { getAllCategories } from "@/lib/data";

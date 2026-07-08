@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
 import { notFound } from "next/navigation";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { 
   ArrowLeft, 
   Clock, 

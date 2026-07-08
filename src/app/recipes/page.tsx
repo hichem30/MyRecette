@@ -1,10 +1,10 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/fr";
 import { use } from "react";
 import Image from "next/image";
 import { useState } from "react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import {
   Search,
   Clock,

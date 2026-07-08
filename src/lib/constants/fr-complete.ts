@@ -82,7 +82,13 @@ export const FR = {
     or: "ou",
     and: "et",
     for: "pour",
-    with: "avec"
+    with: "avec",
+    all: "Tous les",
+    rights: "droits",
+    reserved: "réservés",
+    followed: "suivis",
+    continueShopping: "Continuer vos achats",
+    cart: "Panier"
   },
 
   // ============================================
@@ -187,6 +193,34 @@ export const FR = {
   },
 
   // ============================================
+  // BUNDLES
+  // ============================================
+  bundles: {
+    title: "Lots",
+    subtitle: "Économisez en achetant plusieurs articles ensemble.",
+    save: "Économisez",
+    viewBundle: "Voir le lot",
+    packages: "Lot",
+    description: "Plusieurs articles regroupés à un prix réduit."
+  },
+
+  // ============================================
+  // PROMO CODES
+  // ============================================
+  promoCodes: {
+    title: "Codes Promotionnels",
+    subtitle: "Codes promotionnels actifs",
+    description: "Copiez un code et collez-le lors du paiement pour des économies instantanées.",
+    codes: "Codes",
+    activePromoCodes: "Codes Promotionnels Actifs",
+    copy: "Copier",
+    copied: "Copié!",
+    appliesTo: "S'applique à :",
+    expires: "Expire",
+    code: "Code"
+  },
+
+  // ============================================
   // CART
   // ============================================
   cart: {
@@ -270,6 +304,28 @@ export const FR = {
   },
 
   // ============================================
+  // FEED
+  // ============================================
+  feed: {
+    title: "Votre Fil d'Actualités",
+    subtitle: "Restez informé des derniers produits, coupons et offres des supermarchés que vous suivez.",
+    followed: "suivis",
+    following: "Abonnements"
+  },
+
+  // ============================================
+  // SUPERMARKETS
+  // ============================================
+  supermarkets: {
+    title: "Supermarchés",
+    subtitle: "Trouvez les meilleurs supermarchés locaux pour vos ingrédients",
+    supermarket: "supermarché",
+    supermarkets: "supermarchés",
+    noSupermarkets: "Aucun supermarché trouvé.",
+    discover: "Découvrir les supermarchés"
+  },
+
+  // ============================================
   // ACCOUNT
   // ============================================
   account: {
@@ -286,7 +342,47 @@ export const FR = {
     browseRecipes: "Parcourir les recettes pour ajouter des vidéos",
     viewVideos: "Voir mes vidéos",
     settings: "Paramètres",
-    logout: "Se déconnecter"
+    logout: "Se déconnecter",
+    favorites: {
+      title: "Mes Recettes Favorites",
+      subtitle: "Recettes que vous avez enregistrées dans votre liste de favoris.",
+      loading: "Chargement…",
+      error: "Erreur lors du chargement des favoris",
+      empty: "Vous n'avez pas encore enregistré de recettes en favoris.",
+      browseRecipes: "Parcourir les recettes",
+      favorite: "Favoris",
+      favorites: "favoris"
+    },
+    orders: {
+      title: "Mes Commandes",
+      subtitle: "Historique de toutes vos commandes passées.",
+      loading: "Chargement…",
+      error: "Erreur lors du chargement des commandes",
+      empty: "Vous n'avez pas encore passé de commande.",
+      orderId: "Commande #{id}",
+      date: "Date",
+      status: "Statut",
+      total: "Total",
+      viewDetails: "Voir les détails"
+    },
+    shoppingLists: {
+      title: "Mes Listes de Courses",
+      subtitle: "Gérez vos listes de courses pour un shopping organisé.",
+      loading: "Chargement…",
+      error: "Erreur lors du chargement des listes",
+      empty: "Vous n'avez pas encore créé de liste de courses.",
+      createNew: "Créer une nouvelle liste",
+      edit: "Modifier",
+      delete: "Supprimer"
+    },
+    followedSupermarkets: {
+      title: "Mes Supermarchés Suivis",
+      subtitle: "Supermarchés que vous suivez pour les mises à jour.",
+      loading: "Chargement…",
+      error: "Erreur lors du chargement des supermarchés",
+      empty: "Vous ne suivez aucun supermarché.",
+      browseSupermarkets: "Parcourir les supermarchés"
+    }
   },
 
   // ============================================
@@ -311,6 +407,41 @@ export const FR = {
     send: "Envoyer le message",
     successMessage: "Merci — votre message est en route.",
     errorMessage: "Un problème est survenu — veuillez réessayer ou appelez-nous."
+  },
+
+  // ============================================
+  // PRIVACY
+  // ============================================
+  privacy: {
+    title: "Politique de Confidentialité",
+    description: "Comment nous protégeons vos données et respectons votre vie privée",
+    lastUpdated: "Dernière mise à jour :",
+    introTitle: "Introduction",
+    introParagraph1: "Bienvenue sur My Recette. Nous accordons une grande importance à la protection de vos données personnelles et à votre vie privée.",
+    introParagraph2: "Cette politique de confidentialité explique comment nous collectons, utilisons, divulgons et protégeons vos informations lorsque vous utilisez notre plateforme.",
+    contentsTitle: "Table des Matières",
+    informationTitle: "Informations que nous collectons",
+    informationContent: "Nous collectons des informations personnelles lorsque vous créez un compte, passez une commande, ou contactez notre service client. Cela peut inclure votre nom, adresse email, numéro de téléphone, adresse postale et informations de paiement.",
+    dataTitle: "Utilisation de vos données",
+    dataContent: "Nous utilisons vos informations pour traiter vos commandes, améliorer notre service, personnaliser votre expérience, et communiquer avec vous sur vos commandes et nos offres promotionnelles.",
+    cookiesTitle: "Cookies et technologies similaires",
+    cookiesContent: "Nous utilisons des cookies pour améliorer votre expérience sur notre site. Vous pouvez contrôler l'utilisation des cookies via les paramètres de votre navigateur.",
+    thirdPartyTitle: "Partage avec des tiers",
+    thirdPartyContent: "Nous ne vendons pas vos informations personnelles. Cependant, nous pouvons partager vos données avec des prestataires de services tiers qui nous aident à exploiter notre plateforme et à traiter vos commandes.",
+    securityTitle: "Sécurité de vos données",
+    securityContent: "Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos informations personnelles contre l'accès non autorisé, la modification ou la destruction.",
+    rightsTitle: "Vos droits",
+    rightsContent: "Vous avez le droit d'accéder, de corriger, de supprimer vos données personnelles, et de vous opposer au traitement de vos données. Contactez-nous pour exercer ces droits.",
+    changesTitle: "Modifications de cette politique",
+    changesContent: "Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Nous vous informerons de toute modification importante par email ou via une notification sur notre site.",
+    contactTitle: "Contactez-nous",
+    contactContent: "Si vous avez des questions concernant cette politique de confidentialité ou vos données personnelles, veuillez nous contacter.",
+    supermarketTitle: "Responsabilités des supermarchés",
+    supermarketContent: "Chaque supermarché partenaire est responsable de ses propres pratiques de confidentialité concernant les données collectées directement auprès de vous.",
+    questionsTitle: "Questions ou préoccupations",
+    questionsContent: "Si vous avez des questions ou des préoccupations concernant le traitement de vos données personnelles, n'hésitez pas à nous contacter.",
+    contactUs: "Contactez-nous",
+    backToTop: "Retour en haut"
   },
 
   // ============================================
@@ -353,12 +484,12 @@ export const FR = {
     readyCtaJoin: "Rejoignez gratuitement",
     readyCtaShop: "Explorer les Recettes",
     readyCtaContact: "Découvrir les Supermarchés",
-    milestone1999: "Fondation de la plateforme culinaire - 1999",
-    milestone2005: "Développement du premier système de gestion - 2005",
-    milestone2012: "Lancement de l'application mobile - 2012",
-    milestone2018: "Acquisition d'un marché local - 2018",
-    milestone2023: "Expansion des opérations mondiales - 2023",
-    milestoneToday: "Renforcement de la communauté culinaire - Aujourd'hui"
+    milestone2020: "Lancement de la plateforme My Recette - 2020",
+    milestone2021: "Premières collaborations avec les supermarchés locaux - 2021",
+    milestone2022: "Intégration du système de recettes intelligentes - 2022",
+    milestone2023: "Expansion à travers la France - 2023",
+    milestone2024: "Lancement de la version mobile optimisée - 2024",
+    milestoneToday: "Renforcement continu de la communauté culinaire - Aujourd'hui"
   },
 
   // ============================================

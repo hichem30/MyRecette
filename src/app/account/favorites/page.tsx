@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import Link from "next/link";
 import { Heart, Clock, Users, Flame } from "lucide-react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
@@ -11,9 +11,9 @@ import type { Recipe } from "@/lib/types";
 const mockFavorites: Recipe[] = [
   {
     id: "r-1",
-    title: { en: "Spaghetti Bolognese", es: "Espaguetis a la boloñesa" },
+    title: { fr: "Spaghetti Bolognese" },
     slug: "spaghetti-bolognese",
-    description: { en: "A classic Italian pasta dish with rich meat sauce", es: "Un clásico plato italiano de pasta con rica salsa de carne" },
+    description: { fr: "Un classique plat italien de pâtes avec une riche sauce à la viande" },
     author_id: "user-1",
     prep_time_minutes: 15,
     cook_time_minutes: 45,
@@ -38,9 +38,9 @@ const mockFavorites: Recipe[] = [
   },
   {
     id: "r-2",
-    title: { en: "Chicken Stir Fry", es: "Salteado de pollo" },
+    title: { fr: "Poulet sauté aux légumes" },
     slug: "chicken-stir-fry",
-    description: { en: "Quick and easy chicken stir fry with vegetables", es: "Salteado de pollo rápido y fácil con verduras" },
+    description: { fr: "Poulet sauté rapide et facile avec des légumes" },
     author_id: "user-2",
     prep_time_minutes: 10,
     cook_time_minutes: 15,
@@ -66,55 +66,55 @@ const mockFavorites: Recipe[] = [
 ];
 
 // Helper to format time
-function formatTime(minutes: number | null | undefined, lang: "en" | "es"): string {
+function formatTime(minutes: number | null | undefined): string {
   if (!minutes) return "";
-  if (minutes < 60) return `${minutes} ${lang === "en" ? "min" : "min"}`;
+  if (minutes < 60) return `${minutes} min`;
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  return mins > 0 ? `${hours}${lang === "en" ? "h" : "h"} ${mins}${lang === "en" ? "min" : "min"}` : `${hours}${lang === "en" ? "h" : "h"}`;
+  return mins > 0 ? `${hours}h ${mins}min` : `${hours}h`;
 }
 
-// Helper to get difficulty label
-function getDifficultyLabel(difficulty: string | null | undefined, lang: "en" | "es"): string {
-  const labels: Record<string, { en: string; es: string }> = {
-    easy: { en: "Easy", es: "Fácil" },
-    medium: { en: "Medium", es: "Media" },
-    hard: { en: "Hard", es: "Difícil" },
-    expert: { en: "Expert", es: "Experto" },
+// Helper to get difficulty label - French only
+function getDifficultyLabel(difficulty: string | null | undefined): string {
+  const labels: Record<string, string> = {
+    easy: "Facile",
+    medium: "Moyenne",
+    hard: "Difficile",
+    expert: "Experte",
   };
-  return labels[difficulty || ""]?.[lang] || difficulty || "";
+  return labels[difficulty || ""] || difficulty || "";
 }
 
-// Helper to get meal type label
-function getMealTypeLabel(mealType: string | null | undefined, lang: "en" | "es"): string {
-  const labels: Record<string, { en: string; es: string }> = {
-    breakfast: { en: "Breakfast", es: "Desayuno" },
-    lunch: { en: "Lunch", es: "Almuerzo" },
-    dinner: { en: "Dinner", es: "Cena" },
-    dessert: { en: "Dessert", es: "Postre" },
-    snack: { en: "Snack", es: "Merienda" },
-    appetizer: { en: "Appetizer", es: "Entrante" },
-    drink: { en: "Drink", es: "Bebida" },
+// Helper to get meal type label - French only
+function getMealTypeLabel(mealType: string | null | undefined): string {
+  const labels: Record<string, string> = {
+    breakfast: "Petit-déjeuner",
+    lunch: "Déjeuner",
+    dinner: "Dîner",
+    dessert: "Dessert",
+    snack: "Collation",
+    appetizer: "Entrée",
+    drink: "Boisson",
   };
-  return labels[mealType || ""]?.[lang] || mealType || "";
+  return labels[mealType || ""] || mealType || "";
 }
 
 // Recipe card component
-function RecipeCard({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" }) {
+function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (
     <div className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white transition-shadow hover:shadow-md">
-      <Link href={`/${lang}/recipes/${recipe.slug}`} className="block">
+      <Link href={`/recipes/${recipe.slug}`} className="block">
         {recipe.image_url ? (
           <div className="relative aspect-video overflow-hidden">
             <img
               src={recipe.image_url}
-              alt={recipe.title[lang] || recipe.title.en || "Recipe"}
+              alt={recipe.title?.fr || recipe.title?.en || "Recette"}
               className="w-full h-full object-cover"
             />
             <div className="absolute top-3 left-3">
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/90 backdrop-blur-sm text-xs font-medium text-neutral-700">
                 <Heart className="h-3 w-3 fill-red-500 text-red-500" />
-                {lang === "en" ? "Favorite" : "Favorito"}
+                Favoris
               </span>
             </div>
           </div>
@@ -125,15 +125,15 @@ function RecipeCard({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" }) {
         )}
         <div className="p-4">
           <h3 className="font-semibold text-neutral-900 group-hover:text-recette-700 line-clamp-1">
-            {recipe.title[lang] || recipe.title.en}
+            {recipe.title?.fr || recipe.title?.en}
           </h3>
           <p className="text-sm text-neutral-600 line-clamp-2 mt-1">
-            {recipe.description?.[lang] || recipe.description?.en}
+            {recipe.description?.fr || recipe.description?.en}
           </p>
           <div className="flex items-center gap-3 mt-3 text-xs text-neutral-500">
             <span className="inline-flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
-              {formatTime(recipe.prep_time_minutes, lang)} prep, {formatTime(recipe.cook_time_minutes, lang)} cook
+              {formatTime(recipe.prep_time_minutes)} prép, {formatTime(recipe.cook_time_minutes)} cuisson
             </span>
             <span className="inline-flex items-center gap-1">
               <Users className="h-3.5 w-3.5" />
@@ -141,7 +141,7 @@ function RecipeCard({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" }) {
             </span>
             <span className="inline-flex items-center gap-1">
               <Flame className="h-3.5 w-3.5" />
-              {getDifficultyLabel(recipe.difficulty, lang)}
+              {getDifficultyLabel(recipe.difficulty)}
             </span>
           </div>
           <div className="flex items-center justify-between mt-3">
@@ -154,7 +154,7 @@ function RecipeCard({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" }) {
               </span>
             </div>
             <span className="text-xs text-neutral-500">
-              {recipe.favorite_count?.toLocaleString() || "0"} {lang === "en" ? "favorites" : "favoritos"}
+              {recipe.favorite_count?.toLocaleString() || "0"} favoris
             </span>
           </div>
         </div>
@@ -164,8 +164,7 @@ function RecipeCard({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" }) {
 }
 
 export default function AccountFavorites() {
-  const t = useTranslations("account");
-  const locale = useLocale() as "en" | "es";
+  const t = useTranslations("account.favorites");
   const [favorites, setFavorites] = useState<Recipe[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -241,49 +240,45 @@ export default function AccountFavorites() {
     return () => {
       cancelled = true;
     };
-  }, [locale]);
+  }, []);
 
   return (
     <div>
       <h1 className="font-serif text-2xl font-bold">
-        {locale === "en" ? "My Favorite Recipes" : "Mis Recetas Favoritas"}
+        {t("title")}
       </h1>
       <p className="mt-1 text-sm text-neutral-500">
-        {locale === "en"
-          ? "Recipes you've saved to your favorites list."
-          : "Recetas que has guardado en tu lista de favoritas."}
+        {t("subtitle")}
       </p>
       
       <div className="mt-5">
         {loading ? (
           <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 py-16 text-center text-sm text-neutral-400">
-            {locale === "en" ? "Loading…" : "Cargando…"}
+            {t("loading")}
           </div>
         ) : favorites === null ? (
           <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 py-16 text-center text-sm text-neutral-400">
-            {locale === "en" ? "Error loading favorites" : "Error al cargar favoritas"}
+            {t("error")}
           </div>
         ) : favorites.length === 0 ? (
           <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 py-16 text-center">
             <div className="flex flex-col items-center gap-4">
               <Heart className="h-12 w-12 text-neutral-300" />
               <p className="text-sm text-neutral-500">
-                {locale === "en"
-                  ? "You haven't favorited any recipes yet."
-                  : "Aún no has guardado ninguna receta en favoritas."}
+                {t("empty")}
               </p>
               <Link
-                href={`/${locale}/recipes`}
+                href="/recipes"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white hover:bg-recette-700 text-sm font-medium transition-colors"
               >
-                {locale === "en" ? "Browse Recipes" : "Explorar Recetas"}
+                {t("browseRecipes")}
               </Link>
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {favorites.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} lang={locale} />
+              <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
           </div>
         )}

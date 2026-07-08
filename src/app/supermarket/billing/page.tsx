@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
 import { Calendar, CheckCircle, Clock, CreditCard, Crown, Euro, RotateCcw, XCircle } from "lucide-react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 interface Subscription {

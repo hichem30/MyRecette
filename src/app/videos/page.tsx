@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/lib/i18n/navigation";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
+import Link from "next/link";
 import { Search, PlayCircle, Clock, Eye, Heart, MessageCircle, Share2, Filter, SortDesc, Grid3X3, List } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type { RecipeVideo, VideoPlatform } from "@/lib/types";
@@ -167,21 +168,16 @@ async function getAllVideos(): Promise<RecipeVideo[]> {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "videos" });
-  
+export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: t("title"),
-    description: t("description"),
+    title: t("videos.title"),
+    description: t("videos.description"),
   };
 }
 
 export default async function VideosPage({ 
-  params, 
   searchParams 
 }: { 
-  params: Promise<{ locale: string }>; 
   searchParams: Promise<{ 
     q?: string; 
     platform?: VideoPlatform; 
@@ -189,12 +185,9 @@ export default async function VideosPage({
     recipe?: string; 
   }> 
 }) {
-  const { locale } = await params;
   const { q, platform: platformFilter, sort, recipe } = await searchParams;
   
-  setRequestLocale(locale);
-  const t = await getTranslations("videos");
-  const tC = await getTranslations("common");
+  // In single language mode, no locale handling needed
 
   // Fetch all videos
   let videos = await getAllVideos();
@@ -255,9 +248,9 @@ export default async function VideosPage({
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <PlayCircle className="h-8 w-8 text-recette-600" />
-          <h1 className="font-serif text-3xl font-bold text-neutral-900">{t("title")}</h1>
+          <h1 className="font-serif text-3xl font-bold text-neutral-900">{t("videos.title")}</h1>
         </div>
-        <p className="text-neutral-600">{t("subtitle")}</p>
+        <p className="text-neutral-600">{t("videos.subtitle")}</p>
       </div>
 
       {/* Filters and Search */}
@@ -269,7 +262,7 @@ export default async function VideosPage({
             <input
               type="text"
               name="q"
-              placeholder={t("searchPlaceholder")}
+              placeholder={t("videos.searchPlaceholder")}
               defaultValue={q || ''}
               className="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-recette-500 focus:border-recette-500 transition-colors"
             />
@@ -412,7 +405,7 @@ export default async function VideosPage({
                       {video.platform}
                     </span>
                     <SocialShare
-                      url={`https://myrecette.com/${locale}/videos/${video.id}`}
+                      url={`https://myrecette.com/videos/${video.id}`}
                       title={displayTitle}
                       description={video.description?.en}
                       imageUrl={video.thumbnail_url || undefined}
@@ -437,11 +430,11 @@ export default async function VideosPage({
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-neutral-100 mb-4">
             <PlayCircle className="h-8 w-8 text-neutral-500" />
           </div>
-          <h3 className="font-semibold text-neutral-900">{t("noResults")}</h3>
+          <h3 className="font-semibold text-neutral-900">{t("videos.noResults")}</h3>
           <p className="text-neutral-600 mt-1">
             {q 
               ? tC("noResults")
-              : t("noVideosYet")
+              : t("videos.noVideosYet")
             }
           </p>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/fr";
 import Link from "next/link";
 import { ShoppingBag, Plus, Trash2, Edit2, CheckSquare, Square, MoreVertical } from "lucide-react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";

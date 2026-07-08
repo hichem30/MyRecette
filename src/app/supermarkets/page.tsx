@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { setRequestLocale, t } from "@/lib/fr";
 import { ShoppingBag, Search, TrendingUp } from "lucide-react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { getAllSupermarkets } from "@/lib/data";
-import { locales } from "@/lib/i18n/config";
 import SupermarketCard from "@/components/SupermarketCard";
 import type { SupermarketProfile } from "@/lib/types";
 

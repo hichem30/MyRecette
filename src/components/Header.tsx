@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown, Heart, LayoutDashboard, LogOut, Menu, Package, PlayCircle, Plus, Rss, Search, ShoppingCart, Store, User, X } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import { useEffect, useRef, useState } from "react";
 import { Logo } from "./Logo";
 import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";

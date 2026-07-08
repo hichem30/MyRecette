@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { t } from "@/lib/fr";
+import { getProductName } from "@/lib/products/service";
 import { ChevronRight, Clock, FlaskConical, Heart, MapPin, ShoppingCart, Star, Users, XCircle, CheckCircle } from "lucide-react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { getAllProducts, getProductBySlug } from "@/lib/data";
 import { formatPrice, isDiscountWindowActive } from "@/lib/utils";
-import { locales } from "@/lib/i18n/config";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCTAs } from "@/components/ProductCTAs";
 import { ProductShare } from "@/components/ProductShare";
@@ -19,9 +19,9 @@ import type { Product, Recipe, Ingredient, SupermarketIngredientAvailability } f
 const mockRecipesUsingProduct: Recipe[] = [
   {
     id: "r-1",
-    title: { en: "Spaghetti Bolognese", es: "Espaguetis a la boloñesa" },
+    title: { fr: "Spaghetti Bolognese" },
     slug: "spaghetti-bolognese",
-    description: { en: "A classic Italian pasta dish with rich meat sauce", es: "Un clásico plato italiano de pasta con rica salsa de carne" },
+    description: { fr: "Un classique plat italien de pâtes avec une riche sauce à la viande" },
     author_id: "user-1",
     prep_time_minutes: 15,
     cook_time_minutes: 45,
@@ -40,9 +40,9 @@ const mockRecipesUsingProduct: Recipe[] = [
   },
   {
     id: "r-2",
-    title: { en: "Tomato Basil Soup", es: "Sopa de tomate y albahaca" },
+    title: { fr: "Soupe Tomate-Basilic" },
     slug: "tomato-basil-soup",
-    description: { en: "Creamy tomato soup with fresh basil", es: "Sopa de tomate cremosa con albahaca fresca" },
+    description: { fr: "Une soupe rafraîchissante à base de tomates et de basilic frais" },
     author_id: "user-2",
     prep_time_minutes: 10,
     cook_time_minutes: 30,
@@ -62,38 +62,38 @@ const mockRecipesUsingProduct: Recipe[] = [
 ];
 
 const mockIngredients: Ingredient[] = [
-  { id: "i-tomato", canonical_name: "tomato", display_name: { en: "Tomato", es: "Tomate" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  { id: "i-onion", canonical_name: "onion", display_name: { en: "Onion", es: "Cebolla" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  { id: "i-garlic", canonical_name: "garlic", display_name: { en: "Garlic", es: "Ajo" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-tomato", canonical_name: "tomato", display_name: { fr: "Tomate" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-onion", canonical_name: "onion", display_name: { fr: "Oignon" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-garlic", canonical_name: "garlic", display_name: { fr: "Ail" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
 ];
 
 const mockAvailability: SupermarketIngredientAvailability[] = [
   {
     supermarket_id: "sm-1",
-    supermarket_name: { en: "FreshMart Supermarket", es: "Supermercado FreshMart" },
+    supermarket_name: { fr: "Supermarché FreshMart" },
     location_geometry: null,
     distance_meters: 1200,
     ingredient_count: 5,
     total_price: 12.49,
     available_ingredients: [
-      { ingredient: "Tomato", price: 2.99, in_stock: true },
-      { ingredient: "Onion", price: 0.99, in_stock: true },
-      { ingredient: "Garlic", price: 1.49, in_stock: true },
+      { ingredient: "Tomate", price: 2.99, in_stock: true },
+      { ingredient: "Oignon", price: 0.99, in_stock: true },
+      { ingredient: "Ail", price: 1.49, in_stock: true },
     ],
     missing_ingredients: [],
   },
   {
     supermarket_id: "sm-2",
-    supermarket_name: { en: "GreenGrocer Market", es: "Mercado GreenGrocer" },
+    supermarket_name: { fr: "Marché GreenGrocer" },
     location_geometry: null,
     distance_meters: 2500,
     ingredient_count: 2,
     total_price: 8.25,
     available_ingredients: [
-      { ingredient: "Tomato", price: 3.25, in_stock: true },
-      { ingredient: "Onion", price: 1.00, in_stock: true },
+      { ingredient: "Tomate", price: 3.25, in_stock: true },
+      { ingredient: "Oignon", price: 1.00, in_stock: true },
     ],
-    missing_ingredients: [{ ingredient: "Garlic" }],
+    missing_ingredients: [{ ingredient: "Ail" }],
   },
 ];
 
@@ -136,20 +136,20 @@ function StarRating({ rating, count }: { rating: number | null; count?: number }
 }
 
 // Recipe Card for product page
-function RecipeCardForProduct({ recipe, lang }: { recipe: Recipe; lang: "en" | "es" }) {
+function RecipeCardForProduct({ recipe }: { recipe: Recipe }) {
   return (
     <div className="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white transition-shadow hover:shadow-md">
-      <Link href={`/${lang}/recipes/${recipe.slug}`} className="block">
+      <Link href={`/fr/${recipe.slug}`} className="block">
         {recipe.image_url ? (
-          <Image src={recipe.image_url} alt={recipe.title[lang] || recipe.title.en || "Recipe"} width={400} height={250} className="w-full h-40 object-cover" />
+          <Image src={recipe.image_url} alt={recipe.title?.fr || "Recette"} width={400} height={250} className="w-full h-40 object-cover" />
         ) : (
           <div className="w-full h-40 bg-gradient-to-br from-recette-100 to-recette-200 flex items-center justify-center">
             <Users className="h-8 w-8 text-recette-400" />
           </div>
         )}
         <div className="p-4">
-          <h3 className="font-semibold text-neutral-900 group-hover:text-recette-700 line-clamp-1">{recipe.title[lang] || recipe.title.en}</h3>
-          <p className="text-sm text-neutral-600 line-clamp-2 mt-1">{recipe.description?.[lang] || recipe.description?.en}</p>
+          <h3 className="font-semibold text-neutral-900 group-hover:text-recette-700 line-clamp-1">{recipe.title?.fr}</h3>
+          <p className="text-sm text-neutral-600 line-clamp-2 mt-1">{recipe.description?.fr}</p>
           <div className="flex items-center gap-3 mt-3 text-xs text-neutral-500">
             <span><Clock className="h-3.5 w-3.5 inline" /> {formatTime(recipe.prep_time_minutes)} prep, {formatTime(recipe.cook_time_minutes)} cook</span>
             <span><Users className="h-3.5 w-3.5 inline" /> Serves {recipe.servings || 1}</span>
@@ -165,12 +165,11 @@ function RecipeCardForProduct({ recipe, lang }: { recipe: Recipe; lang: "en" | "
 }
 
 // Ingredient matching info for product
-function IngredientMatchingInfo({ product, ingredients, lang }: { product: Product; ingredients: Ingredient[]; lang: "en" | "es" }) {
+function IngredientMatchingInfo({ product, ingredients }: { product: Product; ingredients: Ingredient[] }) {
+  const productName = product.name?.fr || product.name?.en || "";
   const matchingIngredients = ingredients.filter(ing =>
-    product.name[lang]?.toLowerCase().includes(ing.canonical_name.toLowerCase()) ||
-    product.name.en?.toLowerCase().includes(ing.canonical_name.toLowerCase()) ||
-    ing.canonical_name.toLowerCase().includes(product.name[lang]?.toLowerCase() || "") ||
-    ing.canonical_name.toLowerCase().includes(product.name.en?.toLowerCase() || "")
+    productName.toLowerCase().includes(ing.canonical_name.toLowerCase()) ||
+    ing.canonical_name.toLowerCase().includes(productName.toLowerCase())
   );
 
   if (matchingIngredients.length === 0) return null;
@@ -185,7 +184,7 @@ function IngredientMatchingInfo({ product, ingredients, lang }: { product: Produ
         {matchingIngredients.map((ingredient) => (
           <span key={ingredient.id} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-sm font-medium">
             <CheckCircle className="h-4 w-4" />
-            {ingredient.display_name[lang] || ingredient.display_name.en || ingredient.canonical_name}
+            {ingredient.display_name?.fr || ingredient.canonical_name}
           </span>
         ))}
       </div>
@@ -195,7 +194,7 @@ function IngredientMatchingInfo({ product, ingredients, lang }: { product: Produ
 }
 
 // Supermarket availability panel
-function SupermarketAvailabilityPanel({ availability, lang }: { availability: SupermarketIngredientAvailability[]; lang: "en" | "es" }) {
+function SupermarketAvailabilityPanel({ availability }: { availability: SupermarketIngredientAvailability[] }) {
   if (!availability || availability.length === 0) return null;
 
   return (
@@ -215,7 +214,7 @@ function SupermarketAvailabilityPanel({ availability, lang }: { availability: Su
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <MapPin className="h-5 w-5 text-recette-600" />
-                    <h4 className="font-semibold text-neutral-900">{supermarket.supermarket_name[lang] || supermarket.supermarket_name.en}</h4>
+                    <h4 className="font-semibold text-neutral-900">{supermarket.supermarket_name?.fr}</h4>
                   </div>
                   <div className="mt-3">
                     <div className="flex justify-between text-xs text-neutral-500 mb-1">
@@ -248,7 +247,7 @@ function SupermarketAvailabilityPanel({ availability, lang }: { availability: Su
                   </div>
                 </div>
                 <div className="flex-shrink-0">
-                  <Link href={`/${lang}/supermarkets/${supermarket.supermarket_id}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-recette-50 text-recette-700 hover:bg-recette-100 text-sm font-medium transition-colors">
+                  <Link href={`/fr/${supermarket.supermarket_id}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-recette-50 text-recette-700 hover:bg-recette-100 text-sm font-medium transition-colors">
                     <ShoppingCart className="h-4 w-4" /> View Store
                   </Link>
                 </div>
@@ -266,39 +265,36 @@ export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const all = await getAllProducts();
-  const params: Array<{ locale: string; slug: string }> = [];
-  for (const l of locales) for (const p of all) params.push({ locale: l, slug: p.slug });
-  return params;
+  return all.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { locale, slug } = await params;
+  const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return {};
-  const lang = locale as "en" | "es";
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sucre-et-sel.sucre-et-sel.workers.dev";
-  const url = `${base}/${lang}/products/${product.slug}`;
-  const name = product.name[lang] || product.name.en || "Product";
-  const description = product.description[lang]?.slice(0, 160) || name;
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://shop.redbarnmarket.workers.dev";
+  const url = `${base}/${product.slug}`;
+  const name = product.name?.fr || product.name?.en || "";
+  const description = product.description?.fr?.slice(0, 160) || name;
   return {
-    title: `${name} — sucre et sel`,
+    title: `${name} — My Recette`,
     description,
     alternates: { canonical: url },
     openGraph: {
-      title: `${name} — sucre et sel`,
+      title: `${name} — My Recette`,
       description,
       url,
-      siteName: "sucre et sel",
+      siteName: "My Recette",
       type: "website",
       images: product.image_url ? [{ url: product.image_url, alt: name }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
-      title: `${name} — sucre et sel`,
+      title: `${name} — My Recette`,
       description,
       images: product.image_url ? [product.image_url] : undefined,
     },
@@ -308,14 +304,11 @@ export async function generateMetadata({
 export default async function ProductDetail({
   params,
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { locale, slug } = await params;
-  setRequestLocale(locale);
+  const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) notFound();
-  const t = await getTranslations("common");
-  const lang = locale as "en" | "es";
 
   // Get user session
   const sb = await getSupabaseServerClient();
@@ -333,8 +326,8 @@ export default async function ProductDetail({
   const supermarketAvailability = mockAvailability;
 
   // JSON-LD structured data for SEO rich results
-  const name = product.name[lang] || product.name.en || "Product";
-  const description = product.description[lang] || product.description?.en || "";
+  const name = product.name?.fr || product.name?.en || "Product";
+  const description = product.description?.fr || product.description?.en || "";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -345,7 +338,7 @@ export default async function ProductDetail({
     brand: { "@type": "Brand", name: "sucre et sel" },
     offers: {
       "@type": "Offer",
-      url: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://sucre-et-sel.sucre-et-sel.workers.dev"}/${lang}/products/${product.slug}`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://sucre-et-sel.sucre-et-sel.workers.dev"}/fr/${product.slug}`,
       priceCurrency: "USD",
       price: product.price.toFixed(2),
       availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
@@ -361,15 +354,15 @@ export default async function ProductDetail({
       />
       <div className="container-page pt-6">
         <nav className="flex items-center gap-1 text-xs text-neutral-500">
-          <Link href={`/${lang}/`} className="hover:text-recette-700">
-            {lang === "en" ? "Home" : "Inicio"}
+          <Link href={`/fr/`} className="hover:text-recette-700">
+            Accueil
           </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link href={`/${lang}/products`} className="hover:text-recette-700">
-            {lang === "en" ? "Products" : "Productos"}
+          <Link href={`/fr/products`} className="hover:text-recette-700">
+            Produits
           </Link>
           <ChevronRight className="h-3 w-3" />
-          <span className="text-neutral-700">{product.name[lang] || product.name.en || "Product"}</span>
+          <span className="text-neutral-700">{product.name?.fr || "Produit"}</span>
         </nav>
       </div>
 
@@ -395,7 +388,7 @@ export default async function ProductDetail({
                 product.discount_text &&
                 isDiscountWindowActive(product.discount_starts_at, product.discount_ends_at) && (
                   <span className="rounded-md bg-amber-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
-                    {product.discount_text[lang]}
+                    {product.discount_text?.fr}
                   </span>
                 )}
             </div>
@@ -423,7 +416,7 @@ export default async function ProductDetail({
               )}
             </div>
 
-            <p className="mt-4 text-neutral-600">{product.description[lang]}</p>
+            <p className="mt-4 text-neutral-600">{product.description?.fr}</p>
 
             <div className="mt-4 flex items-center gap-3 text-xs text-neutral-500">
               <span
@@ -464,7 +457,7 @@ export default async function ProductDetail({
           <div className="lg:col-span-2">
             {/* Ingredient Matching Information */}
             <div className="bg-white rounded-2xl border border-neutral-200 p-6 md:p-8 mb-8">
-              <IngredientMatchingInfo product={product} ingredients={matchingIngredients} lang={lang} />
+              <IngredientMatchingInfo product={product} ingredients={matchingIngredients} />
             </div>
 
             {/* Recipes Using This Product */}
@@ -476,13 +469,13 @@ export default async function ProductDetail({
                 </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {recipesUsingProduct.slice(0, 6).map((recipe) => (
-                    <RecipeCardForProduct key={recipe.id} recipe={recipe} lang={lang} />
+                    <RecipeCardForProduct key={recipe.id} recipe={recipe} />
                   ))}
                 </div>
                 {recipesUsingProduct.length > 6 && (
                   <div className="mt-6 text-center">
                     <Link
-                      href={`/${lang}/recipes?ingredient=${encodeURIComponent(product.name[lang] || product.name.en || "")}`}
+                      href={`/fr/recipes?ingredient=${encodeURIComponent(product.name?.fr || "")}`}
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-50 text-recette-700 hover:bg-recette-100 font-medium transition-colors"
                     >
                       View All {recipesUsingProduct.length} Recipes
@@ -498,7 +491,7 @@ export default async function ProductDetail({
           <div className="lg:col-span-1">
             {/* Supermarket Availability */}
             <div className="bg-white rounded-2xl border border-neutral-200 p-6 sticky top-24">
-              <SupermarketAvailabilityPanel availability={supermarketAvailability} lang={lang} />
+              <SupermarketAvailabilityPanel availability={supermarketAvailability} />
             </div>
 
             {/* Product Stats */}
@@ -546,7 +539,7 @@ export default async function ProductDetail({
         <section className="bg-neutral-50 py-12">
           <div className="container-page">
             <h2 className="mb-6 font-serif text-2xl font-bold">
-              {lang === "en" ? "Related Products" : "Productos Relacionados"}
+              {false ? "Related Products" : "Productos Relacionados"}
             </h2>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {related.map((p) => (

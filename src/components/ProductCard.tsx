@@ -2,8 +2,8 @@
 
 import { Heart, ShoppingCart, Truck } from "lucide-react";
 import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/lib/i18n/navigation";
+import { useLocale, useTranslations } from "@/lib/fr";
+import Link from "next/link";
 import { useCart } from "@/lib/cart/CartProvider";
 import type { Product } from "@/lib/types";
 import { formatPrice, isDiscountWindowActive } from "@/lib/utils";

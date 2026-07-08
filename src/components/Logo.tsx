@@ -1,4 +1,4 @@
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 
 export function Logo({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const text = variant === "light" ? "text-white" : "text-barn-700";

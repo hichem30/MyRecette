@@ -1,7 +1,7 @@
 "use client";
 
 import { Send } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import { useState } from "react";
 
 export function ContactForm() {

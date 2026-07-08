@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/lib/i18n/navigation";
+import { useLocale, useTranslations } from "@/lib/fr";
+import Link from "next/link";
 import { PlayCircle, Plus, Eye, Heart, MessageCircle, Share2, Trash2, Edit2, Loader2 } from "lucide-react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { VideoPlayer } from "@/components/VideoPlayer/VideoPlayer";

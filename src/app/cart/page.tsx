@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
 import { notFound } from "next/navigation";
 import { ShoppingCart, ArrowLeft, Trash2, Plus, Minus, MapPin, Store } from "lucide-react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/supabase/user";
 import type { CartItem, Product } from "@/lib/types";
@@ -56,25 +57,19 @@ const mockSupermarkets = [
 export const revalidate = 0;
 export const dynamicParams = true;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "cart" });
+export async function generateMetadata(): Promise<Metadata> {
+  // In single language mode, no locale needed
   
   return {
-    title: t("title"),
-    description: t("description"),
+    title: t("cart.title"),
+    description: t("cart.description"),
   };
 }
 
-export default async function CartPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations("cart");
-  const tC = await getTranslations("common");
+export default async function CartPage() {
+  // In single language mode, no locale needed
+  // Use t("cart.key") and t("common.key") directly
+  const locale = "fr";
   
   // Check if Supabase is configured
   const isConfigured = isSupabaseConfigured();
@@ -98,21 +93,21 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
           <div className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-neutral-100 mb-6">
             <ShoppingCart className="h-10 w-10 text-neutral-400" />
           </div>
-          <h1 className="font-serif text-3xl font-bold text-neutral-900">{t("emptyTitle")}</h1>
-          <p className="mt-2 text-neutral-600">{t("emptyDescription")}</p>
+          <h1 className="font-serif text-3xl font-bold text-neutral-900">{t("cart.emptyTitle")}</h1>
+          <p className="mt-2 text-neutral-600">{t("cart.emptyDescription")}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link
               href="/products"
               className="inline-flex items-center gap-2 rounded-full bg-recette-600 px-6 py-3 text-sm font-semibold text-white hover:bg-recette-700 transition"
             >
               <ArrowLeft className="h-4 w-4" />
-              {tC("continueShopping")}
+              {t("common.continueShopping")}
             </Link>
             <Link
               href="/recipes"
               className="inline-flex items-center gap-2 rounded-full border border-recette-600 px-6 py-3 text-sm font-semibold text-recette-600 hover:bg-recette-50 transition"
             >
-              {t("browseRecipes")}
+              {t("cart.browseRecipes")}
             </Link>
           </div>
         </div>
@@ -128,14 +123,14 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="font-serif text-3xl font-bold text-neutral-900">{t("title")}</h1>
-              <p className="text-sm text-neutral-500">{itemCount} {itemCount === 1 ? t("item") : t("items")}</p>
+              <p className="text-sm text-neutral-500">{itemCount} {itemCount === 1 ? t("cart.item") : t("cart.items")}</p>
             </div>
             <Link
               href="/products"
               className="inline-flex items-center gap-2 text-sm text-recette-600 hover:text-recette-700"
             >
               <ArrowLeft className="h-4 w-4" />
-              {tC("continueShopping")}
+              {t("common.continueShopping")}
             </Link>
           </div>
 
@@ -146,7 +141,7 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
                 <div className="relative">
                   <img
                     src={item.image_url}
-                    alt={item.name[locale as keyof typeof item.name] || item.name.en}
+                    alt={item.name[locale as keyof typeof item.name] }
                     className="h-20 w-20 rounded-md object-cover"
                   />
                   <span className="absolute -top-2 -right-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-recette-600 text-xs font-bold text-white">
@@ -156,10 +151,10 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
                 
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-neutral-900 truncate">
-                    {item.name[locale as keyof typeof item.name] || item.name.en}
+                    {item.name[locale as keyof typeof item.name] }
                   </h3>
                   <p className="text-sm text-neutral-500">
-                    ${item.price.toFixed(2)} {t("each")}
+                    ${item.price.toFixed(2)} {t("cart.each")}
                   </p>
                   
                   {/* Supermarket selector (for sucre et sel) */}
@@ -167,7 +162,7 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
                     <select className="text-xs border border-neutral-300 rounded-md px-2 py-1 bg-white">
                       {mockSupermarkets.map((s) => (
                         <option key={s.id} value={s.id}>
-                          {s.supermarket_name[locale as keyof typeof s.supermarket_name] || s.supermarket_name.en}
+                          {s.supermarket_name[locale as keyof typeof s.supermarket_name] }
                         </option>
                       ))}
                     </select>
@@ -192,7 +187,7 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
                   </div>
                   <button className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1">
                     <Trash2 className="h-3 w-3" />
-                    {t("remove")}
+                    {t("cart.remove")}
                   </button>
                 </div>
               </div>
@@ -204,12 +199,12 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-recette-700 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-recette-800">{t("availabilityTitle")}</p>
+                <p className="font-semibold text-recette-800">{t("cart.availabilityTitle")}</p>
                 <p className="text-sm text-recette-600 mt-1">
-                  {t("availabilityDescription")}
+                  {t("cart.availabilityDescription")}
                 </p>
                 <button className="mt-2 text-sm text-recette-700 font-medium hover:text-recette-800">
-                  {t("checkAvailability")} →
+                  {t("cart.checkAvailability")} →
                 </button>
               </div>
             </div>
@@ -219,20 +214,20 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
         {/* Order Summary */}
         <div className="lg:col-span-1">
           <div className="sticky top-8">
-            <h2 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("orderSummary")}</h2>
+            <h2 className="font-serif text-xl font-bold text-neutral-900 mb-4">{t("cart.orderSummary")}</h2>
             
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-neutral-600">{t("subtotal")}</span>
+                <span className="text-neutral-600">{t("cart.subtotal")}</span>
                 <span className="font-medium">${subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-neutral-600">{t("tax")}</span>
+                <span className="text-neutral-600">{t("cart.tax")}</span>
                 <span className="font-medium">${tax.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-neutral-600">{t("shipping")}</span>
-                <span className="font-medium">{shipping === 0 ? t("free") : `$${shipping.toFixed(2)}`}</span>
+                <span className="text-neutral-600">{t("cart.shipping")}</span>
+                <span className="font-medium">{shipping === 0 ? t("cart.free") : `$${shipping.toFixed(2)}`}</span>
               </div>
               <div className="border-t border-neutral-200 pt-3">
                 <div className="flex justify-between font-bold text-lg">
@@ -264,10 +259,10 @@ export default async function CartPage({ params }: { params: Promise<{ locale: s
                     />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-neutral-900 truncate">
-                        {supermarket.supermarket_name[locale as keyof typeof supermarket.supermarket_name] || supermarket.supermarket_name.en}
+                        {supermarket.supermarket_name[locale as keyof typeof supermarket.supermarket_name] }
                       </p>
                       <p className="text-xs text-neutral-500">
-                        {supermarket.address[locale as keyof typeof supermarket.address] || supermarket.address.en}
+                        {supermarket.address[locale as keyof typeof supermarket.address] }
                       </p>
                     </div>
                     <div className="text-right">

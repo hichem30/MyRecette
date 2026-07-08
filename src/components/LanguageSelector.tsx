@@ -1,7 +1,7 @@
 "use client";
 
 import { Globe } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useLocale } from "@/lib/fr";
 import { useRouter, usePathname } from "@/lib/i18n/navigation";
 import { useTransition } from "react";
 

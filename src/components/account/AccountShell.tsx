@@ -2,7 +2,7 @@
 
 import { Heart, LogOut, ShoppingBag, User, MapPin, Star } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale } from "@/lib/fr";
 import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 

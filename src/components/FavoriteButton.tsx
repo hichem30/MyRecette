@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 

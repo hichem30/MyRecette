@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/lib/i18n/navigation";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
+import Link from "next/link";
 import { ShieldCheck, Eye, Lock, Database, Mail, Cookie, Globe, Calendar, User, Store, ArrowUp } from "lucide-react";
 import { BackToTopButton } from "@/components/BackToTopButton";
 
@@ -11,74 +12,63 @@ const privacySections = [
   {
     id: "information",
     icon: Database,
-    titleKey: "informationTitle",
-    contentKey: "informationContent",
+    titleKey: "privacy.informationTitle",
+    contentKey: "privacy.informationContent",
   },
   {
     id: "data",
     icon: Lock,
-    titleKey: "dataTitle",
-    contentKey: "dataContent",
+    titleKey: "privacy.dataTitle",
+    contentKey: "privacy.dataContent",
   },
   {
     id: "cookies",
     icon: Cookie,
-    titleKey: "cookiesTitle",
-    contentKey: "cookiesContent",
+    titleKey: "privacy.cookiesTitle",
+    contentKey: "privacy.cookiesContent",
   },
   {
     id: "third-party",
     icon: Globe,
-    titleKey: "thirdPartyTitle",
-    contentKey: "thirdPartyContent",
+    titleKey: "privacy.thirdPartyTitle",
+    contentKey: "privacy.thirdPartyContent",
   },
   {
     id: "security",
     icon: ShieldCheck,
-    titleKey: "securityTitle",
-    contentKey: "securityContent",
+    titleKey: "privacy.securityTitle",
+    contentKey: "privacy.securityContent",
   },
   {
     id: "rights",
     icon: User,
-    titleKey: "rightsTitle",
-    contentKey: "rightsContent",
+    titleKey: "privacy.rightsTitle",
+    contentKey: "privacy.rightsContent",
   },
   {
     id: "changes",
     icon: Calendar,
-    titleKey: "changesTitle",
-    contentKey: "changesContent",
+    titleKey: "privacy.changesTitle",
+    contentKey: "privacy.changesContent",
   },
   {
     id: "contact",
     icon: Mail,
-    titleKey: "contactTitle",
-    contentKey: "contactContent",
+    titleKey: "privacy.contactTitle",
+    contentKey: "privacy.contactContent",
   },
 ];
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "privacy" });
-  
+export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: t("title"),
-    description: t("description"),
+    title: t("privacy.title"),
+    description: t("privacy.description"),
   };
 }
 
-export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations("privacy");
-  const tC = await getTranslations("common");
+export default async function PrivacyPage() {
 
-  const lastUpdated = new Date().toLocaleDateString(locale === 'en' ? 'en-US' : locale, {
+  const lastUpdated = new Date().toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -92,24 +82,24 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
           <div className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-recette-100 mb-6">
             <ShieldCheck className="h-10 w-10 text-recette-700" />
           </div>
-          <h1 className="font-serif text-4xl font-bold text-neutral-900">{t("title")}</h1>
+          <h1 className="font-serif text-4xl font-bold text-neutral-900">{t("privacy.title")}</h1>
           <p className="mt-2 text-neutral-500">
-            {t("lastUpdated")} {lastUpdated}
+            {t("privacy.lastUpdated")} {lastUpdated}
           </p>
         </div>
 
         {/* Introduction */}
         <section className="mb-12">
-          <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-4">{t("introTitle")}</h2>
+          <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-4">{t("privacy.introTitle")}</h2>
           <div className="prose prose-neutral max-w-none text-neutral-600 space-y-4">
-            <p>{t("introParagraph1")}</p>
-            <p>{t("introParagraph2")}</p>
+            <p>{t("privacy.introParagraph1")}</p>
+            <p>{t("privacy.introParagraph2")}</p>
           </div>
         </section>
 
         {/* Table of Contents */}
         <section className="mb-12">
-          <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-4">{t("contentsTitle")}</h2>
+          <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-4">{t("privacy.contentsTitle")}</h2>
           <div className="not-prose">
             <ol className="space-y-2">
               {privacySections.map((section, index) => (
@@ -159,9 +149,9 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
               <Store className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-3">{t("supermarketTitle")}</h2>
+              <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-3">{t("privacy.supermarketTitle")}</h2>
               <div className="prose prose-neutral max-w-none text-neutral-600 space-y-4">
-                <p>{t("supermarketContent")}</p>
+                <p>{t("privacy.supermarketContent")}</p>
               </div>
             </div>
           </div>
@@ -169,16 +159,16 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
 
         {/* Contact Section */}
         <section className="mt-12 p-6 rounded-lg border border-neutral-200">
-          <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-4">{t("questionsTitle")}</h2>
+          <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-4">{t("privacy.questionsTitle")}</h2>
           <div className="prose prose-neutral max-w-none text-neutral-600 space-y-4">
-            <p>{t("questionsContent")}</p>
+            <p>{t("privacy.questionsContent")}</p>
             <div className="not-prose">
               <Link
                 href="/contact"
                 className="inline-flex items-center gap-2 bg-recette-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-recette-700 transition"
               >
                 <Mail className="h-4 w-4" />
-                {t("contactUs")}
+                {t("privacy.contactUs")}
               </Link>
             </div>
           </div>
@@ -186,7 +176,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
 
         {/* Back to top */}
         <div className="mt-12 text-center">
-          <BackToTopButton text={t("backToTop")} />
+          <BackToTopButton text={t("privacy.backToTop")} />
         </div>
       </div>
     </div>

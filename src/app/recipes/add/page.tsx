@@ -16,7 +16,7 @@ import {
   Trash2,
   Loader2,
 } from "lucide-react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Ingredient, NewRecipeFormData, RecipeIngredientSuggestion } from "@/lib/types";
 

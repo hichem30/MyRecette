@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/fr";
 import { ArrowRight, Grid3x3 } from "lucide-react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import type { Category } from "@/lib/types";
 
 export function CategoryCard({ category, productCount }: { category: Category; productCount: number }) {

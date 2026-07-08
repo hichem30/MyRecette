@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/lib/i18n/navigation";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
+import Link from "next/link";
 import { FileText, User, ShoppingCart, CreditCard, Store, ShieldCheck, Database, Calendar, Mail } from "lucide-react";
 
 export const revalidate = 3600;

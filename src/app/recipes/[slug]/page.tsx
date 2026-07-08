@@ -1,7 +1,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/fr";
 import { use } from "react";
 import Image from "next/image";
 import { useState } from "react";
@@ -21,7 +21,7 @@ import {
   ChefHat,
   Flame,
 } from "lucide-react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import type { Recipe, RecipeComment, Ingredient, SupermarketIngredientAvailability, RecipeVideo } from "@/lib/types";
 import { VideoList } from "@/components/VideoList/VideoList";

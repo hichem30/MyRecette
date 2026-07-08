@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart, Minus, Plus, ShoppingCart } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/fr";
 import { useState } from "react";
 import { useCart } from "@/lib/cart/CartProvider";
 import type { Product } from "@/lib/types";

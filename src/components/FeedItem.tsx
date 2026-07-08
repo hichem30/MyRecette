@@ -16,13 +16,13 @@ const feedIcons: Record<string, React.ReactNode> = {
 };
 
 // Feed item label mapping
-const feedLabels: Record<string, { en: string; es: string }> = {
-  new_product: { en: "New Product", es: "Producto Nuevo" },
-  price_change: { en: "Price Change", es: "Cambio de Precio" },
-  sale_start: { en: "Sale Started", es: "Oferta Iniciada" },
-  coupon_added: { en: "New Coupon", es: "Nuevo Cupón" },
-  bundle_added: { en: "New Bundle", es: "Nuevo Paquete" },
-  job_posted: { en: "Job Posted", es: "Empleo Publicado" },
+const feedLabels: Record<string, string> = {
+  new_product: "Nouveau Produit",
+  price_change: "Changement de Prix",
+  sale_start: "Promotion Débutée",
+  coupon_added: "Nouveau Coupon",
+  bundle_added: "Nouveau Lot",
+  job_posted: "Emploi Publié",
 };
 
 // Format date relative to now
@@ -37,23 +37,23 @@ function formatRelativeDate(dateString: string): string {
   const days = Math.floor(hours / 24);
   
   if (days > 7) {
-    return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    return date.toLocaleDateString('fr-FR', { month: "short", day: "numeric" });
   } else if (days > 0) {
-    return `${days}d ago`;
+    return `il y a ${days}j`;
   } else if (hours > 0) {
-    return `${hours}h ago`;
+    return `il y a ${hours}h`;
   } else if (minutes > 0) {
-    return `${minutes}m ago`;
+    return `il y a ${minutes}min`;
   } else {
-    return "just now";
+    return "à l'instant";
   }
 }
 
 // Feed item component
-export default function FeedItem({ item, lang }: { item: SupermarketFeedItem; lang: "en" | "es" }) {
+export default function FeedItem({ item }: { item: SupermarketFeedItem }) {
   const type = item.type;
   const icon = feedIcons[type] || <ShoppingBag className="h-5 w-5" />;
-  const label = feedLabels[type]?.[lang] || type;
+  const label = feedLabels[type] || type;
   
   return (
     <article className="flex gap-4 p-4 rounded-lg border border-neutral-200 hover:shadow-sm transition-shadow">

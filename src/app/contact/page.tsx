@@ -1,4 +1,5 @@
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
 import { Clock, Mail, MapPin, Phone, Facebook } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { ContactForm } from "@/components/ContactForm";
@@ -8,39 +9,31 @@ import { BulkQuoteForm } from "@/components/BulkQuoteForm";
 // time, no worker invocation per visit.
 export const dynamic = "force-static";
 
-export default async function ContactPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations("contact");
-
+export default async function ContactPage() {
   return (
     <>
-      <PageHeader title={t("title")} subtitle={t("subtitle")} eyebrow={locale === "en" ? "CONTACT" : "CONTACTO"} />
+      <PageHeader title={t("contact.title")} subtitle={t("contact.subtitle")} eyebrow={t("nav.contact")} />
 
       <section className="container-page py-12">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.5fr]">
           <div>
-            <h2 className="font-serif text-2xl font-bold text-neutral-900">{t("weAreHere")}</h2>
-            <p className="mt-2 text-sm text-neutral-600">{t("weAreHereBody")}</p>
+            <h2 className="font-serif text-2xl font-bold text-neutral-900">{t("contact.weAreHere")}</h2>
+            <p className="mt-2 text-sm text-neutral-600">{t("contact.weAreHereBody")}</p>
 
             <ul className="mt-6 space-y-5 text-sm">
-              <ContactRow Icon={Phone} label={t("phone")}>
+              <ContactRow Icon={Phone} label={t("contact.phone")}>
                 <a href="tel:+19182458112" className="hover:text-barn-700">+1 (918) 245‑8112</a>
               </ContactRow>
-              <ContactRow Icon={Mail} label={t("email")}>
+              <ContactRow Icon={Mail} label={t("contact.email")}>
                 <a href="mailto:redbarnwesternmarket@gmail.com" className="break-all hover:text-barn-700">
                   redbarnwesternmarket@gmail.com
                 </a>
               </ContactRow>
-              <ContactRow Icon={MapPin} label={t("address")}>308 S. 209th W. Ave., Sand Springs, OK</ContactRow>
-              <ContactRow Icon={Clock} label={t("hoursLabel")}>{t("hours")}</ContactRow>
+              <ContactRow Icon={MapPin} label={t("contact.address")}>308 S. 209th W. Ave., Sand Springs, OK</ContactRow>
+              <ContactRow Icon={Clock} label={t("contact.hoursLabel")}>{t("contact.hours")}</ContactRow>
             </ul>
 
-            <p className="mt-8 text-xs font-bold tracking-widest text-neutral-500">{t("followUs")}</p>
+            <p className="mt-8 text-xs font-bold tracking-widest text-neutral-500">{t("contact.followUs")}</p>
             <div className="mt-2 flex gap-2">
               <a
                 href="https://facebook.com/redbarnwesternmarket"

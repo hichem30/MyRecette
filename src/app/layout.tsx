@@ -1,45 +1,31 @@
-import { NextIntlClientProvider, hasLocale } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
-import { notFound } from "next/navigation";
 import { Inter, Playfair_Display } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CartDrawer } from "@/components/CartDrawer";
 import { PWARegister } from "@/components/PWARegister";
 import { CartProvider } from "@/lib/cart/CartProvider";
-import { locales, isRtl } from "@/lib/i18n/config";
+import { isRtl } from "@/lib/i18n/config";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif", display: "swap" });
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
-
-export default async function LocaleLayout({
+export default async function RootLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
-  if (!hasLocale(locales, locale)) notFound();
-  setRequestLocale(locale);
-  const messages = await getMessages();
+  const locale = "fr";
 
   return (
-    <html lang={locale} dir={isRtl(locale) ? 'rtl' : 'ltr'} className={`${inter.variable} ${playfair.variable}`}>
-      <body className="font-sans bg-white text-neutral-900 antialiased" dir={isRtl(locale) ? 'rtl' : 'ltr'}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <CartProvider>
-            <Header />
-            <main className="min-h-[calc(100vh-4rem)]">{children}</main>
-            <Footer />
-            <CartDrawer />
-            <PWARegister />
-          </CartProvider>
-        </NextIntlClientProvider>
+    <html lang={locale} dir={isRtl ? 'rtl' : 'ltr'} className={`${inter.variable} ${playfair.variable}`}>
+      <body className="font-sans bg-white text-neutral-900 antialiased" dir={isRtl ? 'rtl' : 'ltr'}>
+        <CartProvider>
+          <Header />
+          <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+          <Footer />
+          <CartDrawer />
+          <PWARegister />
+        </CartProvider>
       </body>
     </html>
   );

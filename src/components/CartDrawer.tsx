@@ -2,9 +2,9 @@
 
 import { Heart, Minus, Plus, ShoppingBag, Tag, Trash2, X } from "lucide-react";
 import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/fr";
 import { useState } from "react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { useCart } from "@/lib/cart/CartProvider";
 import { formatPrice } from "@/lib/utils";
 

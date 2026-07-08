@@ -1,9 +1,18 @@
 // Simple French translation helper - replaces next-intl
 import { FR, getText as getFrenchText } from './constants/fr-complete';
 
-// Type-safe get translation function
-export function t(key: string): string {
-  return getFrenchText(key);
+// Type-safe get translation function with interpolation support
+export function t(key: string, params?: Record<string, string | number>): string {
+  let text = getFrenchText(key);
+  
+  // Replace placeholders like {email}, {count}, etc.
+  if (params) {
+    for (const [placeholder, value] of Object.entries(params)) {
+      text = text.replace(new RegExp(`\${'{'}${placeholder}\${'}'}`, 'g'), String(value));
+    }
+  }
+  
+  return text;
 }
 
 // Replace setRequestLocale - no op in single language mode
@@ -25,8 +34,30 @@ export function getTranslations(namespace: string) {
   };
 }
 
+// Client-side hook to replace useLocale from next-intl
+export function useLocale(): string {
+  // In single language mode, always return 'fr'
+  return 'fr';
+}
+
+// Client-side hook to replace useTranslations from next-intl
+// Returns a function for backward compatibility with next-intl
+export function useTranslations(namespace?: string): (key: string) => string {
+  // Return a function that prepends the namespace
+  return (key: string) => {
+    const fullKey = namespace ? `${namespace}.${key}` : key;
+    return t(fullKey);
+  };
+}
+
 // Replace unstable_setRequestLocale
 export const unstable_setRequestLocale = setRequestLocale;
+
+// Server-side function to replace getLocale from next-intl/server
+export function getLocale(): string {
+  // In single language mode, always return 'fr'
+  return 'fr';
+}
 
 // Direct access to French constants
 export { FR };

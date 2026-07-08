@@ -1,4 +1,5 @@
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
 import { PageHeader } from "@/components/PageHeader";
 import { WishlistGrid } from "@/components/WishlistGrid";
 import { getAllProducts } from "@/lib/data";

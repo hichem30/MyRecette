@@ -1,7 +1,7 @@
 "use client";
 
 import { Clock, DollarSign, FileText, Phone, Truck, User } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import { useState } from "react";
 
 export function BulkQuoteForm() {

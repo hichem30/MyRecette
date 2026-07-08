@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import { Star } from "lucide-react";
 
 interface RatingInputProps {

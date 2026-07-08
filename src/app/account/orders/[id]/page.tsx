@@ -3,8 +3,8 @@
 import { ArrowLeft, CheckCircle2, MapPin, Package, Truck } from "lucide-react";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { useLocale } from "next-intl";
-import { Link } from "@/lib/i18n/navigation";
+import { useLocale } from "@/lib/fr";
+import Link from "next/link";
 import type { Order, OrderStatus } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 

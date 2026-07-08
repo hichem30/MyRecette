@@ -3,7 +3,8 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
-import { setRequestLocale, getTranslations } from "next-intl/server";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
 import {
   Home,
   MapPin,
@@ -20,7 +21,7 @@ import {
   Plus,
   Share2,
 } from "lucide-react";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import {
   getSupermarketById,
   getSupermarketProducts,

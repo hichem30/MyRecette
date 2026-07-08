@@ -27,7 +27,7 @@ export function CheckoutSuccessRecorder({
   locale,
 }: {
   sessionId: string;
-  locale: "en" | "es";
+  locale?: "en" | "es" | "fr";
 }) {
   const [state, setState] = useState<
     | { status: "idle" }
@@ -86,7 +86,7 @@ export function CheckoutSuccessRecorder({
     return (
       <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-600">
         <Loader2 className="h-4 w-4 animate-spin" />
-        {locale === "en" ? "Saving your order…" : "Guardando tu pedido…"}
+        {(locale === "en" ? "Saving your order…" : locale === "es" ? "Guardando tu pedido…" : "Enregistrement de votre commande…")}
       </div>
     );
   }
@@ -100,9 +100,13 @@ export function CheckoutSuccessRecorder({
           ? wasDup
             ? "Order saved (already on file)."
             : "Order saved to your account."
-          : wasDup
-            ? "Pedido guardado (ya en archivo)."
-            : "Pedido guardado en tu cuenta."}
+          : locale === "es"
+            ? wasDup
+              ? "Pedido guardado (ya en archivo)."
+              : "Pedido guardado en tu cuenta."
+            : wasDup
+              ? "Commande enregistrée (déjà en fichier)."
+              : "Commande enregistrée dans votre compte."}
       </div>
     );
   }
@@ -115,12 +119,16 @@ export function CheckoutSuccessRecorder({
           <p className="font-bold">
             {locale === "en"
               ? "Your payment went through, but we couldn't save the order automatically."
-              : "Tu pago fue procesado, pero no pudimos guardar el pedido automáticamente."}
+              : locale === "es"
+                ? "Tu pago fue procesado, pero no pudimos guardar el pedido automáticamente."
+                : "Votre paiement a été traite, mais nous n'avons pas pu enregistrer la commande automatiquement."}
           </p>
           <p className="mt-1">
             {locale === "en"
               ? "Please contact support with the reference below — we'll sort it right away. Your charge is safe."
-              : "Por favor contáctanos con la referencia siguiente; lo resolveremos enseguida. Tu cargo está seguro."}
+              : locale === "es"
+                ? "Por favor contáctanos con la referencia siguiente; lo resolveremos enseguida. Tu cargo está seguro."
+                : "Veuillez contacter le support avec la référence ci-dessous - nous allons régler cela immédiatement. Votre paiement est sécurisé."}
           </p>
           <dl className="mt-3 space-y-1 font-mono text-[11px]">
             <div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import { Search, X, Loader2 } from "lucide-react";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 

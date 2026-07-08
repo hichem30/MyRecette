@@ -2,7 +2,7 @@
 
 import { Check, Copy, Facebook, Mail, MessageCircle, Share2, Twitter } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale } from "@/lib/fr";
 import type { Product } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 

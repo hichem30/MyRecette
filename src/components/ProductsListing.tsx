@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "@/lib/fr";
 import { Filter, Search } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import type { Category, Product } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 

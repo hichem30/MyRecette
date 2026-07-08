@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { ChevronRight, Clock, Package2, Percent, Tag } from "lucide-react";
-import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Link } from "@/lib/i18n/navigation";
+import { setRequestLocale } from "@/lib/fr";
+import { t } from "@/lib/fr";
+import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
 import { PromoCodeCopy } from "@/components/PromoCodeCopy";
 import { getDeals, getAllProducts } from "@/lib/data";
@@ -53,16 +54,7 @@ async function getActivePromoCodes(): Promise<PromoCode[]> {
   );
 }
 
-export default async function DealsPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const lang = locale as "en" | "es";
-  const t = await getTranslations("deals");
-  const tb = await getTranslations("bundles");
+export default async function DealsPage() {
   const [deals, bundles, products, promos] = await Promise.all([
     getDeals(),
     getActiveBundles(),
@@ -93,14 +85,14 @@ export default async function DealsPage({
         </div>
         <div className="container-page py-16">
           <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-500/95 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
-            <Clock className="h-3 w-3" /> {t("limitedTime")}
+            <Clock className="h-3 w-3" /> {t("deals.limitedTime")}
           </span>
-          <h1 className="mt-4 font-serif text-4xl font-bold sm:text-6xl">{t("title")}</h1>
-          <p className="mt-3 max-w-xl text-white/80">{t("subtitle")}</p>
+          <h1 className="mt-4 font-serif text-4xl font-bold sm:text-6xl">{t("deals.title")}</h1>
+          <p className="mt-3 max-w-xl text-white/80">{t("deals.subtitle")}</p>
           {maxOff > 0 && (
             <div className="mt-5 inline-flex items-center gap-2 rounded-md bg-emerald-600/90 px-4 py-2 text-sm font-semibold">
               <span className="text-amber-300">%</span>
-              {t("saveUpTo", { percent: maxOff })}
+              {t("deals.saveUpTo", { percent: maxOff })}
             </div>
           )}
         </div>
@@ -114,18 +106,16 @@ export default async function DealsPage({
           <div className="mb-6 flex items-end justify-between gap-4">
             <div>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-rose-700">
-                <Percent className="h-3.5 w-3.5" /> {lang === "en" ? "Sale" : "Oferta"}
+                <Percent className="h-3.5 w-3.5" /> {t("deals.off")}
               </span>
               <h2 className="mt-2 font-serif text-2xl font-bold">
-                {lang === "en" ? "Discounted Products" : "Productos con Descuento"}
+                {t("deals.title")}
               </h2>
               <p className="text-xs text-neutral-500">
-                {lang === "en"
-                  ? "Individual items currently on sale."
-                  : "Artículos individuales actualmente en oferta."}
+                {t("deals.subtitle")}
               </p>
             </div>
-            <p className="text-xs text-neutral-500">{t("updatedDaily")}</p>
+            <p className="text-xs text-neutral-500">{t("deals.updatedDaily")}</p>
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {deals.map((p) => (
@@ -145,13 +135,11 @@ export default async function DealsPage({
               <div>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-amber-800">
                   <Package2 className="h-3.5 w-3.5" />{" "}
-                  {lang === "en" ? "Bundles" : "Paquetes"}
+                  {t("bundles.title")}
                 </span>
-                <h2 className="mt-2 font-serif text-2xl font-bold">{tb("title")}</h2>
+                <h2 className="mt-2 font-serif text-2xl font-bold">{t("bundles.title")}</h2>
                 <p className="text-xs text-neutral-500">
-                  {lang === "en"
-                    ? "Multiple items packaged together at a discounted price."
-                    : "Varios artículos empaquetados juntos a precio reducido."}
+                  {t("bundles.description")}
                 </p>
               </div>
             </div>
@@ -172,7 +160,7 @@ export default async function DealsPage({
                       {b.image_url ? (
                         <Image
                           src={b.image_url}
-                          alt={b.name[lang] || b.name.en || "Bundle"}
+                          alt={b.name?.fr || b.name?.en || "Lot"}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           className="object-cover transition group-hover:scale-[1.02]"
@@ -185,16 +173,16 @@ export default async function DealsPage({
                       )}
                       <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-amber-500 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow">
                         <Package2 className="h-3 w-3" />{" "}
-                        {lang === "en" ? "Bundle" : "Paquete"}
+                        {t("bundles.packages")}
                       </span>
                     </div>
                     <div className="flex flex-1 flex-col p-4">
                       <h3 className="font-serif text-lg font-bold leading-snug text-neutral-900 group-hover:text-barn-700">
-                        {b.name[lang] || b.name.en || "Bundle"}
+                        {b.name?.fr || b.name?.en || "Lot"}
                       </h3>
                       {b.description?.en && (
                         <p className="mt-1 line-clamp-2 text-xs text-neutral-600">
-                          {b.description[lang] || b.description.en || ""}
+                          {b.description?.fr || b.description?.en || ""}
                         </p>
                       )}
 
@@ -205,7 +193,7 @@ export default async function DealsPage({
                         </span>{" "}
                         {inBundle.slice(0, 3).map((p, i) => (
                           <span key={p.id}>
-                            {p.name[lang] || p.name.en || "Product"}
+                            {p.name?.fr || p.name?.en || "Produit"}
                             {i < Math.min(2, inBundle.length - 1) ? ", " : ""}
                           </span>
                         ))}
@@ -223,12 +211,12 @@ export default async function DealsPage({
                           </span>
                           {savings > 0 && (
                             <span className="text-[11px] font-medium text-emerald-700">
-                              {tb("save")} {formatPrice(savings)}
+                              {t("deals.save")} {formatPrice(savings)}
                             </span>
                           )}
                         </div>
                         <span className="inline-flex items-center gap-1 text-xs font-semibold text-barn-700">
-                          {lang === "en" ? "View bundle" : "Ver paquete"}
+                          {t("bundles.viewBundle")}
                           <ChevronRight className="h-3.5 w-3.5" />
                         </span>
                       </div>
@@ -251,15 +239,13 @@ export default async function DealsPage({
               <div>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-emerald-800">
                   <Tag className="h-3.5 w-3.5" />{" "}
-                  {lang === "en" ? "Codes" : "Códigos"}
+                  {t("promoCodes.codes")}
                 </span>
                 <h2 className="mt-2 font-serif text-2xl font-bold">
-                  {lang === "en" ? "Active Promo Codes" : "Códigos Promocionales Activos"}
+                  {t("promoCodes.activePromoCodes")}
                 </h2>
                 <p className="text-xs text-neutral-500">
-                  {lang === "en"
-                    ? "Copy a code and paste it at checkout for instant savings."
-                    : "Copia un código y pégalo al pagar para ahorrar al instante."}
+                  {t("promoCodes.description")}
                 </p>
               </div>
             </div>
@@ -280,9 +266,7 @@ export default async function DealsPage({
                 const scopeText =
                   scopeNames.length > 0
                     ? scopeNames.join(", ")
-                    : lang === "en"
-                    ? "All products"
-                    : "Todos los productos";
+                    : t("common.all");
                 const valueLabel =
                   promo.discount_type === "percent"
                     ? `${promo.discount_value}% off`
@@ -303,13 +287,13 @@ export default async function DealsPage({
                     )}
                     <p className="text-xs text-neutral-500">
                       <span className="font-semibold">
-                        {lang === "en" ? "Applies to:" : "Aplica a:"}
+                        {t("promoCodes.appliesTo")}
                       </span>{" "}
                       {scopeText}
                     </p>
                     {promo.ends_at && (
                       <p className="text-xs text-neutral-500">
-                        {lang === "en" ? "Expires" : "Vence"}{" "}
+                        {t("promoCodes.expires")} 
                         {new Date(promo.ends_at).toLocaleDateString()}
                       </p>
                     )}

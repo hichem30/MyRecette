@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale } from "@/lib/fr";
 import { useCart } from "@/lib/cart/CartProvider";
 import { ProductCard } from "./ProductCard";
 import type { Product } from "@/lib/types";

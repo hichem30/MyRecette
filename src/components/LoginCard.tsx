@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import { useState } from "react";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 

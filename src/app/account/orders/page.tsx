@@ -2,8 +2,8 @@
 
 import { ChevronRight, Package } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLocale } from "next-intl";
-import { Link } from "@/lib/i18n/navigation";
+import { useLocale } from "@/lib/fr";
+import Link from "next/link";
 import type { Order, OrderStatus } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 

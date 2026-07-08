@@ -1,8 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "@/lib/fr";
 import { useCart } from "@/lib/cart/CartProvider";
-import { Link } from "@/lib/i18n/navigation";
+import Link from "next/link";
 import { ProductCard } from "./ProductCard";
 import type { Product } from "@/lib/types";
 
