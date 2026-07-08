@@ -15,6 +15,7 @@ import {
   Tag,
   Grid3X3,
   List,
+  Users,
 } from "lucide-react";
 import type { Recipe } from "@/lib/types";
 
@@ -291,7 +292,7 @@ function RecipeCard({
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm text-barn-600 font-medium capitalize">{recipe.cuisine}</span>
-            <StarRating rating={recipe.rating} count={recipe.rating_count} />
+            <StarRating rating={recipe.rating ?? null} count={recipe.rating_count} />
           </div>
           <h3 className="font-semibold text-neutral-900 mb-1">{title}</h3>
           <p className="text-sm text-neutral-600 line-clamp-2">{description}</p>
@@ -372,7 +373,7 @@ function RecipeCard({
                 <Clock className="h-3.5 w-3.5" />
                 {formatTime(totalTime)}
               </span>
-              <StarRating rating={recipe.rating} count={recipe.rating_count} />
+              <StarRating rating={recipe.rating ?? null} count={recipe.rating_count} />
             </div>
           </div>
         </div>

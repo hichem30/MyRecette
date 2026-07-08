@@ -499,7 +499,7 @@ function IngredientList({ ingredients, lang }: { ingredients: Recipe["ingredient
 }
 
 // Instructions list
-function Instructions({ instructions, lang }: { instructions: Recipe["instructions"]; lang: "en" | "es" }) {
+function Instructions({ instructions, lang }: { instructions: Recipe["instructions"]; lang: "en" | "es" | "fr" | "ar" }) {
   if (!instructions || instructions.length === 0) return null;
   
   return (
@@ -896,7 +896,7 @@ function AvailabilityPanel({
   lang,
 }: {
   availability: SupermarketIngredientAvailability[];
-  lang: "en" | "es";
+  lang: "en" | "es" | "fr" | "ar";
 }) {
   if (!availability || availability.length === 0) return null;
   

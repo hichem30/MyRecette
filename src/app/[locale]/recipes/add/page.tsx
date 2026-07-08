@@ -22,26 +22,26 @@ import type { Ingredient, NewRecipeFormData, RecipeIngredientSuggestion } from "
 
 // Mock ingredients for local development
 const mockIngredients: Ingredient[] = [
-  { id: "i-1", canonical_name: "chicken", display_name: { en: "Chicken", es: "Pollo" }, category: "protein", is_common: true, is_basic: true },
-  { id: "i-2", canonical_name: "beef", display_name: { en: "Beef", es: "Carne de res" }, category: "protein", is_common: true, is_basic: true },
-  { id: "i-3", canonical_name: "pork", display_name: { en: "Pork", es: "Cerdo" }, category: "protein", is_common: true, is_basic: true },
-  { id: "i-4", canonical_name: "fish", display_name: { en: "Fish", es: "Pescado" }, category: "protein", is_common: true, is_basic: true },
-  { id: "i-5", canonical_name: "shrimp", display_name: { en: "Shrimp", es: "Camarones" }, category: "protein", is_common: true, is_basic: true },
-  { id: "i-6", canonical_name: "tomato", display_name: { en: "Tomato", es: "Tomate" }, category: "vegetable", is_common: true, is_basic: true },
-  { id: "i-7", canonical_name: "onion", display_name: { en: "Onion", es: "Cebolla" }, category: "vegetable", is_common: true, is_basic: true },
-  { id: "i-8", canonical_name: "garlic", display_name: { en: "Garlic", es: "Ajo" }, category: "vegetable", is_common: true, is_basic: true },
-  { id: "i-9", canonical_name: "carrot", display_name: { en: "Carrot", es: "Zanahoria" }, category: "vegetable", is_common: true, is_basic: true },
-  { id: "i-10", canonical_name: "potato", display_name: { en: "Potato", es: "Papa" }, category: "vegetable", is_common: true, is_basic: true },
-  { id: "i-11", canonical_name: "spaghetti", display_name: { en: "Spaghetti", es: "Espaguetis" }, category: "grain", is_common: true, is_basic: true },
-  { id: "i-12", canonical_name: "rice", display_name: { en: "Rice", es: "Arroz" }, category: "grain", is_common: true, is_basic: true },
-  { id: "i-13", canonical_name: "flour", display_name: { en: "Flour", es: "Harina" }, category: "grain", is_common: true, is_basic: true },
-  { id: "i-14", canonical_name: "egg", display_name: { en: "Egg", es: "Huevo" }, category: "protein", is_common: true, is_basic: true },
-  { id: "i-15", canonical_name: "milk", display_name: { en: "Milk", es: "Leche" }, category: "dairy", is_common: true, is_basic: true },
-  { id: "i-16", canonical_name: "cheese", display_name: { en: "Cheese", es: "Queso" }, category: "dairy", is_common: true, is_basic: true },
-  { id: "i-17", canonical_name: "butter", display_name: { en: "Butter", es: "Mantequilla" }, category: "dairy", is_common: true, is_basic: true },
-  { id: "i-18", canonical_name: "olive oil", display_name: { en: "Olive Oil", es: "Aceite de oliva" }, category: "oil", is_common: true, is_basic: true },
-  { id: "i-19", canonical_name: "salt", display_name: { en: "Salt", es: "Sal" }, category: "spice", is_common: true, is_basic: true },
-  { id: "i-20", canonical_name: "pepper", display_name: { en: "Pepper", es: "Pimienta" }, category: "spice", is_common: true, is_basic: true },
+  { id: "i-1", canonical_name: "chicken", display_name: { en: "Chicken", es: "Pollo" }, category: "protein", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-2", canonical_name: "beef", display_name: { en: "Beef", es: "Carne de res" }, category: "protein", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-3", canonical_name: "pork", display_name: { en: "Pork", es: "Cerdo" }, category: "protein", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-4", canonical_name: "fish", display_name: { en: "Fish", es: "Pescado" }, category: "protein", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-5", canonical_name: "shrimp", display_name: { en: "Shrimp", es: "Camarones" }, category: "protein", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-6", canonical_name: "tomato", display_name: { en: "Tomato", es: "Tomate" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-7", canonical_name: "onion", display_name: { en: "Onion", es: "Cebolla" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-8", canonical_name: "garlic", display_name: { en: "Garlic", es: "Ajo" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-9", canonical_name: "carrot", display_name: { en: "Carrot", es: "Zanahoria" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-10", canonical_name: "potato", display_name: { en: "Potato", es: "Papa" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-11", canonical_name: "spaghetti", display_name: { en: "Spaghetti", es: "Espaguetis" }, category: "grain", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-12", canonical_name: "rice", display_name: { en: "Rice", es: "Arroz" }, category: "grain", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-13", canonical_name: "flour", display_name: { en: "Flour", es: "Harina" }, category: "grain", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-14", canonical_name: "egg", display_name: { en: "Egg", es: "Huevo" }, category: "protein", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-15", canonical_name: "milk", display_name: { en: "Milk", es: "Leche" }, category: "dairy", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-16", canonical_name: "cheese", display_name: { en: "Cheese", es: "Queso" }, category: "dairy", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-17", canonical_name: "butter", display_name: { en: "Butter", es: "Mantequilla" }, category: "dairy", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-18", canonical_name: "olive oil", display_name: { en: "Olive Oil", es: "Aceite de oliva" }, category: "oil", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-19", canonical_name: "salt", display_name: { en: "Salt", es: "Sal" }, category: "spice", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "i-20", canonical_name: "pepper", display_name: { en: "Pepper", es: "Pimienta" }, category: "spice", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
 ];
 
 const cuisines = [
@@ -128,7 +128,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
     instructions: [],
     prep_time_minutes: null,
     cook_time_minutes: null,
-    servings: null,
+    servings: undefined,
     difficulty: null,
     image_url: "",
     video_url: "",
@@ -221,7 +221,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
       (i) => i.ingredient_id === selectedIngredient
     );
     
-    if (existingIndex !== -1 && formData.ingredients) {
+    if (existingIndex !== -1 && existingIndex !== undefined && formData.ingredients) {
       // Update existing ingredient
       const updated = [...formData.ingredients];
       updated[existingIndex] = {
@@ -350,15 +350,15 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
       errors.push("At least one ingredient is required");
     }
     
-    if (formData.prep_time_minutes !== null && formData.prep_time_minutes < 0) {
+    if (formData.prep_time_minutes !== null && formData.prep_time_minutes !== undefined && formData.prep_time_minutes < 0) {
       errors.push("Prep time cannot be negative");
     }
     
-    if (formData.cook_time_minutes !== null && formData.cook_time_minutes < 0) {
+    if (formData.cook_time_minutes !== null && formData.cook_time_minutes !== undefined && formData.cook_time_minutes < 0) {
       errors.push("Cook time cannot be negative");
     }
     
-    if (formData.servings !== null && formData.servings <= 0) {
+    if (formData.servings !== null && formData.servings !== undefined && formData.servings <= 0) {
       errors.push("Servings must be greater than 0");
     }
     
@@ -1085,7 +1085,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                 
                 <input
                   type="url"
-                  value={formData.image_url}
+                  value={formData.image_url || ""}
                   onChange={(e) => handleImageUrlChange(e.target.value)}
                   placeholder="https://example.com/image.jpg"
                   className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
@@ -1126,7 +1126,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                 
                 <input
                   type="url"
-                  value={formData.video_url}
+                  value={formData.video_url || ""}
                   onChange={(e) => handleChange("video_url", e.target.value)}
                   placeholder="https://www.youtube.com/watch?v=..."
                   className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"

@@ -399,7 +399,7 @@ export default function RecipesSearchPage() {
   }
 
   // Format duration
-  function formatDuration(prep?: number, cook?: number) {
+  function formatDuration(prep: number | null | undefined, cook: number | null | undefined) {
     const parts: string[] = [];
     if (prep) parts.push(`${prep}min prep`);
     if (cook) parts.push(`${cook}min cook`);
