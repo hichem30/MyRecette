@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/lib/i18n/navigation";
-import { ShieldCheck, Eye, Lock, Database, Mail, Cookie, Globe, Calendar, User, Store } from "lucide-react";
+import { ShieldCheck, Eye, Lock, Database, Mail, Cookie, Globe, Calendar, User, Store, ArrowUp } from "lucide-react";
+import { BackToTopButton } from "@/components/BackToTopButton";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -185,12 +186,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
 
         {/* Back to top */}
         <div className="mt-12 text-center">
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="inline-flex items-center gap-2 text-sm text-recette-600 hover:text-recette-700"
-          >
-            ↑ {t("backToTop")}
-          </button>
+          <BackToTopButton text={t("backToTop")} />
         </div>
       </div>
     </div>
