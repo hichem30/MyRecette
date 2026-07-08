@@ -121,7 +121,7 @@ export default async function CheckoutPage({ params, searchParams }: {
           <Link href="/cart" className="hover:text-recette-600">
             {tC("cart")}
           </Link>
-          <span>&gt;</span>
+          <span>{'>'}</span>
           <span className="text-neutral-900">{t("title")}</span>
         </nav>
 
