@@ -168,7 +168,7 @@ export default async function BundleDetailPage({
                         <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-md bg-neutral-100">
                           <Image
                             src={p.image_url}
-                            alt={p.name[lang]}
+                            alt={p.name[lang] || p.name.en || "Product"}
                             fill
                             sizes="56px"
                             className="object-cover"
@@ -176,7 +176,7 @@ export default async function BundleDetailPage({
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="line-clamp-1 font-semibold text-neutral-900">
-                            {p.name[lang]}
+                            {p.name[lang] || p.name.en || "Product"}
                           </div>
                           <div className="line-clamp-1 text-xs text-neutral-500">
                             {p.category_slug.replace(/-/g, " ")}
