@@ -1,6 +1,6 @@
 "use client";
 
-import { notFound, revalidatePath } from "next/navigation";
+import { notFound } from "next/navigation";
 import Image from "next/image";
 import { useState } from "react";
 import { setRequestLocale, getTranslations } from "next-intl/server";
@@ -223,7 +223,7 @@ function SocialLinks({ supermarket }: { supermarket: SupermarketProfile }) {
 // About section
 function AboutSection({ supermarket }: { supermarket: SupermarketProfile }) {
   const address = getAddressString(supermarket);
-  const hours = formatOpeningHours(supermarket.opening_hours);
+  const hours = formatOpeningHours(supermarket.opening_hours || undefined);
   const phone = formatPhone(supermarket.phone);
   
   return (

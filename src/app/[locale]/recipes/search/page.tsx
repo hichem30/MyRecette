@@ -1,8 +1,10 @@
 "use client";
 
 import {
+  AlertCircle,
   ArrowLeft,
   ArrowRight,
+  CheckCircle,
   Clock,
   Flame,
   Heart,
@@ -12,6 +14,7 @@ import {
   Tag,
   Users,
   X,
+  XCircle,
   MapPin,
   ShoppingCart,
   TrendingUp,

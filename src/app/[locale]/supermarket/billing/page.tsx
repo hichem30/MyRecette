@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { setRequestLocale, getTranslations } from "next-intl/server";
-import { Calendar, CheckCircle, Clock, CreditCard, Euro, RotateCcw, XCircle } from "lucide-react";
+import { Calendar, CheckCircle, Clock, CreditCard, Crown, Euro, RotateCcw, XCircle } from "lucide-react";
 import { Link } from "@/lib/i18n/navigation";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
@@ -28,7 +28,7 @@ interface SupermarketProfile {
 }
 
 async function getSupermarketProfile(supermarketId: string, userId: string): Promise<SupermarketProfile | null> {
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
 
   if (!isSupabaseConfigured()) {
     // Mock data for local development
@@ -217,7 +217,7 @@ function SubscriptionCard({ supermarket, lang }: { supermarket: SupermarketProfi
                "My Subscription"}
             </h2>
             <p className="text-recette-100 text-sm mt-1">
-              {supermarket.supermarket_name[lang] || supermarket.supermarket_name.en}
+              {supermarket.supermarket_name[lang as keyof typeof supermarket.supermarket_name] || supermarket.supermarket_name.en}
             </p>
           </div>
           <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-${statusInfo.color}-500/20 text-${statusInfo.color}-100`}>
@@ -445,7 +445,7 @@ export default async function SupermarketBillingPage({
   const lang = locale as "en" | "es" | "fr" | "ar";
 
   // Get user session
-  const sb = getSupabaseServerClient();
+  const sb = await getSupabaseServerClient();
   const {
     data: { user },
   } = await sb.auth.getUser();
@@ -464,7 +464,7 @@ export default async function SupermarketBillingPage({
 
   // Get subscription history
   const subscriptions: any[] = [];
-  if (supermarket.stripe_customer_id && isSupabaseConfigured()) {
+  if (supermarket.stripe_customer_id && (await isSupabaseConfigured())) {
     const { data, error } = await sb
       .from("subscriptions")
       .select("*")
