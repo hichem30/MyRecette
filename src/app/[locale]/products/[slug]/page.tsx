@@ -333,17 +333,19 @@ export default async function ProductDetail({
   const supermarketAvailability = mockAvailability;
 
   // JSON-LD structured data for SEO rich results
+  const name = product.name[lang] || product.name.en || "Product";
+  const description = product.description[lang] || product.description?.en || "";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: product.name[lang],
-    description: product.description[lang],
+    name,
+    description,
     image: product.image_url,
     sku: product.id,
-    brand: { "@type": "Brand", name: "My Recette" },
+    brand: { "@type": "Brand", name: "sucre et sel" },
     offers: {
       "@type": "Offer",
-      url: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://myrecette.com"}/${lang}/products/${product.slug}`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://sucre-et-sel.sucre-et-sel.workers.dev"}/${lang}/products/${product.slug}`,
       priceCurrency: "USD",
       price: product.price.toFixed(2),
       availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
@@ -367,7 +369,7 @@ export default async function ProductDetail({
             {lang === "en" ? "Products" : "Productos"}
           </Link>
           <ChevronRight className="h-3 w-3" />
-          <span className="text-neutral-700">{product.name[lang]}</span>
+          <span className="text-neutral-700">{product.name[lang] || product.name.en || "Product"}</span>
         </nav>
       </div>
 
@@ -377,7 +379,7 @@ export default async function ProductDetail({
           <div className="relative aspect-square overflow-hidden rounded-2xl bg-neutral-100">
             <Image
               src={product.image_url}
-              alt={product.name[lang]}
+              alt={name}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
@@ -405,7 +407,7 @@ export default async function ProductDetail({
               {product.category_slug.replace(/-/g, " ")}
             </p>
             <h1 className="mt-2 font-serif text-3xl font-bold text-neutral-900 sm:text-4xl">
-              {product.name[lang]}
+              {name}
             </h1>
             <div className="mt-4 flex items-baseline gap-3">
               <span className="text-3xl font-bold text-neutral-900">{formatPrice(product.price)}</span>
