@@ -23,7 +23,7 @@
   "kv_namespaces": [
     {
       "binding": "KV",
-      "id": "cd343c6079314cbeb63b9c3f5624ad46"
+      "id": "6e354523fe00457a8bd157cdcdc01dc8"
     }
   ]
   // OpenNext ISR cache via Cloudflare KV is currently DISABLED. The free
