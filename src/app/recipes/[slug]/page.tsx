@@ -327,7 +327,6 @@ const mockIngredients: Ingredient[] = [
   { id: "i-tomato", canonical_name: "tomato", display_name: { en: "Tomato", es: "Tomate" }, category: "vegetable", is_common: true, is_basic: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
 ];
 
-export const revalidate = 60;
 export const dynamicParams = true;
 
 // Helper to extract YouTube video ID from URL

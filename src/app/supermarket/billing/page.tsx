@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { setRequestLocale } from "@/lib/fr";
-import { t } from "@/lib/fr";
+import { setRequestLocale, t } from "@/lib/fr";
 import { Calendar, CheckCircle, Clock, CreditCard, Crown, Euro, RotateCcw, XCircle } from "lucide-react";
 import Link from "next/link";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
@@ -109,15 +108,15 @@ async function cancelSubscription(supermarketId: string, userId: string) {
   return { success: true };
 }
 
-async function reactivateSubscription(supermarketId: string, userId: string, lang: string) {
+async function reactivateSubscription(supermarketId: string, userId: string) {
   if (!isSupabaseConfigured()) {
     // Mock for local development
     console.log("[MOCK] Reactivating subscription for supermarket:", supermarketId);
-    return { success: true, checkoutUrl: `/${lang}/supermarket/subscribe` };
+    return { success: true, checkoutUrl: "/fr/supermarket/subscribe" };
   }
 
   // In a real implementation, this would create a new checkout session
-  return { success: true, checkoutUrl: `/${lang}/supermarket/subscribe` };
+  return { success: true, checkoutUrl: "/fr/supermarket/subscribe" };
 }
 
 export async function generateMetadata({
@@ -125,40 +124,36 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; supermarket: string }>;
 }): Promise<Metadata> {
-  const { locale, supermarket: supermarketId } = await params;
-  const t = await getTranslations({ locale, namespace: "subscriptions" });
+  const { supermarket: supermarketId } = await params;
 
   return {
-    title: t("billingTitle"),
-    description: t("billingDescription"),
+    title: "Facturation - My Recette",
+    description: "Gérez votre abonnement et votre facturation pour votre supermarché",
     openGraph: {
-      title: t("billingTitle"),
-      description: t("billingDescription"),
-      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://myrecette.com"}/${locale}/supermarket/billing`,
+      title: "Facturation - My Recette",
+      description: "Gérez votre abonnement et votre facturation pour votre supermarché",
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://myrecette.com"}/fr/supermarket/billing`,
       type: "website",
     },
   };
 }
 
-function formatDate(dateString: string | undefined, lang: string): string {
+function formatDate(dateString: string | undefined): string {
   if (!dateString) return "-";
-  return new Date(dateString).toLocaleDateString(lang === "fr" ? "fr-FR" : lang === "es" ? "es-ES" : lang === "ar" ? "ar-SA" : "en-US");
+  return new Date(dateString).toLocaleDateString("fr-FR");
 }
 
-function formatDateTime(dateString: string | undefined, lang: string): string {
+function formatDateTime(dateString: string | undefined): string {
   if (!dateString) return "-";
-  return new Date(dateString).toLocaleString(lang === "fr" ? "fr-FR" : lang === "es" ? "es-ES" : lang === "ar" ? "ar-SA" : "en-US");
+  return new Date(dateString).toLocaleString("fr-FR");
 }
 
-function formatCurrency(amount: number | undefined, currency: string | undefined, lang: string): string {
+function formatCurrency(amount: number | undefined, currency: string | undefined): string {
   if (amount === undefined) return "-";
-  return new Intl.NumberFormat(
-    lang === "fr" ? "fr-FR" : lang === "es" ? "es-ES" : lang === "ar" ? "ar-SA" : "en-US",
-    { style: "currency", currency: currency || "EUR" }
-  ).format(amount);
+  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: currency || "EUR" }).format(amount);
 }
 
-function SubscriptionCard({ supermarket, lang }: { supermarket: SupermarketProfile; lang: string }) {
+function SubscriptionCard({ supermarket }: { supermarket: SupermarketProfile }) {
   const subscription = supermarket.subscription;
   const status = subscription?.status || supermarket.subscription_status || "inactive";
 
@@ -167,31 +162,31 @@ function SubscriptionCard({ supermarket, lang }: { supermarket: SupermarketProfi
     switch (status) {
       case "active":
         return {
-          label: lang === "es" ? "Activa" : lang === "fr" ? "Active" : lang === "ar" ? "نشط" : "Active",
+          label: "Active",
           color: "emerald",
           icon: <CheckCircle className="h-5 w-5" />,
         };
       case "trialing":
         return {
-          label: lang === "es" ? "En prueba" : lang === "fr" ? "Essai" : lang === "ar" ? "تجريبي" : "Trialing",
+          label: "Essai",
           color: "amber",
           icon: <Clock className="h-5 w-5" />,
         };
       case "past_due":
         return {
-          label: lang === "es" ? "Vencida" : lang === "fr" ? "En retard" : lang === "ar" ? "متأخرة" : "Past Due",
+          label: "En retard",
           color: "red",
           icon: <XCircle className="h-5 w-5" />,
         };
       case "canceled":
         return {
-          label: lang === "es" ? "Cancelada" : lang === "fr" ? "Annulée" : lang === "ar" ? "ملغية" : "Canceled",
+          label: "Annulée",
           color: "neutral",
           icon: <XCircle className="h-5 w-5" />,
         };
       case "incomplete":
         return {
-          label: lang === "es" ? "Incompleta" : lang === "fr" ? "Incomplète" : lang === "ar" ? "غير مكتملة" : "Incomplete",
+          label: "Incomplète",
           color: "amber",
           icon: <Clock className="h-5 w-5" />,
         };
@@ -212,13 +207,10 @@ function SubscriptionCard({ supermarket, lang }: { supermarket: SupermarketProfi
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-semibold text-white">
-              {lang === "es" ? "Mi Suscripción" :
-               lang === "fr" ? "Mon Abonnement" :
-               lang === "ar" ? "اشتراكي" :
-               "My Subscription"}
+              Mon Abonnement
             </h2>
             <p className="text-recette-100 text-sm mt-1">
-              {supermarket.supermarket_name[lang as keyof typeof supermarket.supermarket_name] || supermarket.supermarket_name.en}
+              {supermarket.supermarket_name.fr || supermarket.supermarket_name.en}
             </p>
           </div>
           <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-${statusInfo.color}-500/20 text-${statusInfo.color}-100`}>
@@ -232,34 +224,34 @@ function SubscriptionCard({ supermarket, lang }: { supermarket: SupermarketProfi
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-neutral-500">
-              {lang === "es" ? "Plan" : lang === "fr" ? "Plan" : lang === "ar" ? "الخطة" : "Plan"}
+              Plan
             </p>
             <p className="font-semibold text-neutral-900">
-              {lang === "es" ? "Premium" : lang === "fr" ? "Premium" : lang === "ar" ? "مميز" : "Premium"}
+              Premium
             </p>
           </div>
           <div>
             <p className="text-neutral-500">
-              {lang === "es" ? "Precio" : lang === "fr" ? "Prix" : lang === "ar" ? "السعر" : "Price"}
+              Prix
             </p>
             <p className="font-semibold text-neutral-900">
-              {formatCurrency(subscription?.monthly_fee || 50, subscription?.currency || "EUR", lang)} / {lang === "es" ? "mes" : lang === "fr" ? "mois" : lang === "ar" ? "شهر" : "month"}
+              {formatCurrency(subscription?.monthly_fee || 50, subscription?.currency || "EUR")} / mois
             </p>
           </div>
           <div>
             <p className="text-neutral-500">
-              {lang === "es" ? "Iniciado" : lang === "fr" ? "Début" : lang === "ar" ? "ابدأ" : "Started"}
+              Début
             </p>
             <p className="font-semibold text-neutral-900">
-              {formatDate(subscription?.current_period_start || supermarket.subscription_end_date, lang)}
+              {formatDate(subscription?.current_period_start || supermarket.subscription_end_date)}
             </p>
           </div>
           <div>
             <p className="text-neutral-500">
-              {lang === "es" ? "Renovación" : lang === "fr" ? "Renouvellement" : lang === "ar" ? "تجديد" : "Renewal"}
+              Renouvellement
             </p>
             <p className="font-semibold text-neutral-900">
-              {formatDate(subscription?.current_period_end, lang)}
+              {formatDate(subscription?.current_period_end)}
             </p>
           </div>
         </div>
@@ -271,13 +263,13 @@ function SubscriptionCard({ supermarket, lang }: { supermarket: SupermarketProfi
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 border-recette-600 text-recette-600 font-semibold hover:bg-recette-50 transition-colors"
             >
               <CreditCard className="h-4 w-4" />
-              {lang === "es" ? "Actualizar pago" : lang === "fr" ? "Mettre à jour le paiement" : lang === "ar" ? "تحديث الدفع" : "Update Payment"}
+              Mettre à jour le paiement
             </Link>
             <button
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-100 text-red-700 font-semibold hover:bg-red-200 transition-colors"
             >
               <XCircle className="h-4 w-4" />
-              {lang === "es" ? "Cancelar" : lang === "fr" ? "Annuler" : lang === "ar" ? "إلغاء" : "Cancel"}
+              Annuler
             </button>
           </div>
         )}
@@ -289,7 +281,7 @@ function SubscriptionCard({ supermarket, lang }: { supermarket: SupermarketProfi
               className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
             >
               <RotateCcw className="h-4 w-4" />
-              {lang === "es" ? "Reactivar suscripción" : lang === "fr" ? "Réactiver l'abonnement" : lang === "ar" ? "إعادة تفعيل الاشتراك" : "Reactivate Subscription"}
+              Réactiver l'abonnement
             </Link>
           </div>
         )}
@@ -298,15 +290,12 @@ function SubscriptionCard({ supermarket, lang }: { supermarket: SupermarketProfi
   );
 }
 
-function BillingHistory({ subscriptions, lang }: { subscriptions: any[]; lang: string }) {
+function BillingHistory({ subscriptions }: { subscriptions: any[] }) {
   if (!subscriptions || subscriptions.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-neutral-200 p-6 text-center">
         <p className="text-neutral-500">
-          {lang === "es" ? "No hay historial de facturación" :
-           lang === "fr" ? "Aucun historique de facturation" :
-           lang === "ar" ? "لا يوجد سجل فواتير" :
-           "No billing history"}
+          Aucun historique de facturation
         </p>
       </div>
     );
@@ -316,10 +305,7 @@ function BillingHistory({ subscriptions, lang }: { subscriptions: any[]; lang: s
     <div className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-neutral-100">
         <h3 className="font-semibold text-neutral-900">
-          {lang === "es" ? "Historial de facturación" :
-           lang === "fr" ? "Historique de facturation" :
-           lang === "ar" ? "سجل الفواتير" :
-           "Billing History"}
+          Historique de facturation
         </h3>
       </div>
       <div className="divide-y divide-neutral-100">
@@ -328,7 +314,7 @@ function BillingHistory({ subscriptions, lang }: { subscriptions: any[]; lang: s
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-semibold text-neutral-900">
-                  {formatDateTime(sub.created_at, lang)}
+                  {formatDateTime(sub.created_at)}
                 </p>
                 <p className="text-sm text-neutral-500">
                   {sub.stripe_subscription_id}
@@ -336,7 +322,7 @@ function BillingHistory({ subscriptions, lang }: { subscriptions: any[]; lang: s
               </div>
               <div className="text-right">
                 <p className="font-semibold text-neutral-900">
-                  {formatCurrency(sub.monthly_fee, sub.currency, lang)}
+                  {formatCurrency(sub.monthly_fee, sub.currency)}
                 </p>
                 <p className="text-sm text-neutral-500">
                   {sub.status}
@@ -350,7 +336,7 @@ function BillingHistory({ subscriptions, lang }: { subscriptions: any[]; lang: s
   );
 }
 
-function PaymentMethods({ stripeCustomerId, lang }: { stripeCustomerId?: string; lang: string }) {
+function PaymentMethods({ stripeCustomerId }: { stripeCustomerId?: string }) {
   // Mock payment methods for now
   const paymentMethods = [
     {
@@ -368,17 +354,14 @@ function PaymentMethods({ stripeCustomerId, lang }: { stripeCustomerId?: string;
     return (
       <div className="bg-white rounded-lg border border-neutral-200 p-6 text-center">
         <p className="text-neutral-500 mb-4">
-          {lang === "es" ? "No hay métodos de pago" :
-           lang === "fr" ? "Aucune méthode de paiement" :
-           lang === "ar" ? "لا توجد طرق دفع" :
-           "No payment methods"}
+          Aucune méthode de paiement
         </p>
         <Link
           href="/?add_payment=1"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
         >
           <CreditCard className="h-4 w-4" />
-          {lang === "es" ? "Añadir método de pago" : lang === "fr" ? "Ajouter une méthode de paiement" : lang === "ar" ? "إضافة طريقة دفع" : "Add Payment Method"}
+          Ajouter une méthode de paiement
         </Link>
       </div>
     );
@@ -388,7 +371,7 @@ function PaymentMethods({ stripeCustomerId, lang }: { stripeCustomerId?: string;
     <div className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-neutral-100">
         <h3 className="font-semibold text-neutral-900">
-          {lang === "es" ? "Métodos de pago" : lang === "fr" ? "Méthodes de paiement" : lang === "ar" ? "طرق الدفع" : "Payment Methods"}
+          Méthodes de paiement
         </h3>
       </div>
       <div className="divide-y divide-neutral-100">
@@ -406,13 +389,13 @@ function PaymentMethods({ stripeCustomerId, lang }: { stripeCustomerId?: string;
                     •••• {method.last4}
                   </p>
                   <p className="text-sm text-neutral-500">
-                    {lang === "es" ? "Vence" : lang === "fr" ? "Expire" : lang === "ar" ? "تنتهي" : "Expires"} {method.exp_month}/{method.exp_year}
+                    Expire {method.exp_month}/{method.exp_year}
                   </p>
                 </div>
               </div>
               {method.default && (
                 <span className="text-xs bg-recette-100 text-recette-700 px-2 py-1 rounded-full font-medium">
-                  {lang === "es" ? "Predeterminado" : lang === "fr" ? "Par défaut" : lang === "ar" ? "افتراضي" : "Default"}
+                  Par défaut
                 </span>
               )}
             </div>
@@ -425,7 +408,7 @@ function PaymentMethods({ stripeCustomerId, lang }: { stripeCustomerId?: string;
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-recette-600 text-recette-600 font-semibold hover:bg-recette-50 transition-colors"
         >
           <CreditCard className="h-4 w-4" />
-          {lang === "es" ? "Añadir método de pago" : lang === "fr" ? "Ajouter une méthode de paiement" : lang === "ar" ? "إضافة طريقة دفع" : "Add Payment Method"}
+          Ajouter une méthode de paiement
         </Link>
       </div>
     </div>
@@ -437,13 +420,9 @@ export default async function SupermarketBillingPage({
 }: {
   params: Promise<{ locale: string; supermarket: string }>;
 }) {
-  const { locale, supermarket: supermarketId } = await params;
+  const { supermarket: supermarketId } = await params;
 
-  setRequestLocale(locale);
-  const t = await getTranslations("subscriptions");
-  const tC = await getTranslations("common");
-
-  const lang = locale as "en" | "es" | "fr" | "ar";
+  setRequestLocale("fr");
 
   // Get user session
   const sb = await getSupabaseServerClient();
@@ -453,7 +432,7 @@ export default async function SupermarketBillingPage({
 
   if (!user) {
     // User must be logged in
-    redirect(`/${lang}/login`);
+    redirect("/fr/login");
   }
 
   // Get supermarket profile
@@ -482,25 +461,25 @@ export default async function SupermarketBillingPage({
         {/* Header */}
         <div className="mb-8">
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-4">
-            <Link href={`/${lang}/`} className="hover:text-recette-600">
-              {tC("home")}
+            <Link href="/fr/" className="hover:text-recette-600">
+              Accueil
             </Link>
             <span>/</span>
-            <Link href={`/${lang}/account`} className="hover:text-recette-600">
-              {tC("account")}
+            <Link href="/fr/account" className="hover:text-recette-600">
+              Compte
             </Link>
             <span>/</span>
             <span className="text-neutral-900 font-medium">
-              {t("billing")}
+              Facturation
             </span>
           </nav>
 
           <div className="max-w-3xl">
             <h1 className="font-serif text-4xl font-bold text-neutral-900 mb-2">
-              {t("billing")}
+              Facturation
             </h1>
             <p className="text-neutral-600">
-              {t("manageSubscription")}
+              Gérez votre abonnement et votre facturation
             </p>
           </div>
         </div>
@@ -509,39 +488,36 @@ export default async function SupermarketBillingPage({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Subscription Card */}
           <div className="lg:col-span-2">
-            <SubscriptionCard supermarket={supermarket} lang={lang} />
+            <SubscriptionCard supermarket={supermarket} />
           </div>
 
           {/* Quick Actions */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl border border-neutral-200 p-6">
               <h3 className="font-semibold text-neutral-900 mb-4">
-                {lang === "es" ? "Acciones rápidas" :
-                 lang === "fr" ? "Actions rapides" :
-                 lang === "ar" ? "الإجراءات السريعة" :
-                 "Quick Actions"}
+                Actions rapides
               </h3>
               <div className="space-y-3">
                 <Link
-                  href={`/${lang}/supermarket/subscribe`}
+                  href="/fr/supermarket/subscribe"
                   className="flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 transition-colors"
                 >
                   <Crown className="h-5 w-5 text-recette-600" />
-                  <span className="text-neutral-700">{lang === "es" ? "Ver planes" : lang === "fr" ? "Voir les plans" : lang === "ar" ? "عرض الخطط" : "View Plans"}</span>
+                  <span className="text-neutral-700">Voir les plans</span>
                 </Link>
                 <Link
                   href="/?invoices=1"
                   className="flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 transition-colors"
                 >
                   <Calendar className="h-5 w-5 text-recette-600" />
-                  <span className="text-neutral-700">{lang === "es" ? "Facturas" : lang === "fr" ? "Factures" : lang === "ar" ? "الفواتير" : "Invoices"}</span>
+                  <span className="text-neutral-700">Factures</span>
                 </Link>
                 <Link
                   href="/?support=1"
                   className="flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 transition-colors"
                 >
                   <CreditCard className="h-5 w-5 text-recette-600" />
-                  <span className="text-neutral-700">{lang === "es" ? "Soporte de facturación" : lang === "fr" ? "Support de facturation" : lang === "ar" ? "دعم الفواتير" : "Billing Support"}</span>
+                  <span className="text-neutral-700">Support de facturation</span>
                 </Link>
               </div>
             </div>
@@ -550,30 +526,24 @@ export default async function SupermarketBillingPage({
 
         {/* Additional Sections */}
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <PaymentMethods stripeCustomerId={supermarket.stripe_customer_id} lang={lang} />
-          <BillingHistory subscriptions={subscriptions} lang={lang} />
+          <PaymentMethods stripeCustomerId={supermarket.stripe_customer_id} />
+          <BillingHistory subscriptions={subscriptions} />
         </div>
 
         {/* Support */}
         <div className="mt-8 bg-white rounded-2xl border border-neutral-200 p-6">
           <h3 className="font-semibold text-neutral-900 mb-2">
-            {lang === "es" ? "¿Necesitas ayuda?" :
-             lang === "fr" ? "Besoin d'aide ?" :
-             lang === "ar" ? "هل تحتاج إلى مساعدة؟" :
-             "Need help?"}
+            Besoin d'aide ?
           </h3>
           <p className="text-neutral-600 mb-4">
-            {lang === "es" ? "Contáctanos si tienes alguna pregunta sobre tu suscripción o facturación." :
-             lang === "fr" ? "Contactez-nous si vous avez des questions concernant votre abonnement ou votre facturation." :
-             lang === "ar" ? "اتصل بنا إذا كان لديك أي أسئلة حول الاشتراك أو الفواتير." :
-             "Contact us if you have any questions about your subscription or billing."}
+            Contactez-nous si vous avez des questions concernant votre abonnement ou votre facturation.
           </p>
           <Link
-            href={`/${lang}/contact`}
+            href="/fr/contact"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
           >
             <CreditCard className="h-4 w-4" />
-            {lang === "es" ? "Contactar soporte" : lang === "fr" ? "Contacter le support" : lang === "ar" ? "اتصل بالدعم" : "Contact Support"}
+            Contacter le support
           </Link>
         </div>
       </div>

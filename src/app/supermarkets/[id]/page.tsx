@@ -33,7 +33,6 @@ import {
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type { SupermarketProfile } from "@/lib/types";
 
-export const revalidate = 60;
 export const dynamicParams = true;
 
 type TabType = "about" | "products" | "coupons" | "bundles" | "sales" | "jobs";
@@ -75,10 +74,10 @@ const tabConfig: Array<{
   },
 ];
 
-function getTabLabel(lang: string, tabId: TabType): string {
+function getTabLabel(tabId: TabType): string {
   const tab = tabConfig.find((t) => t.id === tabId);
   if (!tab) return tabId;
-  return tab.label[lang as keyof typeof tab.label] || tab.label.en;
+  return tab.label.fr || tab.label.en;
 }
 
 // Helper to get address string
@@ -369,7 +368,7 @@ function AboutSection({ supermarket }: { supermarket: SupermarketProfile }) {
 }
 
 // Products section
-async function ProductsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" | "fr" | "ar" }) {
+async function ProductsSection({ supermarketId }: { supermarketId: string }) {
   const products = await getSupermarketProducts(supermarketId);
   
   return (
@@ -378,7 +377,7 @@ async function ProductsSection({ supermarketId, lang }: { supermarketId: string;
         <h2 className="text-xl font-bold text-neutral-900">Products</h2>
         {products.length > 0 && (
           <Link
-            href={`/${lang}/supermarkets/${supermarketId}/products`}
+            href={`/fr/supermarkets/${supermarketId}/products`}
             className="text-sm text-recette-600 hover:text-recette-700 font-medium"
           >
             View All
@@ -394,7 +393,7 @@ async function ProductsSection({ supermarketId, lang }: { supermarketId: string;
                 {product.product?.image_url ? (
                   <img
                     src={product.product.image_url}
-                    alt={product.product.name[lang] || product.product.name.en || "Product"}
+                    alt={product.product.name.fr || product.product.name.en || "Product"}
                     className="w-full h-full object-cover rounded-lg"
                   />
                 ) : (
@@ -402,7 +401,7 @@ async function ProductsSection({ supermarketId, lang }: { supermarketId: string;
                 )}
               </div>
               <h3 className="font-semibold text-neutral-900 line-clamp-1">
-                {product.product?.name[lang] || product.product?.name.en || "Product"}
+                {product.product?.name.fr || product.product?.name.en || "Product"}
               </h3>
               <p className="text-sm text-neutral-500">
                 {product.supermarket_sku || product.supermarket_barcode || product.product_id}
@@ -444,7 +443,7 @@ async function ProductsSection({ supermarketId, lang }: { supermarketId: string;
 }
 
 // Coupons section
-async function CouponsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" | "fr" | "ar" }) {
+async function CouponsSection({ supermarketId }: { supermarketId: string }) {
   const coupons = await getSupermarketCoupons(supermarketId);
   
   return (
@@ -453,7 +452,7 @@ async function CouponsSection({ supermarketId, lang }: { supermarketId: string; 
         <h2 className="text-xl font-bold text-neutral-900">Active Coupons</h2>
         {coupons.length > 0 && (
           <Link
-            href={`/${lang}/supermarkets/${supermarketId}/coupons`}
+            href={`/fr/supermarkets/${supermarketId}/coupons`}
             className="text-sm text-recette-600 hover:text-recette-700 font-medium"
           >
             View All
@@ -478,7 +477,7 @@ async function CouponsSection({ supermarketId, lang }: { supermarketId: string; 
                       <h3 className="font-semibold text-neutral-900">{coupon.code}</h3>
                     </div>
                     <p className="text-sm text-neutral-600 mt-1">
-                      {coupon.description[lang] || coupon.description.en}
+                      {coupon.description.fr || coupon.description.en}
                     </p>
                     <div className="flex flex-wrap gap-2 mt-3">
                       <span
@@ -522,7 +521,7 @@ async function CouponsSection({ supermarketId, lang }: { supermarketId: string; 
 }
 
 // Bundles section
-async function BundlesSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" | "fr" | "ar" }) {
+async function BundlesSection({ supermarketId }: { supermarketId: string }) {
   const bundles = await getSupermarketBundles(supermarketId);
   
   return (
@@ -531,7 +530,7 @@ async function BundlesSection({ supermarketId, lang }: { supermarketId: string; 
         <h2 className="text-xl font-bold text-neutral-900">Product Bundles</h2>
         {bundles.length > 0 && (
           <Link
-            href={`/${lang}/supermarkets/${supermarketId}/bundles`}
+            href={`/fr/supermarkets/${supermarketId}/bundles`}
             className="text-sm text-recette-600 hover:text-recette-700 font-medium"
           >
             View All
@@ -551,16 +550,16 @@ async function BundlesSection({ supermarketId, lang }: { supermarketId: string; 
                   {bundle.image_url ? (
                     <img
                       src={bundle.image_url}
-                      alt={bundle.name[lang] || bundle.name.en || "Bundle"}
+                      alt={bundle.name.fr || bundle.name.en || "Bundle"}
                       className="w-full h-full object-cover rounded-lg"
                     />
                   ) : (
                     <Package className="h-10 w-10 text-neutral-400" />
                   )}
                 </div>
-                <h3 className="font-semibold text-neutral-900">{bundle.name[lang] || bundle.name.en}</h3>
+                <h3 className="font-semibold text-neutral-900">{bundle.name.fr || bundle.name.en}</h3>
                 <p className="text-sm text-neutral-600 mt-1 line-clamp-2">
-                  {bundle.description[lang] || bundle.description.en}
+                  {bundle.description.fr || bundle.description.en}
                 </p>
                 <div className="flex items-center justify-between mt-3">
                   <div className="flex items-baseline gap-2">
@@ -595,7 +594,7 @@ async function BundlesSection({ supermarketId, lang }: { supermarketId: string; 
 }
 
 // Sales section
-async function SalesSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" | "fr" | "ar" }) {
+async function SalesSection({ supermarketId }: { supermarketId: string }) {
   const sales = await getSupermarketSales(supermarketId);
   
   return (
@@ -604,7 +603,7 @@ async function SalesSection({ supermarketId, lang }: { supermarketId: string; la
         <h2 className="text-xl font-bold text-neutral-900">Current Sales</h2>
         {sales.length > 0 && (
           <Link
-            href={`/${lang}/supermarkets/${supermarketId}/sales`}
+            href={`/fr/supermarkets/${supermarketId}/sales`}
             className="text-sm text-recette-600 hover:text-recette-700 font-medium"
           >
             View All
@@ -631,7 +630,7 @@ async function SalesSection({ supermarketId, lang }: { supermarketId: string; la
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-neutral-900">{sale.name[lang] || sale.name.en}</h3>
+                      <h3 className="font-semibold text-neutral-900">{sale.name.fr || sale.name.en}</h3>
                       <span
                         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                           isActive ? "bg-emerald-100 text-emerald-800" : "bg-neutral-100 text-neutral-600"
@@ -641,7 +640,7 @@ async function SalesSection({ supermarketId, lang }: { supermarketId: string; la
                       </span>
                     </div>
                     <p className="text-sm text-neutral-600 mt-1">
-                      {sale.description?.[lang] || sale.description?.en || `Get ${sale.discount_percent}% off on selected items`}
+                      {sale.description?.fr || sale.description?.en || `Obtenez ${sale.discount_percent}% de réduction sur les articles sélectionnés`}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-2xl font-bold text-recette-600">
@@ -669,7 +668,7 @@ async function SalesSection({ supermarketId, lang }: { supermarketId: string; la
 }
 
 // Jobs section
-async function JobsSection({ supermarketId, lang }: { supermarketId: string; lang: "en" | "es" | "fr" | "ar" }) {
+async function JobsSection({ supermarketId }: { supermarketId: string }) {
   const jobs = await getSupermarketJobs(supermarketId);
   
   const positionTypeLabels: Record<string, { en: string; es: string; fr?: string; ar?: string }> = {
@@ -686,7 +685,7 @@ async function JobsSection({ supermarketId, lang }: { supermarketId: string; lan
         <h2 className="text-xl font-bold text-neutral-900">Job Openings</h2>
         {jobs.length > 0 && (
           <Link
-            href={`/${lang}/supermarkets/${supermarketId}/jobs`}
+            href={`/fr/supermarkets/${supermarketId}/jobs`}
             className="text-sm text-recette-600 hover:text-recette-700 font-medium"
           >
             View All
@@ -697,7 +696,7 @@ async function JobsSection({ supermarketId, lang }: { supermarketId: string; lan
       {jobs.length > 0 ? (
         <div className="space-y-4">
           {jobs.map((job) => {
-            const positionLabel = positionTypeLabels[job.position_type]?.[lang] || job.position_type;
+            const positionLabel = positionTypeLabels[job.position_type]?.fr || job.position_type;
             
             return (
               <div key={job.id} className="rounded-lg border border-neutral-200 p-4 hover:shadow-sm transition-shadow">
@@ -705,17 +704,17 @@ async function JobsSection({ supermarketId, lang }: { supermarketId: string; lan
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <Briefcase className="h-6 w-6 text-recette-600" />
-                      <h3 className="font-semibold text-neutral-900">{job.title[lang] || job.title.en}</h3>
+                      <h3 className="font-semibold text-neutral-900">{job.title.fr || job.title.en}</h3>
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 text-xs">
                         {positionLabel}
                       </span>
                     </div>
                     <p className="text-sm text-neutral-600 mt-1">
-                      {job.description[lang] || job.description.en}
+                      {job.description.fr || job.description.en}
                     </p>
                     {job.salary_range && (
                       <p className="text-sm text-neutral-500 mt-2">
-                        <span className="font-semibold">Salary:</span> {job.salary_range[lang] || job.salary_range.en}
+                        <span className="font-semibold">Salaire:</span> {job.salary_range.fr || job.salary_range.en}
                       </p>
                     )}
                     {job.contact_email && (
@@ -781,25 +780,23 @@ async function JobsSection({ supermarketId, lang }: { supermarketId: string; lan
 function TabContent({
   activeTab,
   supermarket,
-  lang,
 }: {
   activeTab: TabType;
   supermarket: SupermarketProfile;
-  lang: "en" | "es" | "fr" | "ar";
 }) {
   switch (activeTab) {
     case "about":
       return <AboutSection supermarket={supermarket} />;
     case "products":
-      return <ProductsSection supermarketId={supermarket.id} lang={lang} />;
+      return <ProductsSection supermarketId={supermarket.id} />;
     case "coupons":
-      return <CouponsSection supermarketId={supermarket.id} lang={lang} />;
+      return <CouponsSection supermarketId={supermarket.id} />;
     case "bundles":
-      return <BundlesSection supermarketId={supermarket.id} lang={lang} />;
+      return <BundlesSection supermarketId={supermarket.id} />;
     case "sales":
-      return <SalesSection supermarketId={supermarket.id} lang={lang} />;
+      return <SalesSection supermarketId={supermarket.id} />;
     case "jobs":
-      return <JobsSection supermarketId={supermarket.id} lang={lang} />;
+      return <JobsSection supermarketId={supermarket.id} />;
     default:
       return <AboutSection supermarket={supermarket} />;
   }
@@ -815,7 +812,7 @@ export default async function SupermarketProfilePage({
   const { locale, id } = await params;
   const { tab: searchTab } = await searchParams;
   
-  setRequestLocale(locale);
+  setRequestLocale("fr");
   
   // Get user session for follow status
   const sb = await getSupabaseServerClient();
@@ -829,8 +826,7 @@ export default async function SupermarketProfilePage({
   
   if (!supermarket) notFound();
   
-  const t = await getTranslations("common");
-  const lang = locale as "en" | "es" | "fr" | "ar";
+
   
   // Determine active tab
   const activeTab: TabType = searchTab && tabConfig.some((t) => t.id === searchTab) ? searchTab : "about";
@@ -842,8 +838,8 @@ export default async function SupermarketProfilePage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Store",
-    name: supermarket.supermarket_name[lang] || supermarket.supermarket_name.en,
-    description: supermarket.description?.[lang] || supermarket.description?.en,
+    name: supermarket.supermarket_name.fr || supermarket.supermarket_name.en,
+    description: supermarket.description?.fr || supermarket.description?.en,
     address: supermarket.address && {
       "@type": "PostalAddress",
       streetAddress: supermarket.address.line1,
@@ -871,7 +867,7 @@ export default async function SupermarketProfilePage({
           {supermarket.banner_url ? (
             <Image
               src={supermarket.banner_url}
-              alt={supermarket.supermarket_name[lang] || "Supermarket banner"}
+              alt={supermarket.supermarket_name.fr || "Bannière du supermarché"}
               fill
               className="object-cover"
               priority
@@ -890,7 +886,7 @@ export default async function SupermarketProfilePage({
                 {supermarket.profile_picture_url ? (
                   <Image
                     src={supermarket.profile_picture_url}
-                    alt={supermarket.supermarket_name[lang] || "Supermarket"}
+                    alt={supermarket.supermarket_name.fr || "Supermarché"}
                     width={128}
                     height={128}
                     className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-lg object-cover"
@@ -907,7 +903,7 @@ export default async function SupermarketProfilePage({
               <div className="flex-1 text-center md:text-left">
                 <div className="flex flex-col md:flex-row md:items-center gap-2">
                   <h1 className="font-serif text-2xl md:text-3xl font-bold text-neutral-900">
-                    {supermarket.supermarket_name[lang] || supermarket.supermarket_name.en}
+                    {supermarket.supermarket_name.fr || supermarket.supermarket_name.en}
                   </h1>
                   {/* Verified Badge */}
                   {supermarket.subscription_status === "active" && (
@@ -923,7 +919,7 @@ export default async function SupermarketProfilePage({
                 {/* Tagline */}
                 {supermarket.description && (
                   <p className="text-neutral-600 mt-2 max-w-2xl">
-                    {supermarket.description[lang] || supermarket.description.en}
+                    {supermarket.description.fr || supermarket.description.en}
                   </p>
                 )}
                 
@@ -980,7 +976,7 @@ export default async function SupermarketProfilePage({
                   }`}
                 >
                   {tab.icon}
-                  <span>{tab.label[lang] || tab.label.en}</span>
+                  <span>{tab.label.fr || tab.label.en}</span>
                 </Link>
               );
             })}
@@ -990,7 +986,7 @@ export default async function SupermarketProfilePage({
       
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <TabContent activeTab={activeTab} supermarket={supermarket} lang={lang} />
+        <TabContent activeTab={activeTab} supermarket={supermarket} />
       </div>
     </>
   );

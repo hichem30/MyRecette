@@ -1,14 +1,14 @@
 import { Facebook, Mail, MapPin, Phone } from "lucide-react";
-import { t } from "@/lib/fr";
+import { getTranslations, getLocale } from "@/lib/fr";
 import Link from "next/link";
 import { Logo } from "./Logo";
 import { NewsletterForm } from "./NewsletterForm";
 import { getAllCategories } from "@/lib/data";
 
 export async function Footer() {
-  const tF = await getTranslations("footer");
-  const tN = await getTranslations("nav");
-  const locale = (await getLocale()) as "en" | "es";
+  const { t: tF } = getTranslations("footer");
+  const { t: tN } = getTranslations("nav");
+  const locale = getLocale();
   const cats = await getAllCategories();
 
   return (
@@ -50,7 +50,7 @@ export async function Footer() {
             {cats.slice(0, 7).map((c) => (
               <li key={c.id}>
                 <Link href={`/categories/${c.slug}`} className="hover:text-white">
-                  {c.name[locale]}
+                  {c.name.fr}
                 </Link>
               </li>
             ))}

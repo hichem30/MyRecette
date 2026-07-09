@@ -314,17 +314,6 @@ export const FR = {
   },
 
   // ============================================
-  // SUPERMARKETS
-  // ============================================
-  supermarkets: {
-    title: "Supermarchés",
-    subtitle: "Trouvez les meilleurs supermarchés locaux pour vos ingrédients",
-    supermarket: "supermarché",
-    supermarkets: "supermarchés",
-    noSupermarkets: "Aucun supermarché trouvé.",
-    discover: "Découvrir les supermarchés"
-  },
-
   // ============================================
   // ACCOUNT
   // ============================================
@@ -332,9 +321,6 @@ export const FR = {
     title: "Mon Compte",
     welcome: "Bienvenue",
     profile: "Mon Profil",
-    orders: "Mes Commandes",
-    wishlist: "Ma Liste de Souhaits",
-    shoppingLists: "Mes Listes de Courses",
     videos: "Mes Vidéos",
     videosSubtitle: "Gérez vos vidéos de recettes téléchargées",
     noVideos: "Vous n'avez pas encore téléchargé de vidéos",
@@ -410,40 +396,6 @@ export const FR = {
   },
 
   // ============================================
-  // PRIVACY
-  // ============================================
-  privacy: {
-    title: "Politique de Confidentialité",
-    description: "Comment nous protégeons vos données et respectons votre vie privée",
-    lastUpdated: "Dernière mise à jour :",
-    introTitle: "Introduction",
-    introParagraph1: "Bienvenue sur My Recette. Nous accordons une grande importance à la protection de vos données personnelles et à votre vie privée.",
-    introParagraph2: "Cette politique de confidentialité explique comment nous collectons, utilisons, divulgons et protégeons vos informations lorsque vous utilisez notre plateforme.",
-    contentsTitle: "Table des Matières",
-    informationTitle: "Informations que nous collectons",
-    informationContent: "Nous collectons des informations personnelles lorsque vous créez un compte, passez une commande, ou contactez notre service client. Cela peut inclure votre nom, adresse email, numéro de téléphone, adresse postale et informations de paiement.",
-    dataTitle: "Utilisation de vos données",
-    dataContent: "Nous utilisons vos informations pour traiter vos commandes, améliorer notre service, personnaliser votre expérience, et communiquer avec vous sur vos commandes et nos offres promotionnelles.",
-    cookiesTitle: "Cookies et technologies similaires",
-    cookiesContent: "Nous utilisons des cookies pour améliorer votre expérience sur notre site. Vous pouvez contrôler l'utilisation des cookies via les paramètres de votre navigateur.",
-    thirdPartyTitle: "Partage avec des tiers",
-    thirdPartyContent: "Nous ne vendons pas vos informations personnelles. Cependant, nous pouvons partager vos données avec des prestataires de services tiers qui nous aident à exploiter notre plateforme et à traiter vos commandes.",
-    securityTitle: "Sécurité de vos données",
-    securityContent: "Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos informations personnelles contre l'accès non autorisé, la modification ou la destruction.",
-    rightsTitle: "Vos droits",
-    rightsContent: "Vous avez le droit d'accéder, de corriger, de supprimer vos données personnelles, et de vous opposer au traitement de vos données. Contactez-nous pour exercer ces droits.",
-    changesTitle: "Modifications de cette politique",
-    changesContent: "Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Nous vous informerons de toute modification importante par email ou via une notification sur notre site.",
-    contactTitle: "Contactez-nous",
-    contactContent: "Si vous avez des questions concernant cette politique de confidentialité ou vos données personnelles, veuillez nous contacter.",
-    supermarketTitle: "Responsabilités des supermarchés",
-    supermarketContent: "Chaque supermarché partenaire est responsable de ses propres pratiques de confidentialité concernant les données collectées directement auprès de vous.",
-    questionsTitle: "Questions ou préoccupations",
-    questionsContent: "Si vous avez des questions ou des préoccupations concernant le traitement de vos données personnelles, n'hésitez pas à nous contacter.",
-    contactUs: "Contactez-nous",
-    backToTop: "Retour en haut"
-  },
-
   // ============================================
   // ABOUT
   // ============================================
@@ -615,7 +567,6 @@ export const FR = {
     products: "Produits",
     categories: "Catégories",
     messages: "Messages",
-    orders: "Commandes",
     quotes: "Demandes de devis",
     totalProducts: "Total des produits",
     totalOrders: "Total des commandes",

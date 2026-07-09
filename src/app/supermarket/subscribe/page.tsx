@@ -52,11 +52,11 @@ async function getSupermarketProfile(supermarketId: string, userId: string): Pro
   }
 }
 
-async function createSubscriptionCheckout(supermarketId: string, userId: string, lang: string) {
+async function createSubscriptionCheckout(supermarketId: string, userId: string) {
   if (!isSupabaseConfigured()) {
     // Mock redirect for local development
     console.log("[MOCK] Creating Stripe checkout session for supermarket:", supermarketId);
-    return `/${lang}/supermarket/subscribe/success?session_id=mock_session_123`;
+    return "/fr/supermarket/subscribe/success?session_id=mock_session_123";
   }
 
   try {
@@ -76,16 +76,15 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; supermarket: string }>;
 }): Promise<Metadata> {
-  const { locale, supermarket: supermarketId } = await params;
-  const t = await getTranslations({ locale, namespace: "subscriptions" });
+  const { supermarket: supermarketId } = await params;
 
   return {
-    title: t("subscribeTitle"),
-    description: t("subscribeDescription"),
+    title: "S'abonner à My Recette Premium",
+    description: "Rejoignez le plan Premium pour débloquer toutes les fonctionnalités pour votre supermarché",
     openGraph: {
-      title: t("subscribeTitle"),
-      description: t("subscribeDescription"),
-      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://myrecette.com"}/${locale}/supermarket/subscribe`,
+      title: "S'abonner à My Recette Premium",
+      description: "Rejoignez le plan Premium pour débloquer toutes les fonctionnalités pour votre supermarché",
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://myrecette.com"}/fr/supermarket/subscribe`,
       type: "website",
     },
   };
@@ -125,15 +124,15 @@ const subscriptionFeatures = [
   },
 ];
 
-function getFeatureText(feature: typeof subscriptionFeatures[0], lang: string) {
+function getFeatureText(feature: typeof subscriptionFeatures[0]) {
   return {
-    title: feature.title[lang as keyof typeof feature.title] || feature.title.en,
-    description: feature.description[lang as keyof typeof feature.description] || feature.description.en,
+    title: feature.title.fr || feature.title.en,
+    description: feature.description.fr || feature.description.en,
   };
 }
 
-function SubscriptionFeature({ feature, lang }: { feature: typeof subscriptionFeatures[0]; lang: string }) {
-  const { title, description } = getFeatureText(feature, lang);
+function SubscriptionFeature({ feature }: { feature: typeof subscriptionFeatures[0] }) {
+  const { title, description } = getFeatureText(feature);
 
   return (
     <div className="flex items-start gap-4 p-4 rounded-lg border border-neutral-200 bg-white">
@@ -146,7 +145,7 @@ function SubscriptionFeature({ feature, lang }: { feature: typeof subscriptionFe
   );
 }
 
-function SubscriptionStatus({ status, endDate, lang }: { status?: string; endDate?: string; lang: string }) {
+function SubscriptionStatus({ status, endDate }: { status?: string; endDate?: string }) {
   if (!status || status === "inactive" || status === "canceled") {
     return (
       <div className="text-center py-8">
@@ -154,16 +153,10 @@ function SubscriptionStatus({ status, endDate, lang }: { status?: string; endDat
           <XCircle className="h-8 w-8 text-neutral-500" />
         </div>
         <h3 className="font-semibold text-neutral-900">
-          {lang === "es" ? "No estás suscrito" :
-           lang === "fr" ? "Abonnement inactif" :
-           lang === "ar" ? "لا يوجد اشتراك" :
-           "Not Subscribed"}
+          Abonnement inactif
         </h3>
         <p className="text-neutral-600 mt-2">
-          {lang === "es" ? "Actualmente no tienes una suscripción activa" :
-           lang === "fr" ? "Vous n'avez actuellement aucun abonnement actif" :
-           lang === "ar" ? "لا يوجد اشتراك نشط حاليًا" :
-           "You currently don't have an active subscription"}
+          Vous n'avez actuellement aucun abonnement actif
         </p>
       </div>
     );
@@ -176,23 +169,14 @@ function SubscriptionStatus({ status, endDate, lang }: { status?: string; endDat
           <CheckCircle className="h-8 w-8 text-emerald-600" />
         </div>
         <h3 className="font-semibold text-neutral-900">
-          {lang === "es" ? "Suscrito" :
-           lang === "fr" ? "Abonné" :
-           lang === "ar" ? "مشترك" :
-           "Subscribed"}
+          Abonné
         </h3>
         <p className="text-neutral-600 mt-2">
-          {lang === "es" ? "Tu suscripción está activa" :
-           lang === "fr" ? "Votre abonnement est actif" :
-           lang === "ar" ? "اشتراكك نشط" :
-           "Your subscription is active"}
+          Votre abonnement est actif
         </p>
         {endDate && (
           <p className="text-sm text-neutral-500 mt-2">
-            {lang === "es" ? `Vence: ${new Date(endDate).toLocaleDateString()}` :
-             lang === "fr" ? `Expire: ${new Date(endDate).toLocaleDateString()}` :
-             lang === "ar" ? `تنتهي: ${new Date(endDate).toLocaleDateString()}` :
-             `Expires: ${new Date(endDate).toLocaleDateString()}`}
+            Expire: {new Date(endDate).toLocaleDateString("fr-FR")}
           </p>
         )}
       </div>
@@ -206,16 +190,13 @@ function SubscriptionStatus({ status, endDate, lang }: { status?: string; endDat
       </div>
       <h3 className="font-semibold text-neutral-900 capitalize">{status}</h3>
       <p className="text-neutral-600 mt-2">
-        {lang === "es" ? "Tu suscripción está pendiente" :
-         lang === "fr" ? "Votre abonnement est en attente" :
-         lang === "ar" ? "اشتراكك قيد الانتظار" :
-         "Your subscription is pending"}
+        Votre abonnement est en attente
       </p>
     </div>
   );
 }
 
-function PricingCard({ lang }: { lang: string }) {
+function PricingCard() {
 
   return (
     <div className="bg-white rounded-2xl border-2 border-recette-600 p-8 shadow-lg">
@@ -224,32 +205,23 @@ function PricingCard({ lang }: { lang: string }) {
           <Crown className="h-10 w-10 text-recette-600" />
         </div>
         <h2 className="font-serif text-3xl font-bold text-neutral-900">
-          {lang === "es" ? "Plan Premium" :
-           lang === "fr" ? "Abonnement Premium" :
-           lang === "ar" ? "الخطة المميزة" :
-           "Premium Plan"}
+          Abonnement Premium
         </h2>
         <div className="my-6">
           <span className="font-serif text-5xl font-bold text-recette-600">€50</span>
           <span className="text-neutral-600">
-            {lang === "es" ? "/mes" :
-             lang === "fr" ? "/mois" :
-             lang === "ar" ? "/شهر" :
-             "/month"}
+            /mois
           </span>
         </div>
       </div>
 
       <div className="border-t border-neutral-200 pt-6">
         <h3 className="font-semibold text-neutral-900 mb-4">
-          {lang === "es" ? "Lo que obtienes" :
-           lang === "fr" ? "Ce que vous obtenez" :
-           lang === "ar" ? "ما ستحصل عليه" :
-           "What you get"}:
+          Ce que vous obtenez :
         </h3>
         <div className="space-y-3">
           {subscriptionFeatures.map((feature) => (
-            <SubscriptionFeature key={feature.id} feature={feature} lang={lang} />
+            <SubscriptionFeature key={feature.id} feature={feature} />
           ))}
         </div>
       </div>
@@ -263,17 +235,11 @@ function PricingCard({ lang }: { lang: string }) {
             type="submit"
             className="w-full py-4 px-6 rounded-lg bg-recette-600 text-white font-semibold text-lg hover:bg-recette-700 transition-colors"
           >
-            {lang === "es" ? "Suscríbete ahora" :
-             lang === "fr" ? "S'abonner maintenant" :
-             lang === "ar" ? "اشترك الآن" :
-             "Subscribe Now"}
+            S'abonner maintenant
           </button>
         </form>
         <p className="text-center text-sm text-neutral-500 mt-3">
-          {lang === "es" ? "Cancelar en cualquier momento" :
-           lang === "fr" ? "Annulez à tout moment" :
-           lang === "ar" ? "الغ الإشتراك في أي وقت" :
-           "Cancel anytime"}
+          Annulez à tout moment
         </p>
       </div>
     </div>
@@ -287,14 +253,10 @@ export default async function SupermarketSubscribePage({
   params: Promise<{ locale: string; supermarket: string }>;
   searchParams: Promise<{ success?: string; canceled?: string; error?: string }>;
 }) {
-  const { locale, supermarket: supermarketId } = await params;
+  const { supermarket: supermarketId } = await params;
   const { success, canceled, error } = await searchParams;
 
-  setRequestLocale(locale);
-  const t = await getTranslations("subscriptions");
-  const tC = await getTranslations("common");
-
-  const lang = locale as "en" | "es" | "fr" | "ar";
+  setRequestLocale("fr");
 
   // Get user session
   const sb = await getSupabaseServerClient();
@@ -304,7 +266,7 @@ export default async function SupermarketSubscribePage({
 
   if (!user) {
     // User must be logged in
-    redirect(`/${lang}/login`);
+    redirect("/fr/login");
   }
 
   // Get supermarket profile
@@ -330,23 +292,23 @@ export default async function SupermarketSubscribePage({
             <CheckCircle className="h-10 w-10 text-emerald-600" />
           </div>
           <h1 className="font-serif text-4xl font-bold text-neutral-900 mb-4">
-            {t("subscriptionSuccessful")}
+            Abonnement réussi
           </h1>
           <p className="text-xl text-neutral-600 mb-8">
-            {t("subscriptionWelcome", { name: supermarket.supermarket_name[lang] || supermarket.supermarket_name.en })}
+            Bienvenue sur My Recette, {supermarket.supermarket_name.fr || supermarket.supermarket_name.en} !
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href={`/${lang}/supermarket/billing`}
+              href="/fr/supermarket/billing"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
             >
-              {t("manageSubscription")}
+              Gérer mon abonnement
             </Link>
             <Link
-              href={`/${lang}/account`}
+              href="/fr/account"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border-2 border-recette-600 text-recette-600 font-semibold hover:bg-recette-50 transition-colors"
             >
-              {t("goToAccount")}
+              Aller à mon compte
             </Link>
           </div>
         </div>
@@ -362,16 +324,16 @@ export default async function SupermarketSubscribePage({
             <XCircle className="h-10 w-10 text-amber-600" />
           </div>
           <h1 className="font-serif text-4xl font-bold text-neutral-900 mb-4">
-            {t("subscriptionCanceled")}
+            Abonnement annulé
           </h1>
           <p className="text-xl text-neutral-600 mb-8">
-            {t("subscriptionNotCharged")}
+            Aucun frais ne vous a été facturé
           </p>
           <Link
-            href={`/${lang}/supermarket/subscribe`}
+            href="/fr/supermarket/subscribe"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
           >
-            {t("tryAgain")}
+            Réessayer
           </Link>
         </div>
       </div>
@@ -384,25 +346,25 @@ export default async function SupermarketSubscribePage({
         {/* Header */}
         <div className="mb-12">
           <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-4">
-            <Link href={`/${lang}/`} className="hover:text-recette-600">
-              {tC("home")}
+            <Link href="/fr/" className="hover:text-recette-600">
+              Accueil
             </Link>
             <span>/</span>
-            <Link href={`/${lang}/account`} className="hover:text-recette-600">
-              {tC("account")}
+            <Link href="/fr/account" className="hover:text-recette-600">
+              Compte
             </Link>
             <span>/</span>
             <span className="text-neutral-900 font-medium">
-              {t("subscribe")}
+              S'abonner
             </span>
           </nav>
 
           <div className="max-w-3xl">
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
-              {t("joinPremium")}
+              Rejoignez le plan Premium
             </h1>
             <p className="text-xl text-neutral-600">
-              {t("joinDescription", { name: supermarket.supermarket_name[lang] || supermarket.supermarket_name.en })}
+              Découvrez toutes les fonctionnalités premium pour {supermarket.supermarket_name.fr || supermarket.supermarket_name.en}
             </p>
           </div>
         </div>
@@ -417,14 +379,13 @@ export default async function SupermarketSubscribePage({
               <SubscriptionStatus 
                 status={supermarket.subscription_status} 
                 endDate={supermarket.subscription_end_date}
-                lang={lang}
               />
             </div>
           </div>
 
           {/* Pricing Card */}
           <div className="lg:col-span-2">
-            <PricingCard lang={lang} />
+            <PricingCard />
           </div>
         </div>
 
@@ -432,30 +393,18 @@ export default async function SupermarketSubscribePage({
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg border border-neutral-200 p-6">
             <h3 className="font-semibold text-neutral-900 mb-3">
-              {lang === "es" ? "¿Por qué €50 al mes?" :
-               lang === "fr" ? "Pourquoi 50€ par mois ?" :
-               lang === "ar" ? "لماذا 50 يورو شهريًا؟" :
-               "Why €50 per month?"}
+              Pourquoi 50€ par mois ?
             </h3>
             <p className="text-neutral-600 text-sm">
-              {lang === "es" ? "sucre et sel es tu plataforma todo en uno para gestionar tu supermercado en línea. Este precio cubre todos los servicios incluyendo listados de productos, herramientas promocionales, y soporte dedicado." :
-               lang === "fr" ? "sucre et sel est votre plateforme tout-en-un pour gérer votre supermarché en ligne. Ce prix couvre tous les services y compris les listages de produits, les outils promotionnels et le support dédié." :
-               lang === "ar" ? "sucre et sel هي منصة شاملة لإدارة متجرك عبر الإنترنت. يشمل هذا السعر جميع الخدمات بما في ذلك قائمة المنتجات والأدوات الترويجية والدعم المخصص." :
-               "sucre et sel is your all-in-one platform for managing your supermarket online. This price covers all services including product listings, promotional tools, and dedicated support."}
+              sucre et sel est votre plateforme tout-en-un pour gérer votre supermarché en ligne. Ce prix couvre tous les services y compris les listages de produits, les outils promotionnels et le support dédié.
             </p>
           </div>
           <div className="bg-white rounded-lg border border-neutral-200 p-6">
             <h3 className="font-semibold text-neutral-900 mb-3">
-              {lang === "es" ? "¿Qué pasa si cancelo?" :
-               lang === "fr" ? "Que se passe-t-il si j'annule ?" :
-               lang === "ar" ? "ماذا يحدث إذا ألغيت؟" :
-               "What happens if I cancel?"}
+              Que se passe-t-il si j'annule ?
             </h3>
             <p className="text-neutral-600 text-sm">
-              {lang === "es" ? "Puedes cancelar tu suscripción en cualquier momento. Tendrás acceso completo hasta el final de tu período de facturación actual." :
-               lang === "fr" ? "Vous pouvez annuler votre abonnement à tout moment. Vous aurez un accès complet jusqu'à la fin de votre période de facturation actuelle." :
-               lang === "ar" ? "يمكنك إلغاء الاشتراك في أي وقت. سيكون لديك وصول كامل حتى نهاية فترة الفواتير الحالية." :
-               "You can cancel your subscription at any time. You'll have full access until the end of your current billing period."}
+              Vous pouvez annuler votre abonnement à tout moment. Vous aurez un accès complet jusqu'à la fin de votre période de facturation actuelle.
             </p>
           </div>
         </div>

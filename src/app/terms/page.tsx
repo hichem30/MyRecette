@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "@/lib/fr";
-import { t } from "@/lib/fr";
+import { setRequestLocale, getTranslations } from "@/lib/fr";
 import Link from "next/link";
 import { FileText, User, ShoppingCart, CreditCard, Store, ShieldCheck, Database, Calendar, Mail } from "lucide-react";
+import { BackToTopButton } from "@/components/BackToTopButton";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -82,27 +82,22 @@ const termsSections = [
   },
 ];
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "terms" });
+export async function generateMetadata(): Promise<Metadata> {
+  const { t: termsT } = getTranslations("terms");
   
   return {
-    title: t("title"),
-    description: t("description"),
+    title: termsT("title"),
+    description: termsT("description"),
   };
 }
 
-export default async function TermsPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations("terms");
-  const tC = await getTranslations("common");
+export default async function TermsPage() {
+  setRequestLocale("fr");
+  const { t: termsT } = getTranslations("terms");
+  const { t: commonT } = getTranslations("common");
+  const { t: myRecetteT } = getTranslations("myRecette");
 
-  const lastUpdated = new Date().toLocaleDateString(locale === 'en' ? 'en-US' : locale, {
+  const lastUpdated = new Date().toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -116,23 +111,23 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
           <div className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-recette-100 mb-6">
             <FileText className="h-10 w-10 text-recette-700" />
           </div>
-          <h1 className="font-serif text-4xl font-bold text-neutral-900">{t("title")}</h1>
+          <h1 className="font-serif text-4xl font-bold text-neutral-900">{termsT("title")}</h1>
           <p className="mt-2 text-neutral-500">
-            {t("lastUpdated")} {lastUpdated}
+            {termsT("lastUpdated")} {lastUpdated}
           </p>
         </div>
 
         {/* Introduction */}
         <section className="mb-12">
           <div className="prose prose-neutral max-w-none text-neutral-600 space-y-4">
-            <p>{t("introParagraph1")}</p>
-            <p>{t("introParagraph2")}</p>
+            <p>{termsT("introParagraph1")}</p>
+            <p>{termsT("introParagraph2")}</p>
           </div>
         </section>
 
         {/* Table of Contents */}
         <section className="mb-12">
-          <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-4">{t("contentsTitle")}</h2>
+          <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-4">{termsT("contentsTitle")}</h2>
           <div className="not-prose">
             <ol className="space-y-2">
               {termsSections.map((section, index) => (
@@ -141,7 +136,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
                     href={`#${section.id}`}
                     className="text-recette-600 hover:text-recette-700 hover:underline"
                   >
-                    {index + 1}. {t(section.titleKey)}
+                    {index + 1}. {termsT(section.titleKey)}
                   </Link>
                 </li>
               ))}
@@ -164,10 +159,10 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
                 </div>
                 <div>
                   <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-3">
-                    {index + 1}. {t(section.titleKey)}
+                    {index + 1}. {termsT(section.titleKey)}
                   </h2>
                   <div className="prose prose-neutral max-w-none text-neutral-600 space-y-4">
-                    <p>{t(section.contentKey)}</p>
+                    <p>{termsT(section.contentKey)}</p>
                   </div>
                 </div>
               </div>
@@ -182,14 +177,14 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
               <ShoppingCart className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-3">{t("myRecetteTitle")}</h2>
+              <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-3">{myRecetteT("title")}</h2>
               <div className="prose prose-neutral max-w-none text-neutral-600 space-y-4">
-                <p>{t("myRecetteContent")}</p>
+                <p>{myRecetteT("content")}</p>
                 <ul>
-                  <li>{t("myRecetteFeature1")}</li>
-                  <li>{t("myRecetteFeature2")}</li>
-                  <li>{t("myRecetteFeature3")}</li>
-                  <li>{t("myRecetteFeature4")}</li>
+                  <li>{myRecetteT("feature1")}</li>
+                  <li>{myRecetteT("feature2")}</li>
+                  <li>{myRecetteT("feature3")}</li>
+                  <li>{myRecetteT("feature4")}</li>
                 </ul>
               </div>
             </div>
@@ -198,16 +193,16 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
 
         {/* Contact Section */}
         <section className="mt-12 p-6 rounded-lg border border-neutral-200">
-          <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-4">{t("questionsTitle")}</h2>
+          <h2 className="font-serif text-2xl font-bold text-neutral-900 mb-4">{termsT("questionsTitle")}</h2>
           <div className="prose prose-neutral max-w-none text-neutral-600 space-y-4">
-            <p>{t("questionsContent")}</p>
+            <p>{termsT("questionsContent")}</p>
             <div className="not-prose">
               <Link
                 href="/contact"
                 className="inline-flex items-center gap-2 bg-recette-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-recette-700 transition"
               >
                 <Mail className="h-4 w-4" />
-                {t("contactUs")}
+                {termsT("contactUs")}
               </Link>
             </div>
           </div>
@@ -215,12 +210,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
 
         {/* Back to top */}
         <div className="mt-12 text-center">
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="inline-flex items-center gap-2 text-sm text-recette-600 hover:text-recette-700"
-          >
-            ↑ {t("backToTop")}
-          </button>
+          <BackToTopButton text={commonT("backToTop")} />
         </div>
       </div>
     </div>

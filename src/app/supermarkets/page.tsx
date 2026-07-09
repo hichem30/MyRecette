@@ -14,26 +14,24 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
-  const lang = locale as "en" | "es";
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://myrecette.com";
-  const url = `${base}/${lang}/supermarkets`;
+  const url = `${base}/fr/supermarkets`;
   
   return {
-    title: `Discover Supermarkets — sucre et sel`,
-    description: "Find and follow local supermarkets to discover products, coupons, bundles, and job opportunities.",
+    title: `Découvrir les Supermarchés — My Recette`,
+    description: "Trouvez et suivez les supermarchés locaux pour découvrir des produits, des coupons, des lots et des offres d'emploi.",
     alternates: { canonical: url },
     openGraph: {
-      title: `Discover Supermarkets — sucre et sel`,
-      description: "Find and follow local supermarkets to discover products, coupons, bundles, and job opportunities.",
+      title: `Découvrir les Supermarchés — My Recette`,
+      description: "Trouvez et suivez les supermarchés locaux pour découvrir des produits, des coupons, des lots et des offres d'emploi.",
       url,
-      siteName: "sucre et sel",
+      siteName: "My Recette",
       type: "website",
     },
     twitter: {
       card: "summary",
-      title: `Discover Supermarkets — sucre et sel`,
-      description: "Find and follow local supermarkets to discover products, coupons, bundles, and job opportunities.",
+      title: `Découvrir les Supermarchés — My Recette`,
+      description: "Trouvez et suivez les supermarchés locaux pour découvrir des produits, des coupons, des lots et des offres d'emploi.",
     },
   };
 }
@@ -42,19 +40,17 @@ export async function generateMetadata({
 function CategoryFilter({
   categories,
   selectedCategory,
-  lang,
 }: {
   categories: string[];
   selectedCategory: string | null;
-  lang: "en" | "es";
 }) {
-  const categoryLabels: Record<string, { en: string; es: string }> = {
-    all: { en: "All", es: "Todos" },
-    groceries: { en: "Groceries", es: "Comestibles" },
-    fresh: { en: "Fresh", es: "Frescos" },
-    organic: { en: "Organic", es: "Orgánico" },
-    sustainable: { en: "Sustainable", es: "Sostenible" },
-    ecofriendly: { en: "Eco-Friendly", es: "Ecológico" },
+  const categoryLabels: Record<string, string> = {
+    all: "Tous",
+    groceries: "Épicerie",
+    fresh: "Frais",
+    organic: "Biologique",
+    sustainable: "Durable",
+    ecofriendly: "Écologique",
   };
 
   return (
@@ -66,10 +62,10 @@ function CategoryFilter({
             : "bg-white text-neutral-600 hover:bg-neutral-100"
         }`}
       >
-        {categoryLabels.all[lang]}
+        {categoryLabels.all || "Tous"}
       </button>
       {categories.map((category) => {
-        const label = categoryLabels[category.toLowerCase()]?.[lang] || category;
+        const label = categoryLabels[category.toLowerCase()] || category;
         return (
           <button
             key={category}
@@ -125,10 +121,7 @@ export default async function SupermarketsDiscoveryPage({
   const { locale } = await params;
   const { category, search, sort } = await searchParams;
   
-  setRequestLocale(locale);
-  
-  const lang = locale as "en" | "es";
-  const t = await getTranslations("common");
+  setRequestLocale("fr");
   
   // Fetch all supermarkets
   const supermarkets = await getAllSupermarkets();
@@ -152,8 +145,8 @@ export default async function SupermarketsDiscoveryPage({
   if (search) {
     const searchLower = search.toLowerCase();
     filteredSupermarkets = filteredSupermarkets.filter((s) => {
-      const name = s.supermarket_name[lang]?.toLowerCase() || s.supermarket_name.en?.toLowerCase() || "";
-      const description = s.description?.[lang]?.toLowerCase() || s.description?.en?.toLowerCase() || "";
+      const name = s.supermarket_name.fr?.toLowerCase() || s.supermarket_name.en?.toLowerCase() || "";
+      const description = s.description?.fr?.toLowerCase() || s.description?.en?.toLowerCase() || "";
       const tags = s.category_tags?.join(" ").toLowerCase() || "";
       return name.includes(searchLower) || description.includes(searchLower) || tags.includes(searchLower);
     });
@@ -197,7 +190,6 @@ export default async function SupermarketsDiscoveryPage({
         <CategoryFilter
           categories={allCategories}
           selectedCategory={category || null}
-          lang={lang}
         />
       )}
       
@@ -208,7 +200,6 @@ export default async function SupermarketsDiscoveryPage({
             <SupermarketCard
               key={supermarket.id}
               supermarket={supermarket}
-              lang={lang}
             />
           ))}
         </div>

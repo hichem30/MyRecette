@@ -11,7 +11,6 @@ import { Label } from "@/components/ui/label";
 import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/supabase/user";
 
-export const revalidate = 0;
 export const dynamicParams = true;
 
 // Mock data for local development

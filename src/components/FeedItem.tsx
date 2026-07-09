@@ -62,7 +62,7 @@ export default function FeedItem({ item }: { item: SupermarketFeedItem }) {
         {item.supermarket?.profile_picture_url ? (
           <img
             src={item.supermarket.profile_picture_url}
-            alt={item.supermarket.supermarket_name[lang] || "Supermarket"}
+            alt={item.supermarket.supermarket_name?.fr || item.supermarket.supermarket_name?.en || "Supermarket"}
             className="w-12 h-12 rounded-full object-cover"
           />
         ) : (
@@ -77,7 +77,7 @@ export default function FeedItem({ item }: { item: SupermarketFeedItem }) {
         {/* Header */}
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-semibold text-neutral-900">
-            {item.supermarket?.supermarket_name?.[lang] || item.supermarket?.supermarket_name?.en || "Supermarket"}
+            {item.supermarket?.supermarket_name?.fr || item.supermarket?.supermarket_name?.en || "Supermarket"}
           </span>
           <span className="flex items-center gap-1 text-neutral-500 text-sm">
             {icon}
@@ -90,13 +90,13 @@ export default function FeedItem({ item }: { item: SupermarketFeedItem }) {
         
         {/* Title */}
         <h3 className="font-semibold text-neutral-900 mt-1">
-          {item.title[lang] || item.title.en}
+          {item.title.fr || item.title.en}
         </h3>
         
         {/* Description */}
         {item.description && (
           <p className="text-neutral-600 text-sm mt-1">
-            {item.description[lang] || item.description.en}
+            {item.description.fr || item.description.en}
           </p>
         )}
         
@@ -105,7 +105,7 @@ export default function FeedItem({ item }: { item: SupermarketFeedItem }) {
           <div className="mt-3">
             <img
               src={item.image_url}
-              alt={item.title[lang] || item.title.en || ""}
+              alt={item.title.fr || item.title.en || ""}
               className="w-full max-w-md rounded-lg object-cover aspect-video"
             />
           </div>
@@ -117,7 +117,7 @@ export default function FeedItem({ item }: { item: SupermarketFeedItem }) {
             href={item.action_url}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-barn-50 text-barn-700 hover:bg-barn-100 text-sm font-medium transition-colors"
           >
-            View Details
+            Voir les détails
           </Link>
         </div>
       </div>

@@ -42,11 +42,11 @@ export function useLocale(): string {
 
 // Client-side hook to replace useTranslations from next-intl
 // Returns a function for backward compatibility with next-intl
-export function useTranslations(namespace?: string): (key: string) => string {
+export function useTranslations(namespace?: string): (key: string, params?: Record<string, string | number>) => string {
   // Return a function that prepends the namespace
-  return (key: string) => {
+  return (key: string, params?: Record<string, string | number>) => {
     const fullKey = namespace ? `${namespace}.${key}` : key;
-    return t(fullKey);
+    return t(fullKey, params);
   };
 }
 

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "@/lib/fr";
-import { t } from "@/lib/fr";
+import { setRequestLocale, getTranslations } from "@/lib/fr";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { 
@@ -312,21 +311,21 @@ async function getRelatedVideos(videoId: string, recipeId: string, limit: number
 export async function generateMetadata({ 
   params 
 }: { 
-  params: Promise<{ locale: string; id: string }> 
+  params: Promise<{ id: string }> 
 }): Promise<Metadata> {
-  const { locale, id } = await params;
-  const t = await getTranslations({ locale, namespace: "videos" });
+  const { id } = await params;
+  const { t: videosT } = getTranslations("videos");
   
   // Try to get video title
   const video = await getVideoById(id);
-  const title = video?.title?.en || video?.title?.es || t("video");
+  const title = video?.title?.fr || video?.title?.en || video?.title?.es || videosT("video");
 
   return {
-    title: `${title} | ${t("title")}`,
-    description: video?.description?.en || t("description"),
+    title: `${title} | ${videosT("title")}`,
+    description: video?.description?.fr || video?.description?.en || videosT("description"),
     openGraph: {
       title,
-      description: video?.description?.en || t("description"),
+      description: video?.description?.fr || video?.description?.en || videosT("description"),
       images: [video?.thumbnail_url || '/images/og-image.png'],
     },
   };
@@ -335,13 +334,13 @@ export async function generateMetadata({
 export default async function VideoDetailPage({ 
   params 
 }: { 
-  params: Promise<{ locale: string; id: string }> 
+  params: Promise<{ id: string }> 
 }) {
-  const { locale, id } = await params;
+  const { id } = await params;
   
-  setRequestLocale(locale);
-  const t = await getTranslations("videos");
-  const tC = await getTranslations("common");
+  setRequestLocale("fr");
+  const { t: videosT } = getTranslations("videos");
+  const { t: commonT } = getTranslations("common");
 
   // Fetch video data
   const video = await getVideoById(id);
@@ -363,17 +362,17 @@ export default async function VideoDetailPage({
   // Get related videos (from same recipe)
   const relatedVideos = await getRelatedVideos(video.id, video.recipe_id, 4);
 
-  const displayTitle = video.title?.en || video.title?.es || video.title?.fr || video.title?.ar || "Untitled Video";
-  const displayDescription = video.description?.en || video.description?.es || video.description?.fr || video.description?.ar || "";
-  const displayUser = video.user?.supermarket_name?.en || video.user?.email || "Anonymous";
-  const displayRecipe = video.recipe?.title?.en || video.recipe?.title?.es || "Unknown Recipe";
+  const displayTitle = video.title?.fr || video.title?.en || video.title?.es || video.title?.ar || "Untitled Video";
+  const displayDescription = video.description?.fr || video.description?.en || video.description?.es || video.description?.ar || "";
+  const displayUser = video.user?.supermarket_name?.fr || video.user?.supermarket_name?.en || video.user?.email || "Anonymous";
+  const displayRecipe = video.recipe?.title?.fr || video.recipe?.title?.en || video.recipe?.title?.es || "Unknown Recipe";
 
   return (
     <div className="container-page py-8 sm:py-12">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-sm text-neutral-600 mb-6">
         <Link href="/videos" className="hover:text-recette-600 transition-colors">
-          {t("backToVideos")}
+          {videosT("backToVideos")}
         </Link>
       </nav>
 
@@ -394,21 +393,21 @@ export default async function VideoDetailPage({
           </div>
           <span className="flex items-center gap-1">
             <Eye className="h-4 w-4" />
-            {video.view_count.toLocaleString()} {t("views")}
+            {video.view_count.toLocaleString()} {videosT("views")}
           </span>
           <span className="flex items-center gap-1">
             <Heart className="h-4 w-4" />
-            {video.like_count.toLocaleString()} {t("likes")}
+            {video.like_count.toLocaleString()} {videosT("likes")}
           </span>
           <span className="flex items-center gap-1">
             <MessageCircle className="h-4 w-4" />
-            {comments.length} {t("comments")}
+            {comments.length} {videosT("comments")}
           </span>
           <span>
-            {t("by")} {displayUser}
+            {videosT("by")} {displayUser}
           </span>
           <span>
-            {t("forRecipe")} <Link href={`/recipes/${video.recipe?.slug}`} className="text-recette-600 hover:underline">{displayRecipe}</Link>
+            {videosT("forRecipe")} <Link href={`/recipes/${video.recipe?.slug}`} className="text-recette-600 hover:underline">{displayRecipe}</Link>
           </span>
           <span>
             {new Date(video.created_at).toLocaleDateString('en-US', { 
@@ -435,13 +434,13 @@ export default async function VideoDetailPage({
 
           {/* Video Description */}
           <div className="bg-neutral-50 rounded-xl p-6 mb-8">
-            <h3 className="font-semibold text-neutral-900 mb-3">{t("videoDetails")}</h3>
+            <h3 className="font-semibold text-neutral-900 mb-3">{videosT("videoDetails")}</h3>
             <p className="text-neutral-700 whitespace-pre-wrap">{displayDescription}</p>
           </div>
 
           {/* Reactions */}
           <div className="bg-white border border-neutral-200 rounded-xl p-6 mb-8">
-            <h3 className="font-semibold text-neutral-900 mb-4">{t("reactions")}</h3>
+            <h3 className="font-semibold text-neutral-900 mb-4">{videosT("reactions")}</h3>
             <div className="flex items-center gap-4">
               {reactionTypes.map(({ type, label, icon }) => {
                 const count = reactions[type] || 0;
@@ -456,7 +455,7 @@ export default async function VideoDetailPage({
                         ? "bg-recette-50 ring-2 ring-recette-500" 
                         : "hover:bg-neutral-100"
                     )}
-                    title={user ? `${t("reactWith")} ${label}` : "Sign in to react"}
+                    title={user ? `${videosT("reactWith")} ${label}` : commonT("signInToReact")}
                   >
                     <span className={cn("text-xl", isActive ? "text-recette-600" : "text-neutral-600")}>{icon}</span>
                     <span className="text-xs text-neutral-600">{count.toLocaleString()}</span>
@@ -469,10 +468,10 @@ export default async function VideoDetailPage({
           {/* Comments Section */}
           <div className="bg-white border border-neutral-200 rounded-xl p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-semibold text-neutral-900">{t("comments")} ({comments.length})</h3>
+              <h3 className="font-semibold text-neutral-900">{videosT("comments")} ({comments.length})</h3>
               {user && (
                 <button className="text-sm text-recette-600 hover:text-recette-700 font-medium">
-                  + {t("addComment")}
+                  + {videosT("addComment")}
                 </button>
               )}
             </div>
@@ -482,7 +481,7 @@ export default async function VideoDetailPage({
               comments={comments}
               videoId={video.id}
               currentUserId={user?.id || null}
-              lang={locale}
+              lang="fr"
             />
           </div>
         </div>
@@ -491,9 +490,9 @@ export default async function VideoDetailPage({
         <div className="space-y-6">
           {/* Share Section */}
           <div className="bg-white border border-neutral-200 rounded-xl p-6">
-            <h3 className="font-semibold text-neutral-900 mb-4">{t("share")}</h3>
+            <h3 className="font-semibold text-neutral-900 mb-4">{videosT("share")}</h3>
             <SocialShare
-              url={`https://myrecette.com/${locale}/videos/${video.id}`}
+              url={`https://myrecette.com/fr/videos/${video.id}`}
               title={displayTitle}
               description={displayDescription}
               imageUrl={video.thumbnail_url || undefined}
@@ -503,11 +502,11 @@ export default async function VideoDetailPage({
           {/* Related Videos */}
           {relatedVideos.length > 0 && (
             <div className="bg-white border border-neutral-200 rounded-xl p-6">
-              <h3 className="font-semibold text-neutral-900 mb-4">{t("relatedVideos")}</h3>
+              <h3 className="font-semibold text-neutral-900 mb-4">{videosT("relatedVideos")}</h3>
               <div className="space-y-4">
                 {relatedVideos.map((relatedVideo) => {
-                  const relatedTitle = relatedVideo.title?.en || relatedVideo.title?.es || "Untitled Video";
-                  const relatedUser = relatedVideo.user?.supermarket_name?.en || relatedVideo.user?.email || "Anonymous";
+                  const relatedTitle = relatedVideo.title?.fr || relatedVideo.title?.en || relatedVideo.title?.es || "Untitled Video";
+                  const relatedUser = relatedVideo.user?.supermarket_name?.fr || relatedVideo.user?.supermarket_name?.en || relatedVideo.user?.email || "Anonymous";
                   
                   return (
                     <Link

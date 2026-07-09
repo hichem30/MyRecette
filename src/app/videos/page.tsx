@@ -197,11 +197,13 @@ export default async function VideosPage({
     const searchLower = q.toLowerCase();
     videos = videos.filter(
       (v) => 
+        v.title?.fr?.toLowerCase().includes(searchLower) ||
         v.title?.en?.toLowerCase().includes(searchLower) ||
         v.title?.es?.toLowerCase().includes(searchLower) ||
-        v.title?.fr?.toLowerCase().includes(searchLower) ||
         v.title?.ar?.toLowerCase().includes(searchLower) ||
+        v.description?.fr?.toLowerCase().includes(searchLower) ||
         v.description?.en?.toLowerCase().includes(searchLower) ||
+        v.recipe?.title?.fr?.toLowerCase().includes(searchLower) ||
         v.recipe?.title?.en?.toLowerCase().includes(searchLower)
     );
   }
@@ -214,6 +216,7 @@ export default async function VideosPage({
     const recipeLower = recipe.toLowerCase();
     videos = videos.filter(
       (v) => 
+        v.recipe?.title?.fr?.toLowerCase().includes(recipeLower) ||
         v.recipe?.title?.en?.toLowerCase().includes(recipeLower) ||
         v.recipe?.slug?.toLowerCase().includes(recipeLower)
     );
@@ -356,9 +359,9 @@ export default async function VideosPage({
       {totalVideos > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {videos.map((video) => {
-            const displayTitle = video.title?.en || video.title?.es || video.title?.fr || video.title?.ar || "Untitled Video";
-            const displayRecipe = video.recipe?.title?.en || video.recipe?.title?.es || "Unknown Recipe";
-            const displayUser = video.user?.supermarket_name?.en || video.user?.email || "Anonymous";
+            const displayTitle = video.title?.fr || video.title?.en || video.title?.es || video.title?.ar || "Untitled Video";
+            const displayRecipe = video.recipe?.title?.fr || video.recipe?.title?.en || video.recipe?.title?.es || "Unknown Recipe";
+            const displayUser = video.user?.supermarket_name?.fr || video.user?.supermarket_name?.en || video.user?.email || "Anonymous";
 
             return (
               <div key={video.id} className="space-y-3">
@@ -432,10 +435,7 @@ export default async function VideosPage({
           </div>
           <h3 className="font-semibold text-neutral-900">{t("videos.noResults")}</h3>
           <p className="text-neutral-600 mt-1">
-            {q 
-              ? tC("noResults")
-              : t("videos.noVideosYet")
-            }
+            {q ? t("videos.noResults") : t("videos.noVideosYet")}
           </p>
         </div>
       )}

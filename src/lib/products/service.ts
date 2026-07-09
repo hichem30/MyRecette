@@ -132,9 +132,10 @@ export async function getProductWithFrenchName(sku: string) {
     return null;
   }
 
+  const productData = data as any;
   return {
-    ...data,
-    display_name: data.name_fr || data.name || data.sku
+    ...productData,
+    display_name: productData.name_fr || productData.name || productData.sku
   };
 }
 

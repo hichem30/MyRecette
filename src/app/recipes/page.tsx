@@ -18,8 +18,6 @@ import {
   Users,
 } from "lucide-react";
 import type { Recipe } from "@/lib/types";
-
-export const revalidate = 60;
 export const dynamicParams = true;
 
 // Mock recipes for local development

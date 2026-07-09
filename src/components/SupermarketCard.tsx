@@ -7,13 +7,11 @@ import type { SupermarketProfile } from "@/lib/types";
 // Supermarket card component
 export default function SupermarketCard({
   supermarket,
-  lang,
 }: {
   supermarket: SupermarketProfile;
-  lang: "en" | "es";
 }) {
-  const name = supermarket.supermarket_name[lang] || supermarket.supermarket_name.en || "Supermarket";
-  const description = supermarket.description?.[lang] || supermarket.description?.en || "";
+  const name = supermarket.supermarket_name.fr || supermarket.supermarket_name.en || "Supermarché";
+  const description = supermarket.description?.fr || supermarket.description?.en || "";
   const address = supermarket.address ? [
     supermarket.address.line1,
     supermarket.address.city,
@@ -26,7 +24,7 @@ export default function SupermarketCard({
 
   return (
     <Link
-      href={`/${lang}/supermarkets/${supermarket.id}`}
+      href={`/fr/supermarkets/${supermarket.id}`}
       className="block rounded-xl overflow-hidden border border-neutral-200 hover:shadow-md transition-shadow"
     >
       {/* Banner */}
