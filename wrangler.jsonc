@@ -17,7 +17,6 @@
     "NEXT_PUBLIC_SITE_URL": "https://sucre-et-sel.sucre-et-sel.workers.dev",
     "NEXT_PUBLIC_SUPABASE_URL": "https://rjfcbdjyymspwasgrvts.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqZmNiZGp5eW1zcHdhc2dydnRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNzAyNjIsImV4cCI6MjA5ODk0NjI2Mn0.R0-J-fS-RFYUiv4C5X9YDA6mRcU-2Si2xy-bii58Kdg",
-    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_qmGijOvnqNTjctPTS7ncDQ_0UEJ_eqE",
     "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_51Tn1a4AX2w8dlVHiLvmhbDiFeZaL1AqNjIArXVZ77axX2zJ0f0fPDR9vd5nyokw2UQKF96CdMHk8aOiQgaVG539G00FZ143Z9y",
     "ADMIN_BOOTSTRAP_EMAIL": "hichemjouili2@gmail.com"
   },
