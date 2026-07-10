@@ -5,7 +5,7 @@
   "description": "My Recette - Recipes and products marketplace with social features and e-commerce",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "eslint .",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
@@ -13,7 +13,7 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "dependencies": {
-    "@opennextjs/cloudflare": "^1.19.10",
+    "@opennextjs/cloudflare": "^1.20.1",
     "@stripe/stripe-js": "^9.5.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
@@ -32,7 +32,7 @@
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
-    "wrangler": "^4.92.0",
+    "wrangler": "^4.108.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
