@@ -7,6 +7,7 @@ import { CartProvider } from "@/lib/cart/CartProvider";
 import { ToastProvider } from "@/components/Toast";
 import { AppProvider } from "@/components/AppProvider";
 import { isRtl } from "@/lib/i18n/config";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif", display: "swap" });

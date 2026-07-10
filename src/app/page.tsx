@@ -184,14 +184,15 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="relative h-80 overflow-hidden rounded-2xl bg-neutral-100 shadow-card lg:h-auto">
-            <iframe
-              title="My Recette map"
-              src="https://www.google.com/maps?q=Paris+France&output=embed"
-              loading="lazy"
-              className="h-full w-full"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+          <div className="relative h-80 overflow-hidden rounded-2xl bg-neutral-100 shadow-card lg:h-auto flex items-center justify-center">
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Paris+France"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
+            >
+              Open in Google Maps
+            </a>
           </div>
         </div>
       </section>

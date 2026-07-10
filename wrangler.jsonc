@@ -8,20 +8,6 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  "headers": {
-    "/_next/static/*": {
-      "Access-Control-Allow-Origin": "*",
-      "Cache-Control": "public, max-age=31536000, immutable"
-    },
-    "/_next/static/media/*.woff2": {
-      "Content-Type": "font/woff2",
-      "Access-Control-Allow-Origin": "*"
-    },
-    "/_next/static/media/*.woff": {
-      "Content-Type": "font/woff",
-      "Access-Control-Allow-Origin": "*"
-    }
-  },
   // Public env vars (NEXT_PUBLIC_*) and ADMIN_BOOTSTRAP_EMAIL live here so
   // every `wrangler deploy` re-applies them. Secrets
   // (SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET)
@@ -31,6 +17,7 @@
     "NEXT_PUBLIC_SITE_URL": "https://sucre-et-sel.sucre-et-sel.workers.dev",
     "NEXT_PUBLIC_SUPABASE_URL": "https://rjfcbdjyymspwasgrvts.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqZmNiZGp5eW1zcHdhc2dydnRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNzAyNjIsImV4cCI6MjA5ODk0NjI2Mn0.R0-J-fS-RFYUiv4C5X9YDA6mRcU-2Si2xy-bii58Kdg",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_qmGijOvnqNTjctPTS7ncDQ_0UEJ_eqE",
     "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_51Tn1a4AX2w8dlVHiLvmhbDiFeZaL1AqNjIArXVZ77axX2zJ0f0fPDR9vd5nyokw2UQKF96CdMHk8aOiQgaVG539G00FZ143Z9y",
     "ADMIN_BOOTSTRAP_EMAIL": "hichemjouili2@gmail.com"
   },
