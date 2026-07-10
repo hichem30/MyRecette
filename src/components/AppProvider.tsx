@@ -9,18 +9,6 @@ export function AppProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Handle client-side hydration
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Show loading spinner during hydration
-  if (!isMounted) {
-    return <FullPageLoader message="Chargement..." />;
-  }
-
   return (
     <ErrorBoundary>
       <Suspense
