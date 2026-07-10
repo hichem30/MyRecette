@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- My Recette Logo - Recipe & Supermarket Platform -->
+  <!-- Orange/food themed colors matching recette palette -->
+  <rect width="512" height="512" rx="96" fill="#F57A30" />
+  <g transform="translate(96 96)" fill="white">
+    <!-- Custom recipe book icon with spoon and shopping basket elements -->
+    <!-- Book cover -->
+    <rect x="40" y="60" width="160" height="200" rx="8" fill="white" />
+    <!-- Book pages (lines) -->
+    <line x1="60" y1="90" x2="180" y2="90" stroke="#F57A30" stroke-width="4" />
+    <line x1="60" y1="110" x2="180" y2="110" stroke="#F57A30" stroke-width="4" />
+    <line x1="60" y1="130" x2="180" y2="130" stroke="#F57A30" stroke-width="4" />
+    <line x1="60" y1="150" x2="180" y2="150" stroke="#F57A30" stroke-width="4" />
+    <line x1="60" y1="170" x2="180" y2="170" stroke="#F57A30" stroke-width="4" />
+    <!-- Book spine -->
+    <rect x="200" y="60" width="20" height="200" rx="2" fill="#E85A20" />
+    <!-- Shopping basket handle (representing supermarket/shopping) -->
+    <path d="M240 80 Q260 60 280 80 L270 100 Q260 120 250 100 Z" fill="white" />
+    <!-- Spoon (representing cooking/recipes) -->
+    <path d="M240 220 L240 280 L270 280 L270 220 Q280 200 270 180 L240 180 Z" fill="white" />
+  </g>
+</svg>

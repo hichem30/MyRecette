@@ -1,8 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#8B2A18" />
+  <rect width="512" height="512" rx="96" fill="#F57A30" />
   <g transform="translate(96 96)" fill="white">
-    <!-- Matches the header Logo silhouette: M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z -->
-    <!-- Scaled 24→320 (≈13.33x), centered in 320x320 panel -->
-    <path d="M40 147 L160 53 L280 147 L280 267 a13 13 0 0 1 -13 13 h-67 v-80 h-80 v80 h-67 a13 13 0 0 1 -13 -13 Z" />
+    <!-- My Recette icon - Recipe book -->
+    <rect x="40" y="60" width="160" height="200" rx="8" fill="white" />
+    <line x1="60" y1="90" x2="180" y2="90" stroke="#F57A30" stroke-width="6" />
+    <line x1="60" y1="110" x2="180" y2="110" stroke="#F57A30" stroke-width="6" />
+    <line x1="60" y1="130" x2="180" y2="130" stroke="#F57A30" stroke-width="6" />
+    <line x1="60" y1="150" x2="180" y2="150" stroke="#F57A30" stroke-width="6" />
+    <line x1="60" y1="170" x2="180" y2="170" stroke="#F57A30" stroke-width="6" />
+    <rect x="200" y="60" width="20" height="200" rx="2" fill="#E85A20" />
   </g>
 </svg>

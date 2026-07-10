@@ -22,25 +22,25 @@ export default async function ContactPage() {
 
             <ul className="mt-6 space-y-5 text-sm">
               <ContactRow Icon={Phone} label={t("contact.phone")}>
-                <a href="tel:+19182458112" className="hover:text-barn-700">+1 (918) 245‑8112</a>
+                <a href="tel:+33123456789" className="hover:text-recette-700">+33 1 23 45 67 89</a>
               </ContactRow>
               <ContactRow Icon={Mail} label={t("contact.email")}>
-                <a href="mailto:redbarnwesternmarket@gmail.com" className="break-all hover:text-barn-700">
-                  redbarnwesternmarket@gmail.com
+                <a href="mailto:hello@myrecette.com" className="break-all hover:text-recette-700">
+                  hello@myrecette.com
                 </a>
               </ContactRow>
-              <ContactRow Icon={MapPin} label={t("contact.address")}>308 S. 209th W. Ave., Sand Springs, OK</ContactRow>
+              <ContactRow Icon={MapPin} label={t("contact.address")}>Paris, France</ContactRow>
               <ContactRow Icon={Clock} label={t("contact.hoursLabel")}>{t("contact.hours")}</ContactRow>
             </ul>
 
             <p className="mt-8 text-xs font-bold tracking-widest text-neutral-500">{t("contact.followUs")}</p>
             <div className="mt-2 flex gap-2">
               <a
-                href="https://facebook.com/redbarnwesternmarket"
+                href="https://facebook.com/myrecetteapp"
                 aria-label="Facebook"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 hover:border-barn-600 hover:text-barn-700"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 hover:border-recette-600 hover:text-recette-700"
               >
                 <Facebook className="h-4 w-4" />
               </a>
@@ -67,7 +67,7 @@ function ContactRow({
 }) {
   return (
     <li className="flex gap-3">
-      <span className="mt-0.5 inline-flex h-9 w-9 flex-none items-center justify-center rounded-full bg-barn-50 text-barn-700">
+      <span className="mt-0.5 inline-flex h-9 w-9 flex-none items-center justify-center rounded-full bg-recette-50 text-recette-700">
         <Icon className="h-4 w-4" />
       </span>
       <div>

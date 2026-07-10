@@ -33,7 +33,7 @@ export function ProductCard({ product, compact = false }: { product: Product; co
         <div className="pointer-events-none absolute inset-x-2 top-2 flex items-start justify-between">
           <div className="flex flex-col gap-1">
             {product.new_arrival && (
-              <span className="rounded-md bg-barn-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow">
+              <span className="rounded-md bg-recette-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow">
                 {t("new")}
               </span>
             )}
@@ -59,11 +59,11 @@ export function ProductCard({ product, compact = false }: { product: Product; co
       </Link>
 
       <div className="flex flex-1 flex-col gap-1.5 p-3 sm:p-4">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-barn-600">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-recette-600">
           {product.category_slug.replace(/-/g, " ")}
         </p>
         <h3 className="line-clamp-2 text-sm font-semibold text-neutral-900">
-          <Link href={`/products/${product.slug}`} className="hover:text-barn-700">
+          <Link href={`/products/${product.slug}`} className="hover:text-recette-700">
             {product.name[locale]}
           </Link>
         </h3>
@@ -98,7 +98,7 @@ export function ProductCard({ product, compact = false }: { product: Product; co
               type="button"
               onClick={() => addItem(product)}
               disabled={product.stock === 0}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-barn-600 px-3 py-2 text-sm font-medium text-white hover:bg-barn-700 transition disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:hover:bg-neutral-400"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-recette-600 px-3 py-2 text-sm font-medium text-white hover:bg-recette-700 transition disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:hover:bg-neutral-400"
             >
               <ShoppingCart className="h-4 w-4" />
               {product.stock === 0 ? t("outOfStock") : t("addToCart")}
@@ -114,8 +114,8 @@ export function ProductCard({ product, compact = false }: { product: Product; co
               aria-label="Toggle wishlist"
               className={`inline-flex h-9 w-9 items-center justify-center rounded-md border ${
                 fav
-                  ? "border-barn-600 bg-barn-50 text-barn-700"
-                  : "border-neutral-300 text-neutral-500 hover:text-barn-700"
+                  ? "border-recette-600 bg-recette-50 text-recette-700"
+                  : "border-neutral-300 text-neutral-500 hover:text-recette-700"
               }`}
             >
               <Heart className={`h-4 w-4 ${fav ? "fill-current" : ""}`} />

@@ -18,7 +18,7 @@ export function PageHeader({
     >
       <div className="container-page pt-16 pb-20 text-center sm:pt-20 sm:pb-24">
         {eyebrow && (
-          <p className={`text-xs font-bold tracking-widest ${dark ? "text-barn-300" : "text-barn-600"}`}>
+          <p className={`text-xs font-bold tracking-widest ${dark ? "text-recette-300" : "text-recette-600"}`}>
             {eyebrow}
           </p>
         )}

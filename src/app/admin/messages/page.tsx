@@ -104,7 +104,7 @@ export default function AdminMessagesPage() {
               <article
                 key={m.id}
                 className={`rounded-xl border bg-white transition ${
-                  m.read ? "border-neutral-200" : "border-barn-300 bg-barn-50/40"
+                  m.read ? "border-neutral-200" : "border-recette-300 bg-recette-50/40"
                 }`}
               >
                 <button
@@ -123,7 +123,7 @@ export default function AdminMessagesPage() {
                   <span className="min-w-0 flex-1">
                     <span className="flex flex-wrap items-center gap-2">
                       {!m.read && (
-                        <span className="inline-flex items-center rounded-full bg-barn-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                        <span className="inline-flex items-center rounded-full bg-recette-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
                           New
                         </span>
                       )}
@@ -152,14 +152,14 @@ export default function AdminMessagesPage() {
                         href={`mailto:${m.email}?subject=${encodeURIComponent(
                           `Re: your message to sucre et sel`,
                         )}`}
-                        className="inline-flex items-center gap-1 rounded-md border border-barn-600 bg-barn-600 px-3 py-1.5 font-semibold text-white hover:bg-barn-700"
+                        className="inline-flex items-center gap-1 rounded-md border border-recette-600 bg-recette-600 px-3 py-1.5 font-semibold text-white hover:bg-recette-700"
                       >
                         <Reply className="h-3 w-3" /> Reply
                       </a>
                       <button
                         type="button"
                         onClick={() => toggleRead(m)}
-                        className="inline-flex items-center gap-1 rounded-md border border-neutral-300 px-3 py-1.5 hover:border-barn-600 hover:text-barn-700"
+                        className="inline-flex items-center gap-1 rounded-md border border-neutral-300 px-3 py-1.5 hover:border-recette-600 hover:text-recette-700"
                       >
                         <Mail className="h-3 w-3" /> {m.read ? "Mark unread" : "Mark read"}
                       </button>

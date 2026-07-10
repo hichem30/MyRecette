@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import Image from "next/image";
 import { t } from "@/lib/fr";
 import { getProductName } from "@/lib/products/service";
-import { ChevronRight, Clock, FlaskConical, Heart, MapPin, ShoppingCart, Star, Users, XCircle, CheckCircle } from "lucide-react";
+import { ChevronRight, Clock, FlaskConical, Heart, MapPin, ShoppingCart, Star, Users, XCircle, CheckCircle, Package } from "lucide-react";
 import Link from "next/link";
 import { getAllProducts, getProductBySlug } from "@/lib/data";
 import { formatPrice, isDiscountWindowActive } from "@/lib/utils";
@@ -14,6 +15,8 @@ import { RecentlyViewed } from "@/components/RecentlyViewed";
 import { RecordProductView } from "@/components/RecordProductView";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type { Product, Recipe, Ingredient, SupermarketIngredientAvailability } from "@/lib/types";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { FullPageLoader } from "@/components/LoadingSpinner";
 
 // Mock data for local development
 const mockRecipesUsingProduct: Recipe[] = [
@@ -276,7 +279,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return {};
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://shop.redbarnmarket.workers.dev";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sucre-et-sel.hichemjouili2.workers.dev";
   const url = `${base}/${product.slug}`;
   const name = product.name?.fr || product.name?.en || "";
   const description = product.description?.fr?.slice(0, 160) || name;
@@ -352,7 +355,9 @@ export default async function ProductDetail({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="container-page pt-6">
+      <ErrorBoundary>
+        <Suspense fallback={<FullPageLoader message="Chargement du produit..." />}>
+          <div className="container-page pt-6">
         <nav className="flex items-center gap-1 text-xs text-neutral-500">
           <Link href={`/fr/`} className="hover:text-recette-700">
             Accueil
@@ -549,6 +554,8 @@ export default async function ProductDetail({
           </div>
         </section>
       )}
+          </Suspense>
+        </ErrorBoundary>
     </>
   );
 }

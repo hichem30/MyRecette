@@ -61,7 +61,7 @@ export function ProductCTAs({ product }: { product: Product }) {
         type="button"
         onClick={() => addItem(product, qty)}
         disabled={outOfStock}
-        className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md bg-barn-600 px-3 sm:px-6 text-sm font-bold text-white hover:bg-barn-700 transition disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:hover:bg-neutral-400"
+        className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md bg-recette-600 px-3 sm:px-6 text-sm font-bold text-white hover:bg-recette-700 transition disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:hover:bg-neutral-400"
       >
         <ShoppingCart className="h-4 w-4 flex-none" />
         <span className="truncate">
@@ -79,8 +79,8 @@ export function ProductCTAs({ product }: { product: Product }) {
         aria-label="Toggle wishlist"
         className={`inline-flex h-11 w-11 flex-none items-center justify-center rounded-md border ${
           fav
-            ? "border-barn-600 bg-barn-50 text-barn-700"
-            : "border-neutral-300 text-neutral-500 hover:text-barn-700"
+            ? "border-recette-600 bg-recette-50 text-recette-700"
+            : "border-neutral-300 text-neutral-500 hover:text-recette-700"
         }`}
       >
         <Heart className={`h-4 w-4 ${fav ? "fill-current" : ""}`} />

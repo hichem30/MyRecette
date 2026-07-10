@@ -21,7 +21,7 @@ export function LanguageSelector({ compact = false }: { compact?: boolean }) {
     <div className="relative">
       <button
         type="button"
-        className={`inline-flex items-center gap-1 rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-medium uppercase tracking-wide hover:border-barn-600 hover:text-barn-700 transition ${
+        className={`inline-flex items-center gap-1 rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-medium uppercase tracking-wide hover:border-recette-600 hover:text-recette-700 transition ${
           compact ? "" : ""
         }`}
         onClick={() => setLocale(locale === "en" ? "es" : "en")}

@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { useLocale, useTranslations } from "@/lib/fr";
-import { Filter, Search } from "lucide-react";
+import { Filter, Search, Package } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
 import Link from "next/link";
 import type { Category, Product } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
+import { EmptyState } from "@/components/ErrorBoundary";
+import { ProductGridSkeleton } from "@/components/LoadingSpinner";
 
 const PAGE_SIZE = 10;
 
@@ -98,7 +100,7 @@ export function ProductsListing({
               <button
                 onClick={() => setActiveCategory("")}
                 className={`flex w-full items-center justify-between rounded-md px-2 py-1 text-left ${
-                  activeCategory === "" ? "bg-barn-50 text-barn-700 font-semibold" : "hover:bg-neutral-50"
+                  activeCategory === "" ? "bg-recette-50 text-recette-700 font-semibold" : "hover:bg-neutral-50"
                 }`}
               >
                 {t("allCategories")} <span className="text-xs text-neutral-400">{products.length}</span>
@@ -112,7 +114,7 @@ export function ProductsListing({
                   <button
                     onClick={() => setActiveCategory(c.slug)}
                     className={`flex w-full items-center justify-between rounded-md px-2 py-1 text-left ${
-                      active ? "bg-barn-50 text-barn-700 font-semibold" : "hover:bg-neutral-50"
+                      active ? "bg-recette-50 text-recette-700 font-semibold" : "hover:bg-neutral-50"
                     }`}
                   >
                     {c.name[locale]} <span className="text-xs text-neutral-400">{count}</span>
@@ -134,7 +136,7 @@ export function ProductsListing({
             step={10}
             value={priceMax}
             onChange={(e) => setPriceMax(Number(e.target.value))}
-            className="w-full accent-barn-600"
+            className="w-full accent-recette-600"
           />
           <p className="mt-1 text-xs text-neutral-500">$0 – ${priceMax}</p>
         </div>
@@ -166,17 +168,29 @@ export function ProductsListing({
           </p>
         </div>
 
-        {paged.length === 0 ? (
-          <p className="rounded-md border border-dashed border-neutral-300 bg-neutral-50 p-10 text-center text-sm text-neutral-500">
-            {t("noProducts")}
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
-            {paged.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        )}
+        <Suspense fallback={<ProductGridSkeleton count={PAGE_SIZE} />}>
+          {paged.length === 0 ? (
+            <EmptyState
+              icon={<Package className="h-10 w-10" />}
+              title={t("noProducts")}
+              description={t("noProductsDescription")}
+              action={
+                <Link
+                  href="/products"
+                  className="inline-flex items-center gap-2 rounded-md bg-recette-600 px-4 py-2 text-sm font-medium text-white hover:bg-recette-700"
+                >
+                  {t("browseAllProducts")}
+                </Link>
+              }
+            />
+          ) : (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+              {paged.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          )}
+        </Suspense>
 
         {totalPages > 1 && (
           <nav className="mt-8 flex items-center justify-center gap-2 text-sm">
@@ -213,7 +227,7 @@ function Toggle({
         aria-checked={value}
         onClick={() => onChange(!value)}
         className={`inline-flex h-5 w-9 items-center rounded-full transition ${
-          value ? "bg-barn-600" : "bg-neutral-300"
+          value ? "bg-recette-600" : "bg-neutral-300"
         }`}
       >
         <span
@@ -252,8 +266,8 @@ function PageLink({
       href={`/products?${params.toString()}`}
       className={`rounded-md border px-3 py-1.5 text-xs font-medium ${
         active
-          ? "border-barn-600 bg-barn-600 text-white"
-          : "border-neutral-300 bg-white text-neutral-700 hover:border-barn-600 hover:text-barn-700"
+          ? "border-recette-600 bg-recette-600 text-white"
+          : "border-neutral-300 bg-white text-neutral-700 hover:border-recette-600 hover:text-recette-700"
       }`}
     >
       {label}

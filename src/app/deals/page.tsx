@@ -177,7 +177,7 @@ export default async function DealsPage() {
                       </span>
                     </div>
                     <div className="flex flex-1 flex-col p-4">
-                      <h3 className="font-serif text-lg font-bold leading-snug text-neutral-900 group-hover:text-barn-700">
+                      <h3 className="font-serif text-lg font-bold leading-snug text-neutral-900 group-hover:text-recette-700">
                         {b.name?.fr || b.name?.en || "Lot"}
                       </h3>
                       {b.description?.en && (
@@ -215,7 +215,7 @@ export default async function DealsPage() {
                             </span>
                           )}
                         </div>
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-barn-700">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-recette-700">
                           {t("bundles.viewBundle")}
                           <ChevronRight className="h-3.5 w-3.5" />
                         </span>

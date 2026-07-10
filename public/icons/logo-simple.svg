@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <!-- My Recette Simple Logo -->
+  <!-- Recipe book with page lines -->
+  <rect x="3" y="4" width="14" height="16" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <!-- Book pages (3 visible lines) -->
+  <line x1="5" y1="7" x2="15" y2="7" stroke="currentColor" stroke-width="1" />
+  <line x1="5" y1="10" x2="15" y2="10" stroke="currentColor" stroke-width="1" />
+  <line x1="5" y1="13" x2="15" y2="13" stroke="currentColor" stroke-width="1" />
+  <!-- Book spine -->
+  <rect x="17" y="4" width="1.5" height="16" rx="0.75" fill="currentColor"/>
+  <!-- Small shopping cart symbol in corner -->
+  <circle cx="19" cy="17" r="1" fill="currentColor"/>
+  <circle cx="21" cy="17" r="1" fill="currentColor"/>
+  <path d="M19 15.5L20 14" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
+  <path d="M20 14L21 15.5" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
+</svg>

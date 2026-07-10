@@ -15,7 +15,7 @@ const STATIC_PATHS = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://shop.redbarnmarket.workers.dev";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sucre-et-sel.hichemjouili2.workers.dev";
   const now = new Date();
 
   const entries: MetadataRoute.Sitemap = [];

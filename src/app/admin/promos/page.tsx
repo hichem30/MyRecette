@@ -176,7 +176,7 @@ export default function AdminPromosPage() {
         </div>
         <button
           onClick={() => (adding ? closeForm() : openCreate())}
-          className="inline-flex items-center gap-1.5 rounded-md bg-barn-600 px-4 py-2 text-sm font-bold text-white hover:bg-barn-700"
+          className="inline-flex items-center gap-1.5 rounded-md bg-recette-600 px-4 py-2 text-sm font-bold text-white hover:bg-recette-700"
         >
           <Plus className="h-4 w-4" /> {adding ? "Cancel" : "New code"}
         </button>
@@ -185,7 +185,7 @@ export default function AdminPromosPage() {
       {adding && (
         <form onSubmit={save} className="mb-5 grid gap-3 rounded-xl border border-neutral-200 bg-white p-4 sm:grid-cols-2">
           {editingId && (
-            <div className="sm:col-span-2 -mb-1 text-xs font-semibold uppercase tracking-wide text-barn-700">
+            <div className="sm:col-span-2 -mb-1 text-xs font-semibold uppercase tracking-wide text-recette-700">
               Editing existing code
             </div>
           )}
@@ -274,7 +274,7 @@ export default function AdminPromosPage() {
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, applies_to_category_slugs: [] })}
-                    className="text-[11px] text-neutral-500 hover:text-barn-700"
+                    className="text-[11px] text-neutral-500 hover:text-recette-700"
                   >
                     Clear
                   </button>
@@ -319,7 +319,7 @@ export default function AdminPromosPage() {
                   <button
                     type="button"
                     onClick={() => setForm({ ...form, applies_to_product_ids: [] })}
-                    className="text-[11px] text-neutral-500 hover:text-barn-700"
+                    className="text-[11px] text-neutral-500 hover:text-recette-700"
                   >
                     Clear
                   </button>
@@ -424,7 +424,7 @@ export default function AdminPromosPage() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => openEdit(p)}
-                        className="mr-3 inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-barn-700"
+                        className="mr-3 inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-recette-700"
                       >
                         <Pencil className="h-3.5 w-3.5" /> Edit
                       </button>

@@ -84,8 +84,8 @@ function SupermarketRow({ supermarket, index }: { supermarket: SupermarketProfil
               className="h-10 w-10 rounded-full object-cover"
             />
           ) : (
-            <div className="h-10 w-10 rounded-full bg-barn-100 flex items-center justify-center">
-              <Building2 className="h-5 w-5 text-barn-600" />
+            <div className="h-10 w-10 rounded-full bg-recette-100 flex items-center justify-center">
+              <Building2 className="h-5 w-5 text-recette-600" />
             </div>
           )}
           <div>
@@ -160,8 +160,8 @@ function StatsCards({ supermarkets }: { supermarkets: SupermarketProfile[] }) {
             <p className="text-xs text-neutral-500">Total Supermarkets</p>
             <p className="mt-1 text-2xl font-bold text-neutral-900">{total}</p>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-barn-50 flex items-center justify-center">
-            <Building2 className="h-5 w-5 text-barn-600" />
+          <div className="w-10 h-10 rounded-lg bg-recette-50 flex items-center justify-center">
+            <Building2 className="h-5 w-5 text-recette-600" />
           </div>
         </div>
       </div>
@@ -288,13 +288,13 @@ export default function AdminSupermarketsPage() {
               placeholder="Search supermarkets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-64 pl-10 pr-4 py-2 rounded-lg border border-neutral-300 text-sm bg-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-barn-500 focus:border-transparent"
+              className="w-64 pl-10 pr-4 py-2 rounded-lg border border-neutral-300 text-sm bg-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-recette-500 focus:border-transparent"
             />
           </div>
           <select
             value={statusFilter || ""}
             onChange={(e) => setStatusFilter(e.target.value || null)}
-            className="px-3 py-2 rounded-lg border border-neutral-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-barn-500 focus:border-transparent"
+            className="px-3 py-2 rounded-lg border border-neutral-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-recette-500 focus:border-transparent"
           >
             <option value="">All Statuses</option>
             <option value="active">Active</option>
@@ -306,7 +306,7 @@ export default function AdminSupermarketsPage() {
         </div>
         <Link
           href="/admin/supermarkets/new"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-barn-600 text-white hover:bg-barn-700 text-sm font-medium transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white hover:bg-recette-700 text-sm font-medium transition-colors"
         >
           <Plus className="h-4 w-4" /> Add Supermarket
         </Link>
@@ -356,7 +356,7 @@ export default function AdminSupermarketsPage() {
             <p className="text-sm text-neutral-500">No supermarkets yet</p>
             <Link
               href="/admin/supermarkets/new"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-barn-600 text-white hover:bg-barn-700 text-sm font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white hover:bg-recette-700 text-sm font-medium transition-colors"
             >
               <Plus className="h-4 w-4" /> Add First Supermarket
             </Link>

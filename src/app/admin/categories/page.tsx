@@ -102,7 +102,7 @@ export default function AdminCategoriesPage() {
         </div>
         <button
           onClick={() => setAdding((v) => !v)}
-          className="inline-flex items-center gap-1.5 rounded-md bg-barn-600 px-4 py-2 text-sm font-bold text-white hover:bg-barn-700"
+          className="inline-flex items-center gap-1.5 rounded-md bg-recette-600 px-4 py-2 text-sm font-bold text-white hover:bg-recette-700"
         >
           <Plus className="h-4 w-4" /> Add Category
         </button>
@@ -149,7 +149,7 @@ export default function AdminCategoriesPage() {
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => setEditingDiscount(editingDiscount === c.id ? null : c.id)}
-                        className="mr-3 inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-barn-700"
+                        className="mr-3 inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-recette-700"
                       >
                         <Percent className="h-3.5 w-3.5" /> {editingDiscount === c.id ? "Cancel" : "Sale"}
                       </button>
@@ -219,7 +219,7 @@ function DiscountEditor({
       </label>
       <button
         onClick={() => onSave(percent, fromLocalInput(starts), fromLocalInput(ends))}
-        className="h-9 rounded-md bg-barn-600 px-4 text-xs font-bold text-white hover:bg-barn-700"
+        className="h-9 rounded-md bg-recette-600 px-4 text-xs font-bold text-white hover:bg-recette-700"
       >
         Save
       </button>

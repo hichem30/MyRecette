@@ -2,8 +2,8 @@
 
 import { useLocale, useTranslations } from "@/lib/fr";
 import { use } from "react";
+import { useState, Suspense } from "react";
 import Image from "next/image";
-import { useState } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -18,6 +18,8 @@ import {
   Users,
 } from "lucide-react";
 import type { Recipe } from "@/lib/types";
+import { EmptyState } from "@/components/ErrorBoundary";
+import { ProductGridSkeleton } from "@/components/LoadingSpinner";
 export const dynamicParams = true;
 
 // Mock recipes for local development
@@ -280,8 +282,8 @@ function RecipeCard({
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-barn-100 to-barn-200 flex items-center justify-center">
-              <ChefHat className="h-8 w-8 text-barn-400" />
+            <div className="w-full h-full bg-gradient-to-br from-recette-100 to-recette-200 flex items-center justify-center">
+              <ChefHat className="h-8 w-8 text-recette-400" />
             </div>
           )}
         </div>
@@ -289,7 +291,7 @@ function RecipeCard({
         {/* Content */}
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm text-barn-600 font-medium capitalize">{recipe.cuisine}</span>
+            <span className="text-sm text-recette-600 font-medium capitalize">{recipe.cuisine}</span>
             <StarRating rating={recipe.rating ?? null} count={recipe.rating_count} />
           </div>
           <h3 className="font-semibold text-neutral-900 mb-1">{title}</h3>
@@ -337,8 +339,8 @@ function RecipeCard({
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-barn-100 to-barn-200 flex items-center justify-center">
-              <ChefHat className="h-12 w-12 text-barn-400" />
+            <div className="w-full h-full bg-gradient-to-br from-recette-100 to-recette-200 flex items-center justify-center">
+              <ChefHat className="h-12 w-12 text-recette-400" />
             </div>
           )}
           
@@ -512,14 +514,14 @@ export default function RecipesPage({
             type="search"
             placeholder={lang === "es" ? "Buscar recetas..." : "Search recipes..."}
             defaultValue={search || ""}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
           />
         </div>
         
         {/* Add Recipe Button */}
         <Link
           href={`/${lang}/recipes/add`}
-          className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-barn-600 text-white hover:bg-barn-700 font-semibold transition-colors whitespace-nowrap"
+          className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-recette-600 text-white hover:bg-recette-700 font-semibold transition-colors whitespace-nowrap"
         >
           <Tag className="h-5 w-5" />
           {lang === "es" ? "Añadir Receta" : "Add Recipe"}
@@ -556,7 +558,7 @@ export default function RecipesPage({
             <span className="text-sm text-neutral-600">Category:</span>
             <select
               defaultValue={category || "all"}
-              className="px-3 py-1.5 rounded-lg border border-neutral-300 bg-white text-sm focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none"
+              className="px-3 py-1.5 rounded-lg border border-neutral-300 bg-white text-sm focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none"
             >
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
@@ -571,7 +573,7 @@ export default function RecipesPage({
             <span className="text-sm text-neutral-600">Difficulty:</span>
             <select
               defaultValue={difficulty || "all"}
-              className="px-3 py-1.5 rounded-lg border border-neutral-300 bg-white text-sm focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none"
+              className="px-3 py-1.5 rounded-lg border border-neutral-300 bg-white text-sm focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none"
             >
               {difficulties.map((d) => (
                 <option key={d.id} value={d.id}>{d.label[lang]}</option>
@@ -584,7 +586,7 @@ export default function RecipesPage({
             <span className="text-sm text-neutral-600">Meal Type:</span>
             <select
               defaultValue={meal_type || "all"}
-              className="px-3 py-1.5 rounded-lg border border-neutral-300 bg-white text-sm focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none"
+              className="px-3 py-1.5 rounded-lg border border-neutral-300 bg-white text-sm focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none"
             >
               {mealTypes.map((m) => (
                 <option key={m.id} value={m.id}>{m.label[lang]}</option>
@@ -597,7 +599,7 @@ export default function RecipesPage({
             <span className="text-sm text-neutral-600">Sort by:</span>
             <select
               defaultValue={sort || "popular"}
-              className="px-3 py-1.5 rounded-lg border border-neutral-300 bg-white text-sm focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none"
+              className="px-3 py-1.5 rounded-lg border border-neutral-300 bg-white text-sm focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none"
             >
               {sortOptions.map((s) => (
                 <option key={s.id} value={s.id}>{s.label[lang]}</option>
@@ -608,34 +610,41 @@ export default function RecipesPage({
       </div>
       
       {/* Results */}
-      {recipes.length > 0 ? (
-        <>
-          <p className="text-sm text-neutral-500 mb-4">
-            Showing {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"}
-          </p>
-          
-          <div className={`grid gap-6 ${view === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : ""}`}>
-            {recipes.map((recipe) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                lang={lang}
-                view={view}
-              />
-            ))}
-          </div>
-        </>
-      ) : (
-        <div className="text-center py-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-neutral-100 mb-4">
-            <ChefHat className="h-8 w-8 text-neutral-500" />
-          </div>
-          <h3 className="font-semibold text-neutral-900">No recipes found</h3>
-          <p className="text-neutral-600 mt-1">
-            Try adjusting your search or filters.
-          </p>
-        </div>
-      )}
+      <Suspense fallback={<ProductGridSkeleton count={9} />}>
+        {recipes.length > 0 ? (
+          <>
+            <p className="text-sm text-neutral-500 mb-4">
+              Showing {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"}
+            </p>
+            
+            <div className={`grid gap-6 ${view === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : ""}`}>
+              {recipes.map((recipe) => (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  lang={lang}
+                  view={view}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          <EmptyState
+            icon={<ChefHat className="h-10 w-10" />}
+            title={lang === "es" ? "No se encontraron recetas" : "No recipes found"}
+            description={lang === "es" ? "Intenta ajustar tu búsqueda o filtros." : "Try adjusting your search or filters."}
+            action={
+              <Link
+                href={`/${lang}/recipes/add`}
+                className="inline-flex items-center gap-2 rounded-md bg-recette-600 px-4 py-2 text-sm font-medium text-white hover:bg-recette-700"
+              >
+                <Tag className="h-4 w-4" />
+                {lang === "es" ? "Añadir Receta" : "Add Recipe"}
+              </Link>
+            }
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

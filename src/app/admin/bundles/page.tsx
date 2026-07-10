@@ -65,7 +65,7 @@ export default function AdminBundlesPage() {
         </div>
         <Link
           href="/admin/bundles/new"
-          className="inline-flex items-center gap-1.5 rounded-md bg-barn-600 px-4 py-2 text-sm font-bold text-white hover:bg-barn-700"
+          className="inline-flex items-center gap-1.5 rounded-md bg-recette-600 px-4 py-2 text-sm font-bold text-white hover:bg-recette-700"
         >
           <Plus className="h-4 w-4" /> New bundle
         </Link>
@@ -90,7 +90,7 @@ export default function AdminBundlesPage() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <Package2 className="h-4 w-4 text-barn-600" />
+                      <Package2 className="h-4 w-4 text-recette-600" />
                       <h3 className="truncate font-bold">{b.name.en || "(untitled)"}</h3>
                     </div>
                     <p className="mt-1 text-xs text-neutral-500">{b.product_ids.length} items · {formatPrice(b.bundle_price)}{savings > 0 ? ` (save ${formatPrice(savings)})` : ""}</p>
@@ -105,7 +105,7 @@ export default function AdminBundlesPage() {
                   </button>
                 </div>
                 <div className="mt-3 flex items-center gap-3 text-xs">
-                  <Link href={`/admin/bundles/${b.id}`} className="font-semibold text-barn-700 hover:underline">
+                  <Link href={`/admin/bundles/${b.id}`} className="font-semibold text-recette-700 hover:underline">
                     Edit
                   </Link>
                   <button onClick={() => remove(b.id)} className="inline-flex items-center gap-1 text-neutral-600 hover:text-red-700">

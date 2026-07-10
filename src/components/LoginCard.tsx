@@ -114,7 +114,7 @@ export function LoginCard() {
       <form onSubmit={onSubmit} className="space-y-3">
         <label className="block">
           <span className="mb-1 block text-xs font-semibold text-neutral-700">{t("email")}</span>
-          <div className="flex items-center gap-2 rounded-md border border-neutral-300 bg-white px-3 py-2 focus-within:border-barn-600">
+          <div className="flex items-center gap-2 rounded-md border border-neutral-300 bg-white px-3 py-2 focus-within:border-recette-600">
             <Mail className="h-4 w-4 text-neutral-400" />
             <input name="email" type="email" required placeholder={t("emailPlaceholder")} className="flex-1 bg-transparent text-sm outline-none" />
           </div>
@@ -123,9 +123,9 @@ export function LoginCard() {
         <label className="block">
           <div className="mb-1 flex items-center justify-between">
             <span className="text-xs font-semibold text-neutral-700">{t("password")}</span>
-            <a href="#" className="text-xs font-semibold text-barn-600 hover:underline">{t("forgotPassword")}</a>
+            <a href="#" className="text-xs font-semibold text-recette-600 hover:underline">{t("forgotPassword")}</a>
           </div>
-          <div className="flex items-center gap-2 rounded-md border border-neutral-300 bg-white px-3 py-2 focus-within:border-barn-600">
+          <div className="flex items-center gap-2 rounded-md border border-neutral-300 bg-white px-3 py-2 focus-within:border-recette-600">
             <Lock className="h-4 w-4 text-neutral-400" />
             <input name="password" type={showPw ? "text" : "password"} required placeholder="••••••••" className="flex-1 bg-transparent text-sm outline-none" />
             <button
@@ -140,17 +140,17 @@ export function LoginCard() {
         </label>
 
         <label className="flex items-center gap-2 text-xs text-neutral-600">
-          <input type="checkbox" className="rounded border-neutral-300 accent-barn-600" />
+          <input type="checkbox" className="rounded border-neutral-300 accent-recette-600" />
           {t("rememberMe")}
         </label>
 
         {mode === "sign_up" && (
-          <label className="flex items-start gap-2 rounded-md border border-barn-200 bg-barn-50/50 px-3 py-2.5 text-xs text-neutral-700">
+          <label className="flex items-start gap-2 rounded-md border border-recette-200 bg-recette-50/50 px-3 py-2.5 text-xs text-neutral-700">
             <input
               type="checkbox"
               checked={marketingOptin}
               onChange={(e) => setMarketingOptin(e.target.checked)}
-              className="mt-0.5 h-4 w-4 flex-none rounded border-neutral-300 accent-barn-600"
+              className="mt-0.5 h-4 w-4 flex-none rounded border-neutral-300 accent-recette-600"
             />
             <span className="font-medium">{t("marketingOptin")}</span>
           </label>
@@ -159,7 +159,7 @@ export function LoginCard() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-md bg-barn-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-barn-700 transition disabled:opacity-50"
+          className="w-full rounded-md bg-recette-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-recette-700 transition disabled:opacity-50"
         >
           {mode === "sign_in" ? t("signIn") : t("signUp")}
         </button>
@@ -173,7 +173,7 @@ export function LoginCard() {
         <button
           type="button"
           onClick={() => setMode(mode === "sign_in" ? "sign_up" : "sign_in")}
-          className="font-bold text-barn-600 hover:underline"
+          className="font-bold text-recette-600 hover:underline"
         >
           {mode === "sign_in" ? t("signUp") : t("signIn")}
         </button>

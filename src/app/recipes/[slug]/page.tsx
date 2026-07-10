@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { useLocale, useTranslations } from "@/lib/fr";
-import { use } from "react";
+import { use, Suspense } from "react";
 import Image from "next/image";
 import { useState } from "react";
 import {
@@ -28,6 +28,8 @@ import { VideoList } from "@/components/VideoList/VideoList";
 import { SocialShare } from "@/components/SocialShare/SocialShare";
 import { VideoEmbed } from "@/components/VideoEmbed/VideoEmbed";
 import { RecipeCommunityTabs } from "@/components/RecipeCommunityTabs/RecipeCommunityTabs";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { FullPageLoader } from "@/components/LoadingSpinner";
 
 // Mock data for local development
 const mockRecipe: Recipe = {
@@ -1084,9 +1086,10 @@ export default function RecipeDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      
-      {/* Header */}
-      <div className="max-w-6xl mx-auto px-4 py-4">
+      <ErrorBoundary>
+        <Suspense fallback={<FullPageLoader message="Chargement de la recette..." />}>
+          {/* Header */}
+          <div className="max-w-6xl mx-auto px-4 py-4">
         <nav className="flex items-center gap-2 text-sm text-neutral-500">
           <Link href={`/${lang}/`} className="hover:text-recette-600">
             Home
@@ -1309,6 +1312,8 @@ export default function RecipeDetailPage({
           </div>
         </div>
       </article>
+        </Suspense>
+      </ErrorBoundary>
     </>
   );
 }

@@ -99,7 +99,7 @@ export default function EditProduct() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link href="/admin/products" className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-barn-700">
+      <Link href="/admin/products" className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-recette-700">
         <ChevronLeft className="h-3.5 w-3.5" /> Back to products
       </Link>
       <h1 className="mt-3 font-serif text-2xl font-bold">{isNew ? "Add Product" : "Edit Product"}</h1>
@@ -186,7 +186,7 @@ export default function EditProduct() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-md bg-barn-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-barn-700 disabled:opacity-50"
+          className="w-full rounded-md bg-recette-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-recette-700 disabled:opacity-50"
         >
           {saving ? "Saving..." : isNew ? "Create Product" : "Save Changes"}
         </button>
@@ -231,7 +231,7 @@ function Toggle({
   return (
     <label className="flex items-center justify-between rounded-md border border-neutral-300 px-3 py-2 text-sm">
       <span>{label}</span>
-      <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} className="accent-barn-600" />
+      <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} className="accent-recette-600" />
     </label>
   );
 }

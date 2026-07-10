@@ -9,18 +9,6 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        barn: {
-          50:  "#FFF4F2",
-          100: "#FDE6E1",
-          200: "#FBC9BF",
-          300: "#F4998A",
-          400: "#E36E5A",
-          500: "#C8472F",
-          600: "#A8351F",
-          700: "#8B2A18",
-          800: "#6B1F11",
-          900: "#4A150B",
-        },
         cream: "#FAF7F2",
         // My Recette color palette
         recette: {

@@ -492,7 +492,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
             onClick={() => setActiveTab(tab.id as any)}
             className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === tab.id
-                ? "bg-barn-600 text-white"
+                ? "bg-recette-600 text-white"
                 : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
             }`}
           >
@@ -522,7 +522,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
             {/* Title */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Tag className="h-5 w-5 text-barn-600" />
+                <Tag className="h-5 w-5 text-recette-600" />
                 <label className="font-semibold text-neutral-900">Recipe Title</label>
                 <span className="text-red-500">*</span>
               </div>
@@ -540,7 +540,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                   value={formData.title.en}
                   onChange={(e) => handleTranslatableChange("title", "en", e.target.value)}
                   placeholder="e.g., Spaghetti Bolognese"
-                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                 />
               </div>
               
@@ -554,7 +554,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                   value={formData.title.es}
                   onChange={(e) => handleTranslatableChange("title", "es", e.target.value)}
                   placeholder="e.g., Espaguetis a la boloñesa"
-                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                 />
               </div>
               
@@ -572,7 +572,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                     value={formData.slug}
                     onChange={(e) => handleChange("slug", e.target.value)}
                     placeholder="spaghetti-bolognese"
-                    className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                    className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -581,7 +581,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
             {/* Description */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <ImageIcon className="h-5 w-5 text-barn-600" />
+                <ImageIcon className="h-5 w-5 text-recette-600" />
                 <label className="font-semibold text-neutral-900">Description</label>
               </div>
               <p className="text-sm text-neutral-500">
@@ -598,7 +598,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                   onChange={(e) => handleTranslatableChange("description", "en", e.target.value)}
                   placeholder="e.g., A classic Italian pasta dish with rich meat sauce..."
                   rows={4}
-                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors resize-none"
+                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors resize-none"
                 />
               </div>
               
@@ -612,7 +612,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                   onChange={(e) => handleTranslatableChange("description", "es", e.target.value)}
                   placeholder="e.g., Un clásico plato italiano de pasta con rica salsa de carne..."
                   rows={4}
-                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors resize-none"
+                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors resize-none"
                 />
               </div>
             </div>
@@ -622,7 +622,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
               {/* Prep Time */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-barn-600" />
+                  <Clock className="h-5 w-5 text-recette-600" />
                   <label className="font-semibold text-neutral-900">Prep Time</label>
                 </div>
                 <div className="flex gap-2">
@@ -632,7 +632,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                     onChange={(e) => handleChange("prep_time_minutes", e.target.value ? parseInt(e.target.value) : null)}
                     placeholder="0"
                     min="0"
-                    className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                    className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                   />
                   <span className="px-3 py-2.5 bg-neutral-100 rounded-lg text-neutral-600 text-sm">
                     minutes
@@ -643,7 +643,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
               {/* Cook Time */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-barn-600" />
+                  <Clock className="h-5 w-5 text-recette-600" />
                   <label className="font-semibold text-neutral-900">Cook Time</label>
                 </div>
                 <div className="flex gap-2">
@@ -653,7 +653,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                     onChange={(e) => handleChange("cook_time_minutes", e.target.value ? parseInt(e.target.value) : null)}
                     placeholder="0"
                     min="0"
-                    className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                    className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                   />
                   <span className="px-3 py-2.5 bg-neutral-100 rounded-lg text-neutral-600 text-sm">
                     minutes
@@ -664,7 +664,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
               {/* Servings */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-barn-600" />
+                  <Users className="h-5 w-5 text-recette-600" />
                   <label className="font-semibold text-neutral-900">Servings</label>
                 </div>
                 <div className="flex gap-2">
@@ -674,7 +674,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                     onChange={(e) => handleChange("servings", e.target.value ? parseInt(e.target.value) : null)}
                     placeholder="0"
                     min="1"
-                    className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                    className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                   />
                   <span className="px-3 py-2.5 bg-neutral-100 rounded-lg text-neutral-600 text-sm">
                     people
@@ -685,13 +685,13 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
               {/* Difficulty */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Flame className="h-5 w-5 text-barn-600" />
+                  <Flame className="h-5 w-5 text-recette-600" />
                   <label className="font-semibold text-neutral-900">Difficulty</label>
                 </div>
                 <select
                   value={formData.difficulty || ""}
                   onChange={(e) => handleChange("difficulty", e.target.value || null)}
-                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                 >
                   <option value="">Select difficulty</option>
                   {difficulties.map((d) => (
@@ -703,13 +703,13 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
               {/* Cuisine */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <ChefHat className="h-5 w-5 text-barn-600" />
+                  <ChefHat className="h-5 w-5 text-recette-600" />
                   <label className="font-semibold text-neutral-900">Cuisine</label>
                 </div>
                 <select
                   value={formData.cuisine || ""}
                   onChange={(e) => handleChange("cuisine", e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                 >
                   <option value="">Select cuisine</option>
                   {cuisines.map((c) => (
@@ -721,13 +721,13 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
               {/* Meal Type */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Tag className="h-5 w-5 text-barn-600" />
+                  <Tag className="h-5 w-5 text-recette-600" />
                   <label className="font-semibold text-neutral-900">Meal Type</label>
                 </div>
                 <select
                   value={formData.meal_type || ""}
                   onChange={(e) => handleChange("meal_type", e.target.value || null)}
-                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                 >
                   <option value="">Select meal type</option>
                   {mealTypes.map((m) => (
@@ -740,7 +740,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
             {/* Dietary Tags */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Tag className="h-5 w-5 text-barn-600" />
+                <Tag className="h-5 w-5 text-recette-600" />
                 <label className="font-semibold text-neutral-900">Dietary Tags</label>
               </div>
               <p className="text-sm text-neutral-500">
@@ -756,7 +756,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                       onClick={() => toggleDietaryTag(tag)}
                       className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                         isSelected
-                          ? "bg-barn-600 text-white"
+                          ? "bg-recette-600 text-white"
                           : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
                       }`}
                     >
@@ -776,7 +776,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                   onChange={(e) => handleChange("published", e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-barn-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-barn-600"></div>
+                <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-recette-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-recette-600"></div>
               </label>
               <span className="text-sm text-neutral-700">
                 Publish recipe immediately
@@ -790,7 +790,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
           <div className="space-y-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <ChefHat className="h-5 w-5 text-barn-600" />
+                <ChefHat className="h-5 w-5 text-recette-600" />
                 <label className="font-semibold text-neutral-900">Ingredients</label>
                 <span className="text-red-500">*</span>
               </div>
@@ -815,7 +815,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                     onChange={(e) => setIngredientSearch(e.target.value)}
                     onFocus={() => setShowIngredientDropdown(filteredIngredients.length > 0)}
                     placeholder="Search ingredients..."
-                    className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                    className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                   />
                   
                   {/* Ingredient Suggestions */}
@@ -846,7 +846,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                     value={newIngredientQuantity}
                     onChange={(e) => setNewIngredientQuantity(e.target.value)}
                     placeholder="1, 200, 1.5"
-                    className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                    className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                   />
                 </div>
                 
@@ -858,7 +858,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                   <select
                     value={newIngredientUnit}
                     onChange={(e) => setNewIngredientUnit(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                    className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                   >
                     <option value="">None</option>
                     <option value="g">grams</option>
@@ -887,7 +887,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                     value={newIngredientNotes}
                     onChange={(e) => setNewIngredientNotes(e.target.value)}
                     placeholder="chopped, diced, etc."
-                    className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                    className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -896,7 +896,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                 type="button"
                 onClick={addIngredient}
                 disabled={!selectedIngredient}
-                className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-barn-600 text-white hover:bg-barn-700 disabled:opacity-50 font-semibold transition-colors"
+                className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-recette-600 text-white hover:bg-recette-700 disabled:opacity-50 font-semibold transition-colors"
               >
                 <Plus className="h-4 w-4" />
                 Add Ingredient
@@ -959,7 +959,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
           <div className="space-y-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <LinkIcon className="h-5 w-5 text-barn-600" />
+                <LinkIcon className="h-5 w-5 text-recette-600" />
                 <label className="font-semibold text-neutral-900">Instructions</label>
                 <span className="text-red-500">*</span>
               </div>
@@ -978,7 +978,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                   value={newInstruction}
                   onChange={(e) => setNewInstruction(e.target.value)}
                   placeholder={`e.g., Heat olive oil in a large pan over medium heat...`}
-                  className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                  className="flex-1 px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -990,7 +990,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                   type="button"
                   onClick={addInstruction}
                   disabled={!newInstruction.trim()}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-barn-600 text-white hover:bg-barn-700 disabled:opacity-50 font-semibold transition-colors whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-recette-600 text-white hover:bg-recette-700 disabled:opacity-50 font-semibold transition-colors whitespace-nowrap"
                 >
                   <Plus className="h-4 w-4" />
                   Add
@@ -1011,7 +1011,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                       key={index}
                       className="flex items-center gap-3 p-3 rounded-lg border border-neutral-200"
                     >
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-barn-600 text-white flex items-center justify-center font-semibold">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-recette-600 text-white flex items-center justify-center font-semibold">
                         {index + 1}
                       </div>
                       <div className="flex-1">
@@ -1047,7 +1047,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
             {/* Image */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <ImageIcon className="h-5 w-5 text-barn-600" />
+                <ImageIcon className="h-5 w-5 text-recette-600" />
                 <label className="font-semibold text-neutral-900">Recipe Image</label>
               </div>
               <p className="text-sm text-neutral-500">
@@ -1088,7 +1088,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                   value={formData.image_url || ""}
                   onChange={(e) => handleImageUrlChange(e.target.value)}
                   placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                 />
               </div>
             </div>
@@ -1096,7 +1096,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
             {/* Video */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <LinkIcon className="h-5 w-5 text-barn-600" />
+                <LinkIcon className="h-5 w-5 text-recette-600" />
                 <label className="font-semibold text-neutral-900">Video Tutorial</label>
               </div>
               <p className="text-sm text-neutral-500">
@@ -1129,7 +1129,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
                   value={formData.video_url || ""}
                   onChange={(e) => handleChange("video_url", e.target.value)}
                   placeholder="https://www.youtube.com/watch?v=..."
-                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-barn-500 focus:border-barn-500 outline-none transition-colors"
+                  className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-recette-500 focus:border-recette-500 outline-none transition-colors"
                 />
                 {formData.video_url && !getYouTubeEmbedUrl(formData.video_url) && (
                   <p className="text-sm text-amber-600">Invalid YouTube URL format</p>
@@ -1152,7 +1152,7 @@ export default function AddRecipePage({ params }: { params: Promise<{ locale: st
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-barn-600 text-white hover:bg-barn-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-recette-600 text-white hover:bg-recette-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-colors"
             >
               {submitting ? (
                 <>

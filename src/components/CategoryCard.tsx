@@ -27,19 +27,19 @@ export function CategoryCard({ category, productCount }: { category: Category; p
         <div className="absolute right-3 top-3 rounded-md bg-white/95 px-2 py-1 text-[10px] font-bold tracking-wide text-neutral-700 shadow">
           {category.item_count ?? "—"}+ {t("items")}
         </div>
-        <div className="absolute left-3 bottom-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-barn-700 shadow">
+        <div className="absolute left-3 bottom-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-recette-700 shadow">
           <Grid3x3 className="h-4 w-4" />
         </div>
       </div>
       <div className="flex flex-col gap-1 p-4">
-        <h3 className="text-base font-bold text-neutral-900 group-hover:text-barn-700">
+        <h3 className="text-base font-bold text-neutral-900 group-hover:text-recette-700">
           {category.name[locale]}
         </h3>
         <div className="flex items-center justify-between">
           <p className="text-xs text-neutral-500">
             {productCount} {t("products")}
           </p>
-          <span className="inline-flex items-center gap-1 text-xs font-bold text-barn-600">
+          <span className="inline-flex items-center gap-1 text-xs font-bold text-recette-600">
             {t("browseCategory")} <ArrowRight className="h-3 w-3" />
           </span>
         </div>

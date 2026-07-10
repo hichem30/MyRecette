@@ -105,7 +105,7 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
                   href={item.href}
                   className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium ${
                     active
-                      ? "bg-barn-50 text-barn-700"
+                      ? "bg-recette-50 text-recette-700"
                       : "text-neutral-700 hover:bg-neutral-50"
                   }`}
                 >

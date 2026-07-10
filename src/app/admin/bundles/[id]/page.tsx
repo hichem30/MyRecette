@@ -111,7 +111,7 @@ export default function EditBundle() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Link href="/admin/bundles" className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-barn-700">
+      <Link href="/admin/bundles" className="inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-recette-700">
         <ChevronLeft className="h-3.5 w-3.5" /> Back to bundles
       </Link>
       <h1 className="mt-3 font-serif text-2xl font-bold">{isNew ? "New Bundle" : "Edit Bundle"}</h1>
@@ -170,7 +170,7 @@ export default function EditBundle() {
             type="checkbox"
             checked={!!bundle.active}
             onChange={(e) => setBundle((b) => ({ ...b, active: e.target.checked }))}
-            className="accent-barn-600"
+            className="accent-recette-600"
           />
           Active (visible on storefront)
         </label>
@@ -196,7 +196,7 @@ export default function EditBundle() {
               const checked = (bundle.product_ids ?? []).includes(p.id);
               return (
                 <label key={p.id} className={`flex cursor-pointer items-center gap-3 border-b border-neutral-100 px-3 py-2 text-sm last:border-b-0 ${checked ? "bg-amber-50" : ""}`}>
-                  <input type="checkbox" checked={checked} onChange={() => toggle(p.id)} className="accent-barn-600" />
+                  <input type="checkbox" checked={checked} onChange={() => toggle(p.id)} className="accent-recette-600" />
                   <span className="flex-1 truncate">{p.name.en}</span>
                   <span className="text-xs text-neutral-500">{formatPrice(p.price)}</span>
                 </label>
@@ -211,7 +211,7 @@ export default function EditBundle() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-md bg-barn-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-barn-700 disabled:opacity-50"
+          className="w-full rounded-md bg-recette-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-recette-700 disabled:opacity-50"
         >
           {saving ? "Saving..." : isNew ? "Create bundle" : "Save changes"}
         </button>

@@ -191,7 +191,7 @@ export default function AdminOrdersPage() {
                             aria-label="Copy order number"
                             title="Copy order number"
                             onClick={() => copyText(o.order_number ?? `#${o.id.slice(0, 8)}`)}
-                            className="text-neutral-400 hover:text-barn-700"
+                            className="text-neutral-400 hover:text-recette-700"
                           >
                             <Copy className="h-3 w-3" />
                           </button>
@@ -207,7 +207,7 @@ export default function AdminOrdersPage() {
                               aria-label="Copy email"
                               title="Copy email"
                               onClick={() => copyText(o.customer_email)}
-                              className="text-neutral-400 hover:text-barn-700"
+                              className="text-neutral-400 hover:text-recette-700"
                             >
                               <Copy className="h-3 w-3" />
                             </button>
@@ -215,7 +215,7 @@ export default function AdminOrdersPage() {
                               href={`mailto:${o.customer_email}`}
                               aria-label="Email customer"
                               title="Email customer"
-                              className="text-neutral-400 hover:text-barn-700"
+                              className="text-neutral-400 hover:text-recette-700"
                             >
                               <Mail className="h-3 w-3" />
                             </a>
@@ -231,7 +231,7 @@ export default function AdminOrdersPage() {
                           value={o.status}
                           onChange={(e) => changeStatus(o.id, e.target.value as OrderStatus)}
                           disabled={savingStatusId === o.id}
-                          className={`rounded-md border-0 px-2 py-1 text-xs font-bold focus:ring-2 focus:ring-barn-500 ${
+                          className={`rounded-md border-0 px-2 py-1 text-xs font-bold focus:ring-2 focus:ring-recette-500 ${
                             STATUS_STYLE[o.status] ?? "bg-neutral-50 text-neutral-700"
                           }`}
                         >
@@ -303,7 +303,7 @@ export default function AdminOrdersPage() {
                                   <Phone className="h-3 w-3 text-neutral-500" />
                                   <a
                                     href={`tel:${o.customer_phone}`}
-                                    className="hover:text-barn-700"
+                                    className="hover:text-recette-700"
                                   >
                                     {o.customer_phone}
                                   </a>
@@ -311,7 +311,7 @@ export default function AdminOrdersPage() {
                                     type="button"
                                     onClick={() => copyText(o.customer_phone)}
                                     aria-label="Copy phone"
-                                    className="text-neutral-400 hover:text-barn-700"
+                                    className="text-neutral-400 hover:text-recette-700"
                                   >
                                     <Copy className="h-3 w-3" />
                                   </button>

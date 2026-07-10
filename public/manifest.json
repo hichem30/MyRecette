@@ -1,6 +1,6 @@
 {
-  "name": "sucre et sel",
-  "short_name": "sucre et sel",
+  "name": "My Recette",
+  "short_name": "My Recette",
   "description": "Découvrez des recettes basées sur les ingrédients que vous avez. Achetez des ingrédients auprès des supermarchés locaux.",
   "id": "/",
   "start_url": "/",

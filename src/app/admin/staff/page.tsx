@@ -120,13 +120,13 @@ export default function AdminStaffPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="staff@example.com"
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-barn-500 focus:outline-none"
+            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-recette-500 focus:outline-none"
           />
         </div>
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex items-center gap-1.5 rounded-md bg-barn-600 px-4 py-2 text-sm font-bold text-white hover:bg-barn-700 disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-md bg-recette-600 px-4 py-2 text-sm font-bold text-white hover:bg-recette-700 disabled:opacity-50"
         >
           <UserPlus className="h-4 w-4" /> {submitting ? "Working…" : "Make admin"}
         </button>
@@ -273,7 +273,7 @@ function Table({
             const isSelf = r.email && selfEmail && r.email.toLowerCase() === selfEmail.toLowerCase();
             const orderCount = r.email ? orderCounts[r.email.toLowerCase().trim()] ?? 0 : 0;
             return (
-              <tr key={r.id} className={highlight ? "bg-barn-50/30" : ""}>
+              <tr key={r.id} className={highlight ? "bg-recette-50/30" : ""}>
                 <td className="px-4 py-3 font-medium">
                   {r.email ?? <span className="text-neutral-400">(no email)</span>}
                   {isSelf && (
@@ -313,7 +313,7 @@ function Table({
                   {r.email && !isSelf ? (
                     <button
                       onClick={() => onAction(r.email!)}
-                      className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-barn-700"
+                      className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-recette-700"
                     >
                       {actionIcon} {actionLabel}
                     </button>

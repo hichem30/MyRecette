@@ -88,7 +88,7 @@ export function CartDrawer() {
             <Link
               href="/products"
               onClick={closeCart}
-              className="mt-2 rounded-md bg-barn-600 px-4 py-2 text-sm font-medium text-white hover:bg-barn-700"
+              className="mt-2 rounded-md bg-recette-600 px-4 py-2 text-sm font-medium text-white hover:bg-recette-700"
             >
               {t("emptyCta")}
             </Link>
@@ -110,7 +110,7 @@ export function CartDrawer() {
                   <div className="flex flex-1 flex-col">
                     <Link
                       href={`/products/${item.slug}`}
-                      className="text-sm font-medium text-neutral-900 hover:text-barn-700"
+                      className="text-sm font-medium text-neutral-900 hover:text-recette-700"
                       onClick={closeCart}
                     >
                       {item.name[locale]}
@@ -156,7 +156,7 @@ export function CartDrawer() {
                           }}
                           aria-label={locale === "en" ? "Save for later" : "Guardar para después"}
                           title={locale === "en" ? "Save for later" : "Guardar para después"}
-                          className="text-neutral-400 hover:text-barn-700"
+                          className="text-neutral-400 hover:text-recette-700"
                         >
                           <Heart className="h-4 w-4" />
                         </button>
@@ -164,7 +164,7 @@ export function CartDrawer() {
                           onClick={() => removeItem(item.product_id)}
                           aria-label={t("remove")}
                           title={t("remove")}
-                          className="text-neutral-400 hover:text-barn-700"
+                          className="text-neutral-400 hover:text-recette-700"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -220,7 +220,7 @@ export function CartDrawer() {
             <button
               onClick={checkout}
               disabled={loading}
-              className="w-full rounded-md bg-barn-600 px-4 py-3 text-sm font-bold text-white hover:bg-barn-700 transition disabled:opacity-50"
+              className="w-full rounded-md bg-recette-600 px-4 py-3 text-sm font-bold text-white hover:bg-recette-700 transition disabled:opacity-50"
             >
               {loading ? "..." : t("checkout")}
             </button>

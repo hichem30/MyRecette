@@ -8,6 +8,7 @@ import { getSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/se
 import { getCurrentUser } from "@/lib/supabase/user";
 import type { CartItem, Product } from "@/lib/types";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ErrorBoundary";
 
 // Mock data for local development
 const mockCartItems: CartItem[] = [
@@ -89,28 +90,28 @@ export default async function CartPage() {
   if (itemCount === 0) {
     return (
       <div className="container-page py-12">
-        <div className="text-center">
-          <div className="inline-flex items-center justify-center h-20 w-20 rounded-full bg-neutral-100 mb-6">
-            <ShoppingCart className="h-10 w-10 text-neutral-400" />
-          </div>
-          <h1 className="font-serif text-3xl font-bold text-neutral-900">{t("cart.emptyTitle")}</h1>
-          <p className="mt-2 text-neutral-600">{t("cart.emptyDescription")}</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-2 rounded-full bg-recette-600 px-6 py-3 text-sm font-semibold text-white hover:bg-recette-700 transition"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t("common.continueShopping")}
-            </Link>
-            <Link
-              href="/recipes"
-              className="inline-flex items-center gap-2 rounded-full border border-recette-600 px-6 py-3 text-sm font-semibold text-recette-600 hover:bg-recette-50 transition"
-            >
-              {t("cart.browseRecipes")}
-            </Link>
-          </div>
-        </div>
+        <EmptyState
+          icon={<ShoppingCart className="h-10 w-10 text-recette-600" />}
+          title={t("cart.emptyTitle")}
+          description={t("cart.emptyDescription")}
+          action={
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-2 rounded-full bg-recette-600 px-6 py-3 text-sm font-semibold text-white hover:bg-recette-700 transition"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                {t("common.continueShopping")}
+              </Link>
+              <Link
+                href="/recipes"
+                className="inline-flex items-center gap-2 rounded-full border border-recette-600 px-6 py-3 text-sm font-semibold text-recette-600 hover:bg-recette-50 transition"
+              >
+                {t("cart.browseRecipes")}
+              </Link>
+            </div>
+          }
+        />
       </div>
     );
   }

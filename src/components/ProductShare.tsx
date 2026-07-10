@@ -95,7 +95,7 @@ export function ProductShare({ product }: { product: Product }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-md border border-neutral-300 text-neutral-500 hover:text-barn-700"
+        className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-md border border-neutral-300 text-neutral-500 hover:text-recette-700"
         aria-label={locale === "en" ? "Share" : "Compartir"}
         aria-haspopup="menu"
         aria-expanded={open}

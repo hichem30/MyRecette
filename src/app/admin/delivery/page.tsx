@@ -126,7 +126,7 @@ export default function AdminDeliveryPage() {
             className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-1.5 text-sm"
           />
         </label>
-        <button type="submit" className="inline-flex h-9 items-center gap-1 rounded-md bg-barn-600 px-4 text-sm font-bold text-white hover:bg-barn-700">
+        <button type="submit" className="inline-flex h-9 items-center gap-1 rounded-md bg-recette-600 px-4 text-sm font-bold text-white hover:bg-recette-700">
           <Plus className="h-4 w-4" /> Add
         </button>
       </form>
@@ -138,7 +138,7 @@ export default function AdminDeliveryPage() {
           {Object.entries(grouped).map(([state, zones]) => (
             <div key={state} className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
               <div className="flex items-center gap-2 border-b border-neutral-100 bg-neutral-50 px-4 py-2">
-                <MapPin className="h-4 w-4 text-barn-600" />
+                <MapPin className="h-4 w-4 text-recette-600" />
                 <span className="font-bold">{state}</span>
                 <span className="text-xs text-neutral-500">
                   ({US_STATES.find(([c]) => c === state)?.[1] ?? state})

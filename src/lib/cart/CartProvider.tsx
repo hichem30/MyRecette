@@ -12,9 +12,9 @@ import {
 import type { CartItem, Product } from "../types";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 
-const STORAGE_KEY = "redbarn.cart";
-const WISHLIST_KEY = "redbarn.wishlist";
-const RECENT_KEY = "redbarn.recent";
+const STORAGE_KEY = "myrecette.cart";
+const WISHLIST_KEY = "myrecette.wishlist";
+const RECENT_KEY = "myrecette.recent";
 const RECENT_LIMIT = 8;
 
 interface CartContextValue {

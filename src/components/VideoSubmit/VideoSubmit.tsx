@@ -234,7 +234,7 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
   return (
     <div className={`bg-white rounded-xl border border-neutral-200 p-6 ${className}`} ref={formRef}>
       <h3 className="font-semibold text-neutral-900 mb-4">
-        <PlayCircle className="h-5 w-5 inline-block mr-2 text-barn-600" />
+        <PlayCircle className="h-5 w-5 inline-block mr-2 text-recette-600" />
         Add Your Recipe Video
       </h3>
 
@@ -249,7 +249,7 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
             value={videoUrl}
             onChange={handleUrlChange}
             placeholder={platform === 'youtube' ? "https://www.youtube.com/watch?v=..." : platform === 'facebook' ? "https://www.facebook.com/watch/..." : "https://www.youtube.com/watch?v=... or https://www.facebook.com/watch/..."}
-            className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-barn-500 focus:border-barn-500 transition-colors"
+            className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-recette-500 focus:border-recette-500 transition-colors"
             required
           />
           <p className="text-xs text-neutral-500 mt-1">
@@ -312,7 +312,7 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
                   value={title[lang] || ""}
                   onChange={(e) => handleTitleChange(lang, e.target.value)}
                   placeholder={`Title in ${lang === "en" ? "English" : lang === "es" ? "Spanish" : lang === "fr" ? "French" : "Arabic"}`}
-                  className="flex-1 px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-barn-500 focus:border-barn-500 transition-colors text-sm"
+                  className="flex-1 px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-recette-500 focus:border-recette-500 transition-colors text-sm"
                   dir={lang === "ar" ? "rtl" : "ltr"}
                 />
               </div>
@@ -336,7 +336,7 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
                   onChange={(e) => handleDescriptionChange(lang, e.target.value)}
                   placeholder={`Description in ${lang === "en" ? "English" : lang === "es" ? "Spanish" : lang === "fr" ? "French" : "Arabic"}`}
                   rows={2}
-                  className="flex-1 px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-barn-500 focus:border-barn-500 transition-colors text-sm resize-none"
+                  className="flex-1 px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-recette-500 focus:border-recette-500 transition-colors text-sm resize-none"
                   dir={lang === "ar" ? "rtl" : "ltr"}
                 />
               </div>
@@ -363,7 +363,7 @@ export function VideoSubmit({ recipeId, recipeSlug, onVideoAdded, className = ""
         <button
           type="submit"
           disabled={isSubmitting || !videoUrl.trim()}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-barn-600 text-white font-semibold hover:bg-barn-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isSubmitting ? (
             <>

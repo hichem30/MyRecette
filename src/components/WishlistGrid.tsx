@@ -3,8 +3,10 @@
 import { useTranslations } from "@/lib/fr";
 import { useCart } from "@/lib/cart/CartProvider";
 import Link from "next/link";
+import { Heart } from "lucide-react";
 import { ProductCard } from "./ProductCard";
 import type { Product } from "@/lib/types";
+import { EmptyState } from "./ErrorBoundary";
 
 export function WishlistGrid({ products }: { products: Product[] }) {
   const t = useTranslations("wishlist");
@@ -13,15 +15,19 @@ export function WishlistGrid({ products }: { products: Product[] }) {
 
   if (items.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 py-16 text-center">
-        <p className="text-neutral-500">{t("empty")}</p>
-        <Link
-          href="/products"
-          className="mt-4 inline-block rounded-md bg-barn-600 px-5 py-2 text-sm font-bold text-white hover:bg-barn-700"
-        >
-          {t("emptyCta")}
-        </Link>
-      </div>
+      <EmptyState
+        icon={<Heart className="h-10 w-10 text-recette-600" />}
+        title={t("empty")}
+        description={t("emptyDescription")}
+        action={
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 rounded-md bg-recette-600 px-5 py-2 text-sm font-bold text-white hover:bg-recette-700"
+          >
+            {t("emptyCta")}
+          </Link>
+        }
+      />
     );
   }
 

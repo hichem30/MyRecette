@@ -66,8 +66,8 @@ export default function FeedItem({ item }: { item: SupermarketFeedItem }) {
             className="w-12 h-12 rounded-full object-cover"
           />
         ) : (
-          <div className="w-12 h-12 rounded-full bg-barn-100 flex items-center justify-center">
-            <ShoppingBag className="h-6 w-6 text-barn-600" />
+          <div className="w-12 h-12 rounded-full bg-recette-100 flex items-center justify-center">
+            <ShoppingBag className="h-6 w-6 text-recette-600" />
           </div>
         )}
       </div>
@@ -115,7 +115,7 @@ export default function FeedItem({ item }: { item: SupermarketFeedItem }) {
         <div className="mt-3">
           <Link
             href={item.action_url}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-barn-50 text-barn-700 hover:bg-barn-100 text-sm font-medium transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-recette-50 text-recette-700 hover:bg-recette-100 text-sm font-medium transition-colors"
           >
             Voir les détails
           </Link>

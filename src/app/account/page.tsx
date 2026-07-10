@@ -1,9 +1,11 @@
 "use client";
 
 import { useLocale } from "@/lib/fr";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
+import { FullPageLoader } from "@/components/LoadingSpinner";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export default function AccountHome() {
   const locale = useLocale() as "en" | "es" | "fr" | "ar";
@@ -164,8 +166,10 @@ export default function AccountHome() {
     : "—";
 
   return (
-    <div>
-      <h1 className="font-serif text-2xl font-bold">{labels.title}</h1>
+    <ErrorBoundary>
+      <Suspense fallback={<FullPageLoader message="Chargement du compte..." />}>
+        <div>
+          <h1 className="font-serif text-2xl font-bold">{labels.title}</h1>
       <p className="mt-1 text-sm text-neutral-500">
         {labels.welcome}, <span className="font-semibold text-neutral-700">{profile.name ?? profile.email ?? "—"}</span>.
       </p>
@@ -242,6 +246,8 @@ export default function AccountHome() {
           <p className="mt-2 text-xs text-emerald-700">{optinFeedback}</p>
         )}
       </section>
-    </div>
+        </div>
+      </Suspense>
+    </ErrorBoundary>
   );
 }

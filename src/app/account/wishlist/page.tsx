@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useLocale, useTranslations } from "@/lib/fr";
+import { Heart } from "lucide-react";
 import { WishlistGrid } from "@/components/WishlistGrid";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Product } from "@/lib/types";
 import { mockProducts } from "@/lib/data/mock-data";
+import { ProductGridSkeleton } from "@/components/LoadingSpinner";
+import { EmptyState } from "@/components/ErrorBoundary";
 
 export default function AccountWishlist() {
   const t = useTranslations("wishlist");
@@ -44,13 +47,15 @@ export default function AccountWishlist() {
           : "Artículos guardados en todos tus dispositivos."}
       </p>
       <div className="mt-5">
-        {products === null ? (
-          <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 py-16 text-center text-sm text-neutral-400">
-            {locale === "en" ? "Loading…" : "Cargando…"}
-          </div>
-        ) : (
-          <WishlistGrid products={products} />
-        )}
+        <Suspense fallback={<ProductGridSkeleton count={4} />}>
+          {products === null ? (
+            <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 py-16 text-center text-sm text-neutral-400">
+              {locale === "en" ? "Loading…" : "Cargando…"}
+            </div>
+          ) : (
+            <WishlistGrid products={products} />
+          )}
+        </Suspense>
       </div>
     </div>
   );

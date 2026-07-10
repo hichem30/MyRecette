@@ -62,7 +62,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-barn-600 px-4 py-3 text-sm font-bold text-white hover:bg-barn-700 transition disabled:opacity-50"
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-recette-600 px-4 py-3 text-sm font-bold text-white hover:bg-recette-700 transition disabled:opacity-50"
       >
         <Send className="h-4 w-4" />
         {submitting ? tC("submitting") : t("send")}

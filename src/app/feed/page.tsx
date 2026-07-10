@@ -47,8 +47,8 @@ function SupermarketSidebarCard({ supermarket }: { supermarket: SupermarketProfi
           className="w-10 h-10 rounded-full object-cover flex-shrink-0"
         />
       ) : (
-        <div className="w-10 h-10 rounded-full bg-barn-100 flex items-center justify-center flex-shrink-0">
-          <ShoppingBag className="h-5 w-5 text-barn-600" />
+        <div className="w-10 h-10 rounded-full bg-recette-100 flex items-center justify-center flex-shrink-0">
+          <ShoppingBag className="h-5 w-5 text-recette-600" />
         </div>
       )}
       <div className="flex-1 min-w-0">
@@ -119,7 +119,7 @@ export default async function UserFeedPage() {
               </p>
               <Link
                 href="/supermarkets"
-                className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 rounded-md bg-barn-600 text-white hover:bg-barn-700 font-semibold transition-colors"
+                className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 rounded-md bg-recette-600 text-white hover:bg-recette-700 font-semibold transition-colors"
               >
                 {t("supermarkets.discover")}
               </Link>

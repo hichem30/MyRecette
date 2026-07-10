@@ -198,9 +198,9 @@ function getStatusColor(status: ProcessedRow["status"]) {
   }
 }
 
-function ProgressBar({ progress, color = "barn" }: { progress: number; color?: string }) {
+function ProgressBar({ progress, color = "recette" }: { progress: number; color?: string }) {
   const colorClasses: Record<string, string> = {
-    barn: "bg-barn-600",
+    recette: "bg-recette-600",
     emerald: "bg-emerald-600",
     amber: "bg-amber-500",
     red: "bg-red-500",
@@ -209,7 +209,7 @@ function ProgressBar({ progress, color = "barn" }: { progress: number; color?: s
   return (
     <div className="h-2 w-full rounded-full bg-neutral-200 overflow-hidden">
       <div
-        className={`h-full ${colorClasses[color || "barn"]} transition-all`}
+        className={`h-full ${colorClasses[color || "recette"]} transition-all`}
         style={{ width: `${Math.min(progress, 100)}%` }}
       />
     </div>
@@ -391,18 +391,18 @@ export default function AdminSupermarketBulkUploadPage() {
       {/* Steps */}
       <div className="flex items-center gap-8 text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-barn-600 text-white flex items-center justify-center font-semibold text-sm">1</div>
-          <span className={`font-medium ${!file ? "text-barn-600" : "text-neutral-500"}`}>Upload CSV</span>
+          <div className="w-8 h-8 rounded-full bg-recette-600 text-white flex items-center justify-center font-semibold text-sm">1</div>
+          <span className={`font-medium ${!file ? "text-recette-600" : "text-neutral-500"}`}>Upload CSV</span>
         </div>
         <div className="w-px h-4 bg-neutral-200" />
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-barn-600 text-white flex items-center justify-center font-semibold text-sm">2</div>
-          <span className={`font-medium ${!showPreview ? "text-neutral-500" : !processing ? "text-barn-600" : "text-neutral-500"}`}>Preview & Validate</span>
+          <div className="w-8 h-8 rounded-full bg-recette-600 text-white flex items-center justify-center font-semibold text-sm">2</div>
+          <span className={`font-medium ${!showPreview ? "text-neutral-500" : !processing ? "text-recette-600" : "text-neutral-500"}`}>Preview & Validate</span>
         </div>
         <div className="w-px h-4 bg-neutral-200" />
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-barn-600 text-white flex items-center justify-center font-semibold text-sm">3</div>
-          <span className={`font-medium ${!results ? "text-neutral-500" : "text-barn-600"}`}>Complete</span>
+          <div className="w-8 h-8 rounded-full bg-recette-600 text-white flex items-center justify-center font-semibold text-sm">3</div>
+          <span className={`font-medium ${!results ? "text-neutral-500" : "text-recette-600"}`}>Complete</span>
         </div>
       </div>
 
@@ -410,15 +410,15 @@ export default function AdminSupermarketBulkUploadPage() {
       {!file && !processing && !results && (
         <div className="rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-8 text-center">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-barn-100 flex items-center justify-center">
-              <Upload className="h-8 w-8 text-barn-600" />
+            <div className="w-16 h-16 rounded-full bg-recette-100 flex items-center justify-center">
+              <Upload className="h-8 w-8 text-recette-600" />
             </div>
             <h2 className="font-semibold text-neutral-900">Upload CSV File</h2>
             <p className="text-sm text-neutral-600 max-w-md">
               Drag and drop your CSV file here or click the button below. The system will automatically map products using barcode, SKU, and name matching.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-barn-600 text-white hover:bg-barn-700 text-sm font-medium transition-colors cursor-pointer">
+              <label className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white hover:bg-recette-700 text-sm font-medium transition-colors cursor-pointer">
                 <Upload className="h-4 w-4" />
                 Choose File
                 <input
@@ -466,7 +466,7 @@ export default function AdminSupermarketBulkUploadPage() {
               <button
                 onClick={handleUpload}
                 disabled={errorCount > 0}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-barn-600 text-white hover:bg-barn-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-sm font-medium transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white hover:bg-recette-700 disabled:bg-neutral-400 disabled:cursor-not-allowed text-sm font-medium transition-colors"
               >
                 {validCount > 0 && errorCount === 0 ? (
                   <>
@@ -601,7 +601,7 @@ export default function AdminSupermarketBulkUploadPage() {
       {processing && (
         <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="flex items-center gap-4">
-            <Loader2 className="h-6 w-6 animate-spin text-barn-600" />
+            <Loader2 className="h-6 w-6 animate-spin text-recette-600" />
             <div className="flex-1">
               <h2 className="font-semibold text-neutral-900">Processing...</h2>
               <p className="text-sm text-neutral-600 mt-1">{progress.message}</p>
@@ -670,14 +670,14 @@ export default function AdminSupermarketBulkUploadPage() {
                 </div>
               </div>
             </div>
-            <div className="rounded-xl border border-barn-200 bg-barn-50 p-4">
+            <div className="rounded-xl border border-recette-200 bg-recette-50 p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-neutral-500">New Products</p>
-                  <p className="mt-1 text-xl font-bold text-barn-700">{results.newProductCount}</p>
+                  <p className="mt-1 text-xl font-bold text-recette-700">{results.newProductCount}</p>
                 </div>
-                <div className="w-10 h-10 rounded-lg bg-barn-100 flex items-center justify-center">
-                  <Package className="h-5 w-5 text-barn-600" />
+                <div className="w-10 h-10 rounded-lg bg-recette-100 flex items-center justify-center">
+                  <Package className="h-5 w-5 text-recette-600" />
                 </div>
               </div>
             </div>
@@ -718,7 +718,7 @@ export default function AdminSupermarketBulkUploadPage() {
             </Link>
             <Link
               href={`/admin/supermarkets/${supermarketId}`}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-barn-600 text-white hover:bg-barn-700 text-sm font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-recette-600 text-white hover:bg-recette-700 text-sm font-medium transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Supermarket

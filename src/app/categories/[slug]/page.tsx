@@ -21,7 +21,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const cat = await getCategoryBySlug(slug);
   if (!cat) return {};
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://shop.redbarnmarket.workers.dev";
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sucre-et-sel.hichemjouili2.workers.dev";
   const url = `${base}/categories/${cat.slug}`;
   const name = typeof cat.name === 'string' ? cat.name : (cat.name?.fr || cat.name?.en || "Category");
   const description = `Découvrez tous les produits de la catégorie ${name} sur My Recette.`;

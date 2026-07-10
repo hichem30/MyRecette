@@ -21,7 +21,7 @@ import type { Bundle, Product, PromoCode } from "@/lib/types";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-  "https://shop.redbarnmarket.workers.dev";
+  "https://sucre-et-sel.hichemjouili2.workers.dev";
 
 type ProductFilter = "new" | "discount" | "all";
 
@@ -362,13 +362,13 @@ export default function AdminCampaignsPage() {
     const a = document.createElement("a");
     const stamp = new Date().toISOString().slice(0, 10);
     a.href = url;
-    a.download = `red-barn-subscribers-${stamp}.csv`;
+    a.download = `myrecette-subscribers-${stamp}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     if (subscribers.length > 0) {
-      flashStatus(`Downloaded red-barn-subscribers-${stamp}.csv (${subscribers.length} email${subscribers.length === 1 ? "" : "s"}).`);
+      flashStatus(`Downloaded myrecette-subscribers-${stamp}.csv (${subscribers.length} email${subscribers.length === 1 ? "" : "s"}).`);
     }
   }
 
@@ -446,7 +446,7 @@ export default function AdminCampaignsPage() {
   return (
     <div>
       <h1 className="font-serif text-2xl font-bold flex items-center gap-2">
-        <Megaphone className="h-5 w-5 text-barn-700" /> Email Campaigns
+        <Megaphone className="h-5 w-5 text-recette-700" /> Email Campaigns
       </h1>
       <p className="mt-1 text-sm text-neutral-500">
         Pick any combination of products, bundles, and promo codes — then either copy the styled HTML into
@@ -456,7 +456,7 @@ export default function AdminCampaignsPage() {
       <section className="mt-5 rounded-xl border border-neutral-200 bg-white p-4 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-barn-50 text-barn-700">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-recette-50 text-recette-700">
               <Users className="h-4 w-4" />
             </span>
             <div>
@@ -476,7 +476,7 @@ export default function AdminCampaignsPage() {
               type="button"
               onClick={exportSubscribersCsv}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 rounded-md bg-barn-600 px-3 py-2 text-xs font-semibold text-white hover:bg-barn-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-md bg-recette-600 px-3 py-2 text-xs font-semibold text-white hover:bg-recette-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Download className="h-3.5 w-3.5" />
               Download CSV
@@ -485,7 +485,7 @@ export default function AdminCampaignsPage() {
               type="button"
               onClick={copySubscriberEmails}
               disabled={loading || subscribers.length === 0}
-              className="inline-flex items-center gap-1.5 rounded-md border border-neutral-300 bg-white px-3 py-2 text-xs font-semibold text-neutral-700 hover:border-barn-600 hover:text-barn-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-md border border-neutral-300 bg-white px-3 py-2 text-xs font-semibold text-neutral-700 hover:border-recette-600 hover:text-recette-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <ClipboardCopy className="h-3.5 w-3.5" />
               Copy emails
@@ -494,7 +494,7 @@ export default function AdminCampaignsPage() {
               href="https://emailoctopus.com/lists"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md border border-neutral-300 bg-white px-3 py-2 text-xs font-semibold text-neutral-700 hover:border-barn-600 hover:text-barn-700"
+              className="inline-flex items-center gap-1.5 rounded-md border border-neutral-300 bg-white px-3 py-2 text-xs font-semibold text-neutral-700 hover:border-recette-600 hover:text-recette-700"
             >
               <ExternalLink className="h-3.5 w-3.5" />
               Open EmailOctopus
@@ -521,11 +521,11 @@ export default function AdminCampaignsPage() {
         )}
 
         <details className="mt-3 text-xs text-neutral-600">
-          <summary className="cursor-pointer font-semibold text-neutral-800 hover:text-barn-700">
+          <summary className="cursor-pointer font-semibold text-neutral-800 hover:text-recette-700">
             How to import these subscribers into EmailOctopus
           </summary>
           <ol className="mt-2 list-decimal space-y-1 pl-5">
-            <li>Click <strong>Download CSV</strong> above — a file like <span className="font-mono">red-barn-subscribers-YYYY-MM-DD.csv</span> downloads to your computer.</li>
+            <li>Click <strong>Download CSV</strong> above — a file like <span className="font-mono">myrecette-subscribers-YYYY-MM-DD.csv</span> downloads to your computer.</li>
             <li>Click <strong>Open EmailOctopus</strong> — opens https://emailoctopus.com/lists in a new tab. Sign in if you aren’t already.</li>
             <li>Click your list (or <strong>+ New list</strong> if you don’t have one yet).</li>
             <li>Inside the list, click <strong>Subscribers</strong> → <strong>Add subscribers</strong> → <strong>Upload a file</strong>.</li>
@@ -567,7 +567,7 @@ export default function AdminCampaignsPage() {
                   onClick={() => setProductFilter("new")}
                   className={`rounded-md border px-2 py-1 font-semibold flex items-center gap-1 ${
                     productFilter === "new"
-                      ? "border-barn-600 bg-barn-50 text-barn-700"
+                      ? "border-recette-600 bg-recette-50 text-recette-700"
                       : "border-neutral-200 bg-white text-neutral-600"
                   }`}
                 >
@@ -612,7 +612,7 @@ export default function AdminCampaignsPage() {
                 value={productSearch}
                 onChange={(e) => setProductSearch(e.target.value)}
                 placeholder="Search by product name…"
-                className="w-full rounded-md border border-neutral-300 bg-white py-1.5 pl-8 pr-3 text-sm focus:border-barn-500 focus:outline-none"
+                className="w-full rounded-md border border-neutral-300 bg-white py-1.5 pl-8 pr-3 text-sm focus:border-recette-500 focus:outline-none"
               />
             </div>
             <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
@@ -646,7 +646,7 @@ export default function AdminCampaignsPage() {
                             type="checkbox"
                             checked={selectedProductIds.has(p.id)}
                             onChange={() => toggleSet(setSelectedProductIds, p.id)}
-                            className="accent-barn-600"
+                            className="accent-recette-600"
                             aria-label={`Select ${p.name.en}`}
                           />
                         </td>
@@ -665,7 +665,7 @@ export default function AdminCampaignsPage() {
                         </td>
                         <td className="px-3 py-2 text-xs text-neutral-500">
                           {p.new_arrival && (
-                            <span className="mr-1 rounded bg-barn-50 px-1.5 py-0.5 text-barn-700">
+                            <span className="mr-1 rounded bg-recette-50 px-1.5 py-0.5 text-recette-700">
                               <Sparkles className="mr-1 inline h-3 w-3" />
                               NEW
                             </span>
@@ -730,7 +730,7 @@ export default function AdminCampaignsPage() {
                             type="checkbox"
                             checked={selectedBundleIds.has(b.id)}
                             onChange={() => toggleSet(setSelectedBundleIds, b.id)}
-                            className="accent-barn-600"
+                            className="accent-recette-600"
                             aria-label={`Select ${b.name.en}`}
                           />
                         </td>
@@ -804,7 +804,7 @@ export default function AdminCampaignsPage() {
                               type="checkbox"
                               checked={selectedPromoIds.has(c.id)}
                               onChange={() => toggleSet(setSelectedPromoIds, c.id)}
-                              className="accent-barn-600"
+                              className="accent-recette-600"
                               aria-label={`Select ${c.code}`}
                             />
                           </td>
@@ -836,7 +836,7 @@ export default function AdminCampaignsPage() {
             <input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-barn-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-recette-500 focus:outline-none"
             />
             <label className="mt-3 block text-xs font-semibold text-neutral-600">
               Intro message
@@ -845,7 +845,7 @@ export default function AdminCampaignsPage() {
               value={intro}
               onChange={(e) => setIntro(e.target.value)}
               rows={3}
-              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-barn-500 focus:outline-none"
+              className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-recette-500 focus:outline-none"
             />
 
             <div className="mt-4">
@@ -861,7 +861,7 @@ export default function AdminCampaignsPage() {
                   }}
                   className={`inline-flex w-full items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold text-white transition ${
                     canCompose
-                      ? "bg-barn-600 hover:bg-barn-700"
+                      ? "bg-recette-600 hover:bg-recette-700"
                       : "cursor-not-allowed bg-neutral-300"
                   }`}
                 >
@@ -874,7 +874,7 @@ export default function AdminCampaignsPage() {
                   disabled={!canCompose}
                   className={`inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-sm font-semibold transition ${
                     canCompose
-                      ? "border-barn-600 bg-white text-barn-700 hover:bg-barn-50"
+                      ? "border-recette-600 bg-white text-recette-700 hover:bg-recette-50"
                       : "cursor-not-allowed border-neutral-200 bg-neutral-100 text-neutral-400"
                   }`}
                 >

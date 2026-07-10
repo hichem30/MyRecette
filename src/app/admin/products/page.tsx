@@ -154,7 +154,7 @@ export default function AdminProductsPage() {
           </Link>
           <Link
             href="/admin/products/new"
-            className="inline-flex items-center gap-1.5 rounded-md bg-barn-600 px-4 py-2 text-sm font-bold text-white hover:bg-barn-700"
+            className="inline-flex items-center gap-1.5 rounded-md bg-recette-600 px-4 py-2 text-sm font-bold text-white hover:bg-recette-700"
           >
             <Plus className="h-4 w-4" /> Add Product
           </Link>
@@ -166,7 +166,7 @@ export default function AdminProductsPage() {
           onClick={() => setFilter("all")}
           className={`rounded-md border px-3 py-1.5 font-semibold ${
             filter === "all"
-              ? "border-barn-600 bg-barn-50 text-barn-700"
+              ? "border-recette-600 bg-recette-50 text-recette-700"
               : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300"
           }`}
         >
@@ -209,7 +209,7 @@ export default function AdminProductsPage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
-            className="rounded-md border border-neutral-200 bg-white px-2 py-1.5 font-semibold text-neutral-700 focus:border-barn-500 focus:outline-none"
+            className="rounded-md border border-neutral-200 bg-white px-2 py-1.5 font-semibold text-neutral-700 focus:border-recette-500 focus:outline-none"
           >
             <option value="created_desc">Newest added</option>
             <option value="updated_desc">Recently modified</option>
@@ -265,7 +265,7 @@ export default function AdminProductsPage() {
                             min={0}
                             value={stockDraft}
                             onChange={(e) => setStockDraft(Number(e.target.value))}
-                            className="w-20 rounded-md border border-neutral-300 px-2 py-1 text-sm focus:border-barn-500 focus:outline-none"
+                            className="w-20 rounded-md border border-neutral-300 px-2 py-1 text-sm focus:border-recette-500 focus:outline-none"
                             autoFocus
                           />
                           <button
@@ -299,7 +299,7 @@ export default function AdminProductsPage() {
                       {p.published === false && (
                         <span className="mr-1 rounded bg-neutral-200 px-1.5 py-0.5 font-bold text-neutral-700">DRAFT</span>
                       )}
-                      {p.new_arrival && <span className="mr-1 rounded bg-barn-50 px-1.5 py-0.5 text-barn-700">NEW</span>}
+                      {p.new_arrival && <span className="mr-1 rounded bg-recette-50 px-1.5 py-0.5 text-recette-700">NEW</span>}
                       {p.discount && <span className="mr-1 rounded bg-amber-50 px-1.5 py-0.5 text-amber-700">SALE</span>}
                       {p.featured && <span className="mr-1 rounded bg-emerald-50 px-1.5 py-0.5 text-emerald-700">FEAT</span>}
                       {(salesByProduct[p.id] ?? 0) > 0 && (
@@ -315,7 +315,7 @@ export default function AdminProductsPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                           title="View as customer"
-                          className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-barn-700"
+                          className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-recette-700"
                         >
                           <ExternalLink className="h-3.5 w-3.5" /> View
                         </a>
@@ -323,7 +323,7 @@ export default function AdminProductsPage() {
                           onClick={() => togglePublished(p)}
                           disabled={publishingId === p.id}
                           title={p.published === false ? "Publish" : "Unpublish"}
-                          className={`inline-flex items-center gap-1 text-xs hover:text-barn-700 disabled:opacity-50 ${
+                          className={`inline-flex items-center gap-1 text-xs hover:text-recette-700 disabled:opacity-50 ${
                             p.published === false ? "text-emerald-700" : "text-neutral-600"
                           }`}
                         >
@@ -337,7 +337,7 @@ export default function AdminProductsPage() {
                             </>
                           )}
                         </button>
-                        <Link href={`/admin/products/${p.id}`} className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-barn-700">
+                        <Link href={`/admin/products/${p.id}`} className="inline-flex items-center gap-1 text-xs text-neutral-600 hover:text-recette-700">
                           <Edit2 className="h-3.5 w-3.5" /> Edit
                         </Link>
                         <button

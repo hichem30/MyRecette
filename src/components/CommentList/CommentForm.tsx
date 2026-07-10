@@ -34,12 +34,12 @@ export function CommentForm({ recipeId, userId, onCommentAdded, lang }: CommentF
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder={lang === "es" ? "Escribe un comentario..." : lang === "fr" ? "Écrivez un commentaire..." : "Write a comment..."}
-        className="w-full rounded-lg border border-neutral-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-barn-500"
+        className="w-full rounded-lg border border-neutral-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-recette-500"
         rows={3}
       />
       <button
         type="submit"
-        className="rounded-lg bg-barn-600 px-4 py-2 text-sm font-medium text-white hover:bg-barn-700"
+        className="rounded-lg bg-recette-600 px-4 py-2 text-sm font-medium text-white hover:bg-recette-700"
       >
         {lang === "es" ? "Comentar" : lang === "fr" ? "Commenter" : "Comment"}
       </button>

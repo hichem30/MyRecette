@@ -21,7 +21,7 @@ export default async function LoginPage() {
             { Icon: Lock, label: t("login.securePrivate") },
           ].map(({ Icon, label }) => (
             <div key={label} className="flex flex-col items-center gap-1 text-xs text-neutral-500">
-              <Icon className="h-4 w-4 text-barn-600" />
+              <Icon className="h-4 w-4 text-recette-600" />
               {label}
             </div>
           ))}

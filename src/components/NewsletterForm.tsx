@@ -29,11 +29,11 @@ export function NewsletterForm({
         type="email"
         required
         placeholder={placeholder}
-        className="flex-1 rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm placeholder-neutral-500 outline-none focus:border-barn-500"
+        className="flex-1 rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm placeholder-neutral-500 outline-none focus:border-recette-500"
       />
       <button
         type="submit"
-        className="rounded-md bg-barn-600 px-3 py-2 text-sm font-medium text-white hover:bg-barn-700 transition"
+        className="rounded-md bg-recette-600 px-3 py-2 text-sm font-medium text-white hover:bg-recette-700 transition"
       >
         {subscribe}
       </button>

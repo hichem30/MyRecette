@@ -68,11 +68,11 @@ export default async function BundleDetailPage({
     <>
       <div className="container-page pt-6">
         <nav className="flex flex-wrap items-center gap-1 text-xs text-neutral-500">
-          <Link href="/" className="hover:text-barn-700">
+          <Link href="/" className="hover:text-recette-700">
             {lang === "en" ? "Home" : "Inicio"}
           </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link href="/deals" className="hover:text-barn-700">
+          <Link href="/deals" className="hover:text-recette-700">
             {lang === "en" ? "Deals" : "Ofertas"}
           </Link>
           <ChevronRight className="h-3 w-3" />

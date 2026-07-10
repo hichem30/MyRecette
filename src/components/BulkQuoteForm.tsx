@@ -98,12 +98,12 @@ export function BulkQuoteForm() {
           <fieldset className="mt-4">
             <legend className="text-xs font-semibold text-neutral-700">{t("delivery")} *</legend>
             <div className="mt-2 grid gap-2 sm:grid-cols-2">
-              <label className="flex items-center gap-2 rounded-md border border-neutral-300 px-3 py-2 text-sm hover:border-barn-600">
-                <input type="radio" name="delivery" value="deliver" required className="accent-barn-600" />
+              <label className="flex items-center gap-2 rounded-md border border-neutral-300 px-3 py-2 text-sm hover:border-recette-600">
+                <input type="radio" name="delivery" value="deliver" required className="accent-recette-600" />
                 {t("deliverYes")}
               </label>
-              <label className="flex items-center gap-2 rounded-md border border-neutral-300 px-3 py-2 text-sm hover:border-barn-600">
-                <input type="radio" name="delivery" value="pickup" required className="accent-barn-600" />
+              <label className="flex items-center gap-2 rounded-md border border-neutral-300 px-3 py-2 text-sm hover:border-recette-600">
+                <input type="radio" name="delivery" value="pickup" required className="accent-recette-600" />
                 {t("deliverNo")}
               </label>
             </div>
@@ -133,7 +133,7 @@ export function BulkQuoteForm() {
           </button>
 
           <p className="mt-3 flex items-center justify-center gap-1 text-center text-xs text-neutral-500">
-            {t("responseTime")} <a href="tel:+19182458112" className="font-semibold text-barn-700"><Phone className="inline h-3 w-3" /> +1 (918) 245‑8112</a>
+            {t("responseTime")} <a href="tel:+19182458112" className="font-semibold text-recette-700"><Phone className="inline h-3 w-3" /> +1 (918) 245‑8112</a>
           </p>
 
           {status === "success" && (

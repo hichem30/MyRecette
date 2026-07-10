@@ -312,7 +312,7 @@ export async function POST(req: Request) {
       success_url: `${origin}/${parsed.locale}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/${parsed.locale}/checkout/cancel`,
       metadata: {
-        source: "redbarn-storefront",
+        source: "myrecette-storefront",
         items: JSON.stringify(stockDecrement),
         ...(promoApplied ? { promo_code: promoApplied.code } : {}),
         ...(signedInEmail ? { user_email: signedInEmail } : {}),
