@@ -125,8 +125,8 @@ export async function subscriptionGateMiddleware(request: NextRequest): Promise<
   const subscriptionStatus = await getSubscriptionStatusForMiddleware(supermarketId);
 
   if (!subscriptionStatus.hasActiveSubscription) {
-    // Redirect to subscription page
-    const subscribeUrl = new URL("/supermarket/subscribe", request.url);
+    // Redirect to subscription page with supermarket ID
+    const subscribeUrl = new URL(`/supermarket/${supermarketId}/subscribe`, request.url);
     const response = NextResponse.redirect(subscribeUrl);
     response.cookies.set("subscription_error", "inactive_subscription", { maxAge: 60 });
     response.cookies.set("redirect_after_subscribe", pathname, { maxAge: 300 });
@@ -164,7 +164,7 @@ export async function subscriptionGateApiMiddleware(request: NextRequest): Promi
             error: "Subscription required",
             message: "This feature requires an active €50/month subscription",
             requiresSubscription: true,
-            subscribeUrl: "/supermarket/subscribe",
+            subscribeUrl: `/supermarket/${supermarketId}/subscribe`,
           },
           { status: 402 } // Payment Required
         );
@@ -182,7 +182,7 @@ export async function subscriptionGateApiMiddleware(request: NextRequest): Promi
  */
 export function createSubscriptionGate<Props extends object>({
   feature,
-  redirectTo = "/supermarket/subscribe",
+  redirectTo,
 }: {
   feature: string;
   redirectTo?: string;

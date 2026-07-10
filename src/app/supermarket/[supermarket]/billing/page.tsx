@@ -112,11 +112,11 @@ async function reactivateSubscription(supermarketId: string, userId: string) {
   if (!isSupabaseConfigured()) {
     // Mock for local development
     console.log("[MOCK] Reactivating subscription for supermarket:", supermarketId);
-    return { success: true, checkoutUrl: "/fr/supermarket/subscribe" };
+    return { success: true, checkoutUrl: `/fr/supermarket/${supermarketId}/subscribe` };
   }
 
   // In a real implementation, this would create a new checkout session
-  return { success: true, checkoutUrl: "/fr/supermarket/subscribe" };
+  return { success: true, checkoutUrl: `/fr/supermarket/${supermarketId}/subscribe` };
 }
 
 export async function generateMetadata({
@@ -132,7 +132,7 @@ export async function generateMetadata({
     openGraph: {
       title: "Facturation - My Recette",
       description: "Gérez votre abonnement et votre facturation pour votre supermarché",
-      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://myrecette.com"}/fr/supermarket/billing`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://myrecette.com"}/fr/supermarket/${supermarketId}/billing`,
       type: "website",
     },
   };
@@ -277,7 +277,7 @@ function SubscriptionCard({ supermarket }: { supermarket: SupermarketProfile }) 
         {status !== "active" && (
           <div className="mt-6 pt-6 border-t border-neutral-100">
             <Link
-              href="/supermarket/subscribe"
+              href={`/supermarket/${supermarket.id}/subscribe`}
               className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
             >
               <RotateCcw className="h-4 w-4" />
@@ -499,7 +499,7 @@ export default async function SupermarketBillingPage({
               </h3>
               <div className="space-y-3">
                 <Link
-                  href="/fr/supermarket/subscribe"
+                  href={`/fr/supermarket/${supermarket.id}/subscribe`}
                   className="flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-neutral-50 transition-colors"
                 >
                   <Crown className="h-5 w-5 text-recette-600" />

@@ -56,7 +56,7 @@ async function createSubscriptionCheckout(supermarketId: string, userId: string)
   if (!isSupabaseConfigured()) {
     // Mock redirect for local development
     console.log("[MOCK] Creating Stripe checkout session for supermarket:", supermarketId);
-    return "/fr/supermarket/subscribe/success?session_id=mock_session_123";
+    return `/fr/supermarket/${supermarketId}/subscribe/success?session_id=mock_session_123`;
   }
 
   try {
@@ -84,7 +84,7 @@ export async function generateMetadata({
     openGraph: {
       title: "S'abonner à My Recette Premium",
       description: "Rejoignez le plan Premium pour débloquer toutes les fonctionnalités pour votre supermarché",
-      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://myrecette.com"}/fr/supermarket/subscribe`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://myrecette.com"}/fr/supermarket/${supermarketId}/subscribe`,
       type: "website",
     },
   };
@@ -299,7 +299,7 @@ export default async function SupermarketSubscribePage({
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/fr/supermarket/billing"
+              href={`/fr/supermarket/${supermarketId}/billing`}
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
             >
               Gérer mon abonnement
@@ -330,7 +330,7 @@ export default async function SupermarketSubscribePage({
             Aucun frais ne vous a été facturé
           </p>
           <Link
-            href="/fr/supermarket/subscribe"
+            href={`/fr/supermarket/${supermarketId}/subscribe`}
             className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-recette-600 text-white font-semibold hover:bg-recette-700 transition-colors"
           >
             Réessayer
