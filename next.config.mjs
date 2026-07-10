@@ -17,6 +17,10 @@ const nextConfig = {
       { protocol: 'https', hostname: 'source.unsplash.com' },
     ],
   },
+  reactStrictMode: true,
+  compiler: {
+    reactRemoveProperties: true,
+  },
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
