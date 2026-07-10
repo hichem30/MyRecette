@@ -13,25 +13,4 @@ import dummyIncrementalCache from "@opennextjs/aws/overrides/incrementalCache/du
  */
 export default defineCloudflareConfig({
   incrementalCache: dummyIncrementalCache,
-  // Fix CORS for static assets (fonts, CSS, JS)
-  overrides: {
-    // Add headers to all responses
-    headers: {
-      // CORS headers for all requests
-      ".*": {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-        "Access-Control-Allow-Headers": "*",
-      },
-      // Specific Content-Type for font files
-      "^/_next/static/media/.*\\.woff2$": {
-        "Content-Type": "font/woff2",
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-      "^/_next/static/media/.*\\.woff$": {
-        "Content-Type": "font/woff",
-        "Cache-Control": "public, max-age=31536000, immutable",
-      },
-    },
-  },
 });
